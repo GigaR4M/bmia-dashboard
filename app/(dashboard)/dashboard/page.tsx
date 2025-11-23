@@ -10,12 +10,19 @@ export default function DashboardPage() {
     const { data: topUsers, loading: usersLoading } = useTopUsers(5)
     const { data: topChannels, loading: channelsLoading } = useTopChannels(5)
 
+    const periodDays = serverStats?.period_days || 30
+
     return (
         <div className="space-y-8">
+            {/* Period Info */}
+            <div className="text-slate-400 text-sm">
+                📊 Estatísticas dos últimos <span className="font-semibold text-white">{periodDays} dias</span>
+            </div>
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatsCard
-                    title="Total de Mensagens"
+                    title={`Mensagens (${periodDays}d)`}
                     value={serverStats ? formatNumber(serverStats.total_messages) : '0'}
                     icon={<MessageSquare className="w-8 h-8" />}
                     loading={serverLoading}
@@ -27,7 +34,7 @@ export default function DashboardPage() {
                     loading={serverLoading}
                 />
                 <StatsCard
-                    title="Membros Ativos"
+                    title={`Membros Ativos (${periodDays}d)`}
                     value={serverStats ? formatNumber(serverStats.active_members) : '0'}
                     icon={<TrendingUp className="w-8 h-8" />}
                     loading={serverLoading}
@@ -44,7 +51,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Top Users */}
                 <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl p-6 border border-slate-700/50">
-                    <h3 className="text-xl font-bold text-white mb-4">Top Usuários</h3>
+                    <h3 className="text-xl font-bold text-white mb-4">Top Usuários ({periodDays}d)</h3>
                     {usersLoading ? (
                         <div className="space-y-3">
                             {[...Array(5)].map((_, i) => (
@@ -57,6 +64,8 @@ export default function DashboardPage() {
                                 </div>
                             ))}
                         </div>
+                    ) : topUsers.length === 0 ? (
+                        <p className="text-slate-400 text-center py-8">Nenhum dado disponível</p>
                     ) : (
                         <div className="space-y-3">
                             {topUsers.map((user, index) => (
@@ -81,7 +90,7 @@ export default function DashboardPage() {
 
                 {/* Top Channels */}
                 <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl p-6 border border-slate-700/50">
-                    <h3 className="text-xl font-bold text-white mb-4">Top Canais</h3>
+                    <h3 className="text-xl font-bold text-white mb-4">Top Canais ({periodDays}d)</h3>
                     {channelsLoading ? (
                         <div className="space-y-3">
                             {[...Array(5)].map((_, i) => (
@@ -94,6 +103,8 @@ export default function DashboardPage() {
                                 </div>
                             ))}
                         </div>
+                    ) : topChannels.length === 0 ? (
+                        <p className="text-slate-400 text-center py-8">Nenhum dado disponível</p>
                     ) : (
                         <div className="space-y-3">
                             {topChannels.map((channel, index) => (
@@ -105,9 +116,16 @@ export default function DashboardPage() {
                                         {index + 1}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-white font-medium">#{channel.channel_name}</p>
+                                        <p className="text-white font-medium flex items-center gap-2">
+                                            #{channel.channel_name}
+                                            {channel.is_voice && (
+                                                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
+                                                    🎤 Voz
+                                                </span>
+                                            )}
+                                        </p>
                                         <p className="text-slate-400 text-sm">
-                                            {formatNumber(channel.message_count)} mensagens
+                                            {formatNumber(channel.message_count)} {channel.is_voice ? 'atividades' : 'mensagens'}
                                         </p>
                                     </div>
                                 </div>

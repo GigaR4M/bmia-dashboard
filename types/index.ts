@@ -4,6 +4,7 @@ export interface ServerStats {
     total_members: number
     active_members: number
     total_channels: number
+    period_days: number
     last_updated: string
 }
 
@@ -21,7 +22,9 @@ export interface ChannelStats {
     channel_id: string
     guild_id: string
     channel_name: string
+    channel_type: string
     message_count: number
+    is_voice: boolean
     last_message_at: string
 }
 

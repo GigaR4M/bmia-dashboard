@@ -98,10 +98,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }),
     ],
     callbacks: {
-        async signIn({ user, account }) {
-            // Check if user is admin
-            if (account?.provider === "discord" && user?.id) {
-                const isAdmin = await isUserAdmin(user.id)
+        async signIn({ user, account, profile }) {
+            // Check if user is admin using Discord ID from account
+            if (account?.provider === "discord" && account?.providerAccountId) {
+                const discordId = account.providerAccountId
+                const isAdmin = await isUserAdmin(discordId)
 
                 if (!isAdmin) {
                     // Deny access if not admin
@@ -111,22 +112,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             return true
         },
-        async jwt({ token, user, account }) {
-            if (user?.id) {
-                token.id = user.id
+        async jwt({ token, user, account, profile }) {
+            // Store Discord ID in token
+            if (account?.provider === "discord" && account?.providerAccountId) {
+                token.id = account.providerAccountId
 
-                // Check admin status
-                if (account?.provider === "discord") {
-                    const isAdmin = await isUserAdmin(user.id)
-                    token.isAdmin = isAdmin
-                }
+                // Check admin status using Discord ID
+                const isAdmin = await isUserAdmin(account.providerAccountId)
+                token.isAdmin = isAdmin
             }
 
             return token
         },
         async session({ session, token }) {
             if (session.user && token.id) {
-                session.user.id = token.id
+                session.user.id = token.id as string
                 session.user.isAdmin = token.isAdmin || false
             }
 
