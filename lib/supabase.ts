@@ -1,22 +1,30 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
 // Client for browser/client-side operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null
 
 // Admin client for server-side operations with elevated permissions
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-    auth: {
-        autoRefreshToken: false,
-        persistSession: false
-    }
-})
+export const supabaseAdmin = supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+            autoRefreshToken: false,
+            persistSession: false
+        }
+    })
+    : null
 
 // Helper function to get server stats
 export async function getServerStats(guildId: string) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
     const { data, error } = await supabaseAdmin
         .from('server_stats')
         .select('*')
@@ -29,6 +37,10 @@ export async function getServerStats(guildId: string) {
 
 // Helper function to get top users
 export async function getTopUsers(guildId: string, limit: number = 10) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
     const { data, error } = await supabaseAdmin
         .from('user_stats')
         .select('*')
@@ -42,6 +54,10 @@ export async function getTopUsers(guildId: string, limit: number = 10) {
 
 // Helper function to get top channels
 export async function getTopChannels(guildId: string, limit: number = 10) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
     const { data, error } = await supabaseAdmin
         .from('channel_stats')
         .select('*')
@@ -55,6 +71,10 @@ export async function getTopChannels(guildId: string, limit: number = 10) {
 
 // Helper function to get activity over time
 export async function getActivityOverTime(guildId: string, days: number = 7) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - days)
 

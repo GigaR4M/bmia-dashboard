@@ -8,6 +8,17 @@ declare module "next-auth" {
             isAdmin: boolean
         } & DefaultSession["user"]
     }
+
+    interface User {
+        id: string
+    }
+}
+
+declare module "@auth/core/jwt" {
+    interface JWT {
+        id?: string
+        isAdmin?: boolean
+    }
 }
 
 // Function to check if user is admin in the Discord server
@@ -16,7 +27,8 @@ async function isUserAdmin(userId: string): Promise<boolean> {
     const botToken = process.env.DISCORD_BOT_TOKEN!
 
     try {
-        const response = await fetch(
+        // Fetch member info
+        const memberResponse = await fetch(
             `https://discord.com/api/v10/guilds/${guildId}/members/${userId}`,
             {
                 headers: {
@@ -25,35 +37,48 @@ async function isUserAdmin(userId: string): Promise<boolean> {
             }
         )
 
-        if (!response.ok) {
-            console.error('Failed to fetch member:', await response.text())
+        if (!memberResponse.ok) {
+            console.error('Failed to fetch member:', await memberResponse.text())
             return false
         }
 
-        const member = await response.json()
+        const member = await memberResponse.json()
 
-        // Check if user has administrator permission
-        // Permission value 8 = ADMINISTRATOR
-        const hasAdminRole = member.roles?.some(async (roleId: string) => {
-            const roleResponse = await fetch(
-                `https://discord.com/api/v10/guilds/${guildId}/roles`,
-                {
-                    headers: {
-                        Authorization: `Bot ${botToken}`,
-                    },
+        // Fetch all guild roles
+        const rolesResponse = await fetch(
+            `https://discord.com/api/v10/guilds/${guildId}/roles`,
+            {
+                headers: {
+                    Authorization: `Bot ${botToken}`,
+                },
+            }
+        )
+
+        if (!rolesResponse.ok) {
+            console.error('Failed to fetch roles:', await rolesResponse.text())
+            return false
+        }
+
+        const allRoles = await rolesResponse.json()
+
+        // Check if any of the member's roles has ADMINISTRATOR permission
+        const memberRoleIds = member.roles || []
+
+        for (const roleId of memberRoleIds) {
+            const role = allRoles.find((r: any) => r.id === roleId)
+
+            if (role) {
+                // Check if role has ADMINISTRATOR permission (bit 3 = 0x8)
+                const permissions = BigInt(role.permissions)
+                const hasAdmin = (permissions & BigInt(0x8)) === BigInt(0x8)
+
+                if (hasAdmin) {
+                    return true
                 }
-            )
+            }
+        }
 
-            if (!roleResponse.ok) return false
-
-            const roles = await roleResponse.json()
-            const role = roles.find((r: any) => r.id === roleId)
-
-            // Check if role has ADMINISTRATOR permission (bit 3)
-            return role && (BigInt(role.permissions) & BigInt(0x8)) === BigInt(0x8)
-        })
-
-        return hasAdminRole || false
+        return false
     } catch (error) {
         console.error('Error checking admin status:', error)
         return false
@@ -73,9 +98,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }),
     ],
     callbacks: {
-        async signIn({ user, account, profile }) {
+        async signIn({ user, account }) {
             // Check if user is admin
-            if (account?.provider === "discord" && user.id) {
+            if (account?.provider === "discord" && user?.id) {
                 const isAdmin = await isUserAdmin(user.id)
 
                 if (!isAdmin) {
@@ -87,7 +112,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return true
         },
         async jwt({ token, user, account }) {
-            if (user) {
+            if (user?.id) {
                 token.id = user.id
 
                 // Check admin status
@@ -100,9 +125,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return token
         },
         async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id as string
-                session.user.isAdmin = token.isAdmin as boolean
+            if (session.user && token.id) {
+                session.user.id = token.id
+                session.user.isAdmin = token.isAdmin || false
             }
 
             return session
