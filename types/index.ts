@@ -29,9 +29,35 @@ export interface ChannelStats {
 }
 
 export interface DailyActivity {
-    id: string
-    guild_id: string
     date: string
     message_count: number
     active_users: number
+}
+
+export interface DailyVoiceActivity {
+    date: string
+    total_minutes: number
+    active_users: number
+}
+
+export interface DailyMemberStats {
+    date: string
+    total_members: number
+    joins: number
+    leaves: number
+}
+
+export interface VoiceUserStats {
+    user_id: string
+    username: string
+    discriminator: string
+    total_minutes: number
+    last_seen: string
+}
+
+export interface VoiceChannelStats {
+    channel_id: string
+    channel_name: string
+    total_minutes: number
+    join_count: number
 }
