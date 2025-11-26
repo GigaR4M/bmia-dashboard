@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { StatsCard } from '@/components/dashboard/StatsCard'
-import { PeriodSelector } from '@/components/dashboard/PeriodSelector'
+import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
 import { MemberGrowthChart } from '@/components/dashboard/charts/MemberGrowthChart'
 import { MessageActivityChart } from '@/components/dashboard/charts/MessageActivityChart'
 import { VoiceActivityChart } from '@/components/dashboard/charts/VoiceActivityChart'
@@ -20,7 +20,23 @@ import { Users, MessageSquare, Hash, TrendingUp, Mic } from 'lucide-react'
 import { formatNumber } from '@/lib/utils'
 
 export default function DashboardPage() {
-    const [period, setPeriod] = useState(30)
+    const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'days', days: 30 })
+
+    // Convert DateFilter to days for backward compatibility with existing hooks
+    const period = useMemo(() => {
+        if (dateFilter.type === 'days' && dateFilter.days) {
+            return dateFilter.days
+        }
+        // For custom date ranges, calculate days difference
+        if (dateFilter.startDate && dateFilter.endDate) {
+            const start = new Date(dateFilter.startDate)
+            const end = new Date(dateFilter.endDate)
+            const diffTime = Math.abs(end.getTime() - start.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return diffDays || 30
+        }
+        return 30
+    }, [dateFilter])
 
     // Server Stats
     const { data: serverStats, loading: serverLoading } = useServerStats(period)
@@ -46,7 +62,7 @@ export default function DashboardPage() {
                     <h1 className="text-2xl font-bold text-white">Visão Geral</h1>
                     <p className="text-slate-400 text-sm">Estatísticas do servidor</p>
                 </div>
-                <PeriodSelector value={period} onChange={setPeriod} />
+                <PeriodSelector value={dateFilter} onChange={setDateFilter} />
             </div>
 
             {/* Overview Cards */}

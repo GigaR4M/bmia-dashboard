@@ -219,3 +219,55 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
 
     return { data, loading, error }
 }
+
+export function useActivityStats(days: number = 30, limit: number = 10) {
+    const [data, setData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                setLoading(true)
+                const response = await fetch(`/api/stats/activities?days=${days}&limit=${limit}`)
+                if (!response.ok) throw new Error('Failed to fetch activity stats')
+                const stats = await response.json()
+                setData(stats)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [days, limit])
+
+    return { data, loading, error }
+}
+
+export function useGiveawayStats(days: number = 30, limit: number = 20, activeOnly: boolean = false) {
+    const [data, setData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                setLoading(true)
+                const response = await fetch(`/api/stats/giveaways?days=${days}&limit=${limit}&active=${activeOnly}`)
+                if (!response.ok) throw new Error('Failed to fetch giveaway stats')
+                const stats = await response.json()
+                setData(stats)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [days, limit, activeOnly])
+
+    return { data, loading, error }
+}

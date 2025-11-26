@@ -10,7 +10,7 @@ import {
     ResponsiveContainer,
     Legend
 } from 'recharts'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import type { DailyMemberStats } from '@/types'
 
@@ -46,7 +46,12 @@ export function MemberGrowthChart({ data, loading }: MemberGrowthChartProps) {
                         dataKey="date"
                         stroke="#94a3b8"
                         fontSize={12}
-                        tickFormatter={(value) => format(new Date(value + 'T12:00:00'), 'dd/MM', { locale: ptBR })}
+                        tickFormatter={(value) => {
+                            // Parse date string as local date to avoid timezone shifts
+                            const [year, month, day] = value.split('-').map(Number)
+                            const date = new Date(year, month - 1, day)
+                            return format(date, 'dd/MM', { locale: ptBR })
+                        }}
                         tickMargin={10}
                     />
                     <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={(value) => `${value}`} domain={['auto', 'auto']} />
@@ -57,7 +62,12 @@ export function MemberGrowthChart({ data, loading }: MemberGrowthChartProps) {
                             borderRadius: '8px',
                             color: '#f8fafc'
                         }}
-                        labelFormatter={(value) => format(new Date(value + 'T12:00:00'), "d 'de' MMMM", { locale: ptBR })}
+                        labelFormatter={(value) => {
+                            // Parse date string as local date to avoid timezone shifts
+                            const [year, month, day] = value.split('-').map(Number)
+                            const date = new Date(year, month - 1, day)
+                            return format(date, "d 'de' MMMM", { locale: ptBR })
+                        }}
                     />
                     <Legend />
                     <Line
