@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION get_total_unique_active_users(
 )
 RETURNS BIGINT
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT COUNT(DISTINCT user_id)::BIGINT
   FROM user_activities

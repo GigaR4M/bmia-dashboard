@@ -14,6 +14,7 @@ RETURNS TABLE (
   avg_participants_per_giveaway NUMERIC
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   WITH giveaway_data AS (
     SELECT
@@ -52,6 +53,7 @@ RETURNS TABLE (
   participant_count BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT
     g.giveaway_id,
@@ -85,6 +87,7 @@ RETURNS TABLE (
   wins_count BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT
     u.user_id,
@@ -115,6 +118,7 @@ RETURNS TABLE (
   unique_participants BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   WITH daily_giveaways AS (
     SELECT

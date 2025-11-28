@@ -17,6 +17,7 @@ RETURNS TABLE (
   total_hours NUMERIC
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     activity_name,
@@ -49,6 +50,7 @@ RETURNS TABLE (
   avg_session_minutes NUMERIC
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT
     (started_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
@@ -82,6 +84,7 @@ RETURNS TABLE (
   avg_session_minutes NUMERIC
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     u.user_id,
@@ -115,6 +118,7 @@ RETURNS TABLE (
   total_hours NUMERIC
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     COALESCE(activity_type, 'Unknown') as activity_type,

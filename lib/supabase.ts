@@ -272,10 +272,13 @@ export async function getTopVoiceChannels(guildId: string, limit: number = 10, d
 
     if (!data) return []
 
-    return data.map((channel: any) => ({
-        channel_id: String(channel.channel_id),
-        channel_name: channel.channel_name || 'Canal Desconhecido',
-        total_minutes: Number(channel.total_minutes),
-        join_count: Number(channel.join_count)
-    }))
+    return data
+        .filter((channel: any) => Number(channel.total_minutes) > 0)
+        .map((channel: any) => ({
+            channel_id: String(channel.channel_id),
+            channel_name: channel.channel_name || 'Canal Desconhecido',
+            channel_type: channel.channel_type || 'voice',
+            total_minutes: Number(channel.total_minutes),
+            join_count: Number(channel.join_count)
+        }))
 }

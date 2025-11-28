@@ -26,6 +26,7 @@ RETURNS TABLE (
   last_seen TIMESTAMP
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     u.user_id,
@@ -56,6 +57,7 @@ RETURNS TABLE (
   last_activity TIMESTAMP
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     c.channel_id,
@@ -84,6 +86,7 @@ RETURNS TABLE (
   active_users BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT
     (created_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
@@ -108,6 +111,7 @@ RETURNS TABLE (
   active_users BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT
     (joined_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
@@ -135,6 +139,7 @@ RETURNS TABLE (
   leaves INTEGER
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   WITH daily_data AS (
     SELECT
@@ -168,6 +173,7 @@ RETURNS TABLE (
   last_seen TIMESTAMP
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     u.user_id,
@@ -197,6 +203,7 @@ RETURNS TABLE (
   join_count BIGINT
 )
 LANGUAGE SQL
+SET search_path = public
 AS $$
   SELECT 
     c.channel_id,
