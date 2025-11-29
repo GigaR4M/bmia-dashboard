@@ -1,0 +1,26 @@
+import { NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { getLeaderboard } from '@/lib/supabase'
+
+export async function GET(request: Request) {
+    try {
+        const session = await auth()
+
+        if (!session || !session.user.isAdmin) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const { searchParams } = new URL(request.url)
+        const limit = parseInt(searchParams.get('limit') || '50')
+
+        const leaderboard = await getLeaderboard(limit)
+
+        return NextResponse.json(leaderboard)
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error)
+        return NextResponse.json(
+            { error: 'Failed to fetch leaderboard' },
+            { status: 500 }
+        )
+    }
+}

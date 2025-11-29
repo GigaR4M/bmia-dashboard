@@ -271,3 +271,29 @@ export function useGiveawayStats(days: number = 30, limit: number = 20, activeOn
 
     return { data, loading, error }
 }
+
+export function useLeaderboard(limit: number = 50) {
+    const [data, setData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchLeaderboard() {
+            try {
+                setLoading(true);
+                const response = await fetch(`/api/stats/leaderboard?limit=${limit}`);
+                if (!response.ok) throw new Error('Failed to fetch leaderboard');
+                const leaderboard = await response.json();
+                setData(leaderboard);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchLeaderboard();
+    }, [limit]);
+
+    return { data, loading, error };
+}

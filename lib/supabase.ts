@@ -282,3 +282,31 @@ export async function getTopVoiceChannels(guildId: string, limit: number = 10, d
             join_count: Number(channel.join_count)
         }))
 }
+
+// Helper function to get leaderboard
+export async function getLeaderboard(limit: number = 50) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
+    const { data, error } = await supabaseAdmin
+        .rpc('get_leaderboard', {
+            p_limit: limit
+        })
+
+    if (error) {
+        console.error('Error fetching leaderboard:', error)
+        return []
+    }
+
+    if (!data) return []
+
+    return data.map((user: any) => ({
+        user_id: String(user.user_id),
+        username: user.username || 'Usuário Desconhecido',
+        discriminator: user.discriminator || '0000',
+        total_points: Number(user.total_points),
+        rank: Number(user.rank),
+        avatar_url: null
+    }))
+}
