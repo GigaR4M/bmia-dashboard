@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server'
+import { auth, validateGuildAccess } from '@/lib/auth'
 import { getGiveawayStats, getGiveawayList, getTopParticipants, getDailyParticipation } from '@/lib/giveaways'
 
 export async function GET(request: Request) {
     try {
+        const session = await auth()
         const { searchParams } = new URL(request.url)
         const days = parseInt(searchParams.get('days') || '30')
         const limit = parseInt(searchParams.get('limit') || '20')
         const activeOnly = searchParams.get('active') === 'true'
+        const guildId = searchParams.get('guildId')
 
-        // Default guild ID
-        const guildId = '1327836427915886643'
+        if (!session || !session.user.isAdmin) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        if (!guildId) {
+            return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
+        }
+
+        if (!validateGuildAccess(session, guildId)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+        }
 
         // Fetch all giveaway data in parallel
         const [stats, giveaways, topParticipants, dailyParticipation] = await Promise.all([

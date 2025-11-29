@@ -6,6 +6,8 @@ import { LayoutDashboard, Users, Hash, LogOut, Gamepad2, Gift, MessageSquare, Tr
 import { signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 
+import { ServerSelector } from './ServerSelector'
+
 const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Leaderboard', href: '/dashboard/leaderboard', icon: Trophy },
@@ -22,9 +24,12 @@ export function Sidebar() {
     return (
         <div className="flex flex-col h-full bg-slate-900/50 backdrop-blur-xl border-r border-slate-700/50">
             {/* Logo */}
-            <div className="p-6 border-b border-slate-700/50">
-                <h1 className="text-2xl font-bold text-white">BMIA</h1>
-                <p className="text-sm text-slate-400">Dashboard</p>
+            <div className="p-6 border-b border-slate-700/50 space-y-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-white">BMIA</h1>
+                    <p className="text-sm text-slate-400">Dashboard</p>
+                </div>
+                <ServerSelector />
             </div>
 
             {/* Navigation */}

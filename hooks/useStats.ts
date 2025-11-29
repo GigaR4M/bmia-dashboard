@@ -21,7 +21,10 @@ export function useServerStats(days: number = 30) {
         async function fetchStats() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/server?days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/server?days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch server stats')
                 const stats = await response.json()
                 setData(stats)
@@ -47,7 +50,10 @@ export function useTopUsers(limit: number = 10, days: number = 30) {
         async function fetchUsers() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/users?limit=${limit}&days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/users?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top users')
                 const users = await response.json()
                 setData(users)
@@ -73,7 +79,10 @@ export function useTopChannels(limit: number = 10, days: number = 30) {
         async function fetchChannels() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/channels?limit=${limit}&days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top channels')
                 const channels = await response.json()
                 setData(channels)
@@ -99,7 +108,10 @@ export function useActivityOverTime(days: number = 30) {
         async function fetchActivity() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/activity?days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/activity?days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch activity stats')
                 const activity = await response.json()
                 setData(activity)
@@ -125,7 +137,10 @@ export function useVoiceActivityOverTime(days: number = 30) {
         async function fetchActivity() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/voice?days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/voice?days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch voice stats')
                 const activity = await response.json()
                 setData(activity)
@@ -151,7 +166,10 @@ export function useMemberStats(days: number = 30) {
         async function fetchStats() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/members?days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/members?days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch member stats')
                 const stats = await response.json()
                 setData(stats)
@@ -177,7 +195,10 @@ export function useTopVoiceUsers(limit: number = 10, days: number = 30) {
         async function fetchUsers() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/voice/users?limit=${limit}&days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/voice/users?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top voice users')
                 const users = await response.json()
                 setData(users)
@@ -203,7 +224,10 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
         async function fetchChannels() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/voice/channels?limit=${limit}&days=${days}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/voice/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top voice channels')
                 const channels = await response.json()
                 setData(channels)
@@ -229,7 +253,10 @@ export function useActivityStats(days: number = 30, limit: number = 10) {
         async function fetchStats() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/activities?days=${days}&limit=${limit}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/activities?days=${days}&limit=${limit}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch activity stats')
                 const stats = await response.json()
                 setData(stats)
@@ -255,7 +282,10 @@ export function useGiveawayStats(days: number = 30, limit: number = 20, activeOn
         async function fetchStats() {
             try {
                 setLoading(true)
-                const response = await fetch(`/api/stats/giveaways?days=${days}&limit=${limit}&active=${activeOnly}`)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/giveaways?days=${days}&limit=${limit}&active=${activeOnly}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch giveaway stats')
                 const stats = await response.json()
                 setData(stats)

@@ -1,13 +1,25 @@
 import { NextResponse } from 'next/server'
+import { auth, validateGuildAccess } from '@/lib/auth'
 import { getActivityOverTime } from '@/lib/supabase'
 
 export async function GET(request: Request) {
     try {
+        const session = await auth()
         const { searchParams } = new URL(request.url)
         const days = parseInt(searchParams.get('days') || '30')
+        const guildId = searchParams.get('guildId')
 
-        // Default guild ID - in a real app this would come from auth or context
-        const guildId = '1327836427915886643'
+        if (!session || !session.user.isAdmin) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        if (!guildId) {
+            return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
+        }
+
+        if (!validateGuildAccess(session, guildId)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+        }
 
         const activity = await getActivityOverTime(guildId, days)
 

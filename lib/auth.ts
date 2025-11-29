@@ -6,11 +6,21 @@ declare module "next-auth" {
         user: {
             id: string
             isAdmin: boolean
+            guilds: {
+                id: string
+                name: string
+                icon: string | null
+            }[]
         } & DefaultSession["user"]
     }
 
     interface User {
         id: string
+        guilds?: {
+            id: string
+            name: string
+            icon: string | null
+        }[]
     }
 }
 
@@ -18,70 +28,45 @@ declare module "@auth/core/jwt" {
     interface JWT {
         id?: string
         isAdmin?: boolean
+        guilds?: {
+            id: string
+            name: string
+            icon: string | null
+        }[]
     }
 }
 
-// Function to check if user is admin in the Discord server
-async function isUserAdmin(userId: string): Promise<boolean> {
-    const guildId = process.env.DISCORD_GUILD_ID!
-    const botToken = process.env.DISCORD_BOT_TOKEN!
-
+// Function to fetch user's guilds where they have admin permissions
+async function getUserAdminGuilds(accessToken: string): Promise<any[]> {
     try {
-        // Fetch member info
-        const memberResponse = await fetch(
-            `https://discord.com/api/v10/guilds/${guildId}/members/${userId}`,
-            {
-                headers: {
-                    Authorization: `Bot ${botToken}`,
-                },
-            }
-        )
+        const response = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
 
-        if (!memberResponse.ok) {
-            console.error('Failed to fetch member:', await memberResponse.text())
-            return false
+        if (!response.ok) {
+            console.error('Failed to fetch user guilds:', await response.text())
+            return []
         }
 
-        const member = await memberResponse.json()
+        const guilds = await response.json()
 
-        // Fetch all guild roles
-        const rolesResponse = await fetch(
-            `https://discord.com/api/v10/guilds/${guildId}/roles`,
-            {
-                headers: {
-                    Authorization: `Bot ${botToken}`,
-                },
-            }
-        )
-
-        if (!rolesResponse.ok) {
-            console.error('Failed to fetch roles:', await rolesResponse.text())
-            return false
-        }
-
-        const allRoles = await rolesResponse.json()
-
-        // Check if any of the member's roles has ADMINISTRATOR permission
-        const memberRoleIds = member.roles || []
-
-        for (const roleId of memberRoleIds) {
-            const role = allRoles.find((r: any) => r.id === roleId)
-
-            if (role) {
-                // Check if role has ADMINISTRATOR permission (bit 3 = 0x8)
-                const permissions = BigInt(role.permissions)
-                const hasAdmin = (permissions & BigInt(0x8)) === BigInt(0x8)
-
-                if (hasAdmin) {
-                    return true
-                }
-            }
-        }
-
-        return false
+        // Filter guilds where user has ADMINISTRATOR (0x8) or MANAGE_GUILD (0x20) permission
+        // Permissions are returned as a string integer
+        return guilds.filter((guild: any) => {
+            const permissions = BigInt(guild.permissions)
+            const hasAdmin = (permissions & BigInt(0x8)) === BigInt(0x8)
+            const hasManageGuild = (permissions & BigInt(0x20)) === BigInt(0x20)
+            return hasAdmin || hasManageGuild
+        }).map((guild: any) => ({
+            id: guild.id,
+            name: guild.name,
+            icon: guild.icon
+        }))
     } catch (error) {
-        console.error('Error checking admin status:', error)
-        return false
+        console.error('Error fetching user guilds:', error)
+        return []
     }
 }
 
@@ -98,38 +83,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }),
     ],
     callbacks: {
-        async signIn({ user, account, profile }) {
-            // Check if user is admin using Discord ID from account
-            if (account?.provider === "discord" && account?.providerAccountId) {
-                const discordId = account.providerAccountId
-                const isAdmin = await isUserAdmin(discordId)
-
-                if (!isAdmin) {
-                    // Deny access if not admin
-                    return false
-                }
-            }
-
-            return true
-        },
-        async jwt({ token, user, account, profile }) {
-            // Store Discord ID in token
-            if (account?.provider === "discord" && account?.providerAccountId) {
+        async jwt({ token, account }) {
+            // Initial sign in
+            if (account?.provider === "discord" && account?.access_token) {
                 token.id = account.providerAccountId
 
-                // Check admin status using Discord ID
-                const isAdmin = await isUserAdmin(account.providerAccountId)
-                token.isAdmin = isAdmin
+                // Fetch user's admin guilds using the access token
+                const adminGuilds = await getUserAdminGuilds(account.access_token)
+                token.guilds = adminGuilds
+                token.isAdmin = adminGuilds.length > 0
             }
-
             return token
         },
         async session({ session, token }) {
             if (session.user && token.id) {
                 session.user.id = token.id as string
                 session.user.isAdmin = token.isAdmin || false
+                session.user.guilds = token.guilds || []
             }
-
             return session
         },
     },
@@ -138,3 +109,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         error: '/login',
     },
 })
+
+export function validateGuildAccess(session: any, guildId: string): boolean {
+    if (!session?.user?.guilds) return false
+    return session.user.guilds.some((g: any) => g.id === guildId)
+}

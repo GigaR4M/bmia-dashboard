@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Send, Eye, Edit3 } from 'lucide-react'
 import EmbedBuilder, { EmbedData } from '@/components/dashboard/embed/EmbedBuilder'
 import EmbedPreview from '@/components/dashboard/embed/EmbedPreview'
@@ -11,9 +11,14 @@ export default function EmbedPage() {
     const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit')
     const [selectedChannelId, setSelectedChannelId] = useState('')
     const [sending, setSending] = useState(false)
+    const [guildId, setGuildId] = useState('')
 
-    // Hardcoded guild ID for now, ideally fetched from context or auth
-    const GUILD_ID = '1327836427915886643'
+    useEffect(() => {
+        const storedGuildId = localStorage.getItem('selectedGuildId')
+        if (storedGuildId) {
+            setGuildId(storedGuildId)
+        }
+    }, [])
 
     const [embed, setEmbed] = useState<EmbedData>({
         content: '',
@@ -37,7 +42,8 @@ export default function EmbedPage() {
 
         setSending(true)
         try {
-            const result = await sendEmbedRequest(GUILD_ID, selectedChannelId, embed)
+            if (!guildId) throw new Error('No server selected')
+            const result = await sendEmbedRequest(guildId, selectedChannelId, embed)
 
             if (!result.success) {
                 throw new Error(result.error)
@@ -101,7 +107,7 @@ export default function EmbedPage() {
                             </h2>
 
                             <ChannelSelector
-                                guildId={GUILD_ID}
+                                guildId={guildId}
                                 selectedChannelId={selectedChannelId}
                                 onSelect={setSelectedChannelId}
                             />
