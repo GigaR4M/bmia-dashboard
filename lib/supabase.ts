@@ -21,13 +21,15 @@ export const supabaseAdmin = supabaseUrl && supabaseServiceKey
     : null
 
 // Helper function to get server stats
-export async function getServerStats(guildId: string, days: number = 30) {
+export async function getServerStats(guildId: string, days: number = 30, startDate: string | null = null) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
 
-    const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - days)
+    const cutoffDate = startDate ? new Date(startDate) : new Date()
+    if (!startDate) {
+        cutoffDate.setDate(cutoffDate.getDate() - days)
+    }
 
     // Get total messages in period
     const { count: totalMessages } = await supabaseAdmin
@@ -70,7 +72,7 @@ export async function getServerStats(guildId: string, days: number = 30) {
 }
 
 // Helper function to get top users using RPC function
-export async function getTopUsers(guildId: string, limit: number = 10, days: number = 30) {
+export async function getTopUsers(guildId: string, limit: number = 10, days: number = 30, startDate: string | null = null) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -79,7 +81,8 @@ export async function getTopUsers(guildId: string, limit: number = 10, days: num
         .rpc('get_top_users_by_messages', {
             p_guild_id: guildId,
             p_days: days,
-            p_limit: limit
+            p_limit: limit,
+            p_start_date: startDate
         })
 
     if (error) {
@@ -101,7 +104,7 @@ export async function getTopUsers(guildId: string, limit: number = 10, days: num
 }
 
 // Helper function to get top channels using RPC function
-export async function getTopChannels(guildId: string, limit: number = 10, days: number = 30) {
+export async function getTopChannels(guildId: string, limit: number = 10, days: number = 30, startDate: string | null = null) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -110,7 +113,8 @@ export async function getTopChannels(guildId: string, limit: number = 10, days: 
         .rpc('get_top_channels_by_messages', {
             p_guild_id: guildId,
             p_days: days,
-            p_limit: limit
+            p_limit: limit,
+            p_start_date: startDate
         })
 
     if (error) {
@@ -137,7 +141,7 @@ export async function getTopChannels(guildId: string, limit: number = 10, days: 
 }
 
 // Helper function to get activity over time using RPC (Timezone aware)
-export async function getActivityOverTime(guildId: string, days: number = 30): Promise<DailyActivity[]> {
+export async function getActivityOverTime(guildId: string, days: number = 30, startDate: string | null = null): Promise<DailyActivity[]> {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -146,7 +150,8 @@ export async function getActivityOverTime(guildId: string, days: number = 30): P
         .rpc('get_daily_message_stats', {
             p_guild_id: guildId,
             p_days: days,
-            p_timezone: 'America/Sao_Paulo'
+            p_timezone: 'America/Sao_Paulo',
+            p_start_date: startDate
         })
 
     if (error) {
@@ -166,7 +171,7 @@ export async function getActivityOverTime(guildId: string, days: number = 30): P
 }
 
 // Helper function to get voice activity over time
-export async function getVoiceActivityOverTime(guildId: string, days: number = 30): Promise<DailyVoiceActivity[]> {
+export async function getVoiceActivityOverTime(guildId: string, days: number = 30, startDate: string | null = null): Promise<DailyVoiceActivity[]> {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -175,7 +180,8 @@ export async function getVoiceActivityOverTime(guildId: string, days: number = 3
         .rpc('get_daily_voice_stats', {
             p_guild_id: guildId,
             p_days: days,
-            p_timezone: 'America/Sao_Paulo'
+            p_timezone: 'America/Sao_Paulo',
+            p_start_date: startDate
         })
 
     if (error) {
@@ -195,7 +201,7 @@ export async function getVoiceActivityOverTime(guildId: string, days: number = 3
 }
 
 // Helper function to get member stats (Joins)
-export async function getMemberStats(guildId: string, days: number = 30): Promise<DailyMemberStats[]> {
+export async function getMemberStats(guildId: string, days: number = 30, startDate: string | null = null): Promise<DailyMemberStats[]> {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -204,7 +210,8 @@ export async function getMemberStats(guildId: string, days: number = 30): Promis
         .rpc('get_daily_member_stats', {
             p_guild_id: guildId,
             p_days: days,
-            p_timezone: 'America/Sao_Paulo'
+            p_timezone: 'America/Sao_Paulo',
+            p_start_date: startDate
         })
 
     if (error) {
@@ -224,7 +231,7 @@ export async function getMemberStats(guildId: string, days: number = 30): Promis
 }
 
 // Helper function to get top users by voice
-export async function getTopVoiceUsers(guildId: string, limit: number = 10, days: number = 30): Promise<VoiceUserStats[]> {
+export async function getTopVoiceUsers(guildId: string, limit: number = 10, days: number = 30, startDate: string | null = null): Promise<VoiceUserStats[]> {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -233,7 +240,8 @@ export async function getTopVoiceUsers(guildId: string, limit: number = 10, days
         .rpc('get_top_users_by_voice', {
             p_guild_id: guildId,
             p_days: days,
-            p_limit: limit
+            p_limit: limit,
+            p_start_date: startDate
         })
 
     if (error) {
@@ -253,7 +261,7 @@ export async function getTopVoiceUsers(guildId: string, limit: number = 10, days
 }
 
 // Helper function to get top channels by voice
-export async function getTopVoiceChannels(guildId: string, limit: number = 10, days: number = 30): Promise<VoiceChannelStats[]> {
+export async function getTopVoiceChannels(guildId: string, limit: number = 10, days: number = 30, startDate: string | null = null): Promise<VoiceChannelStats[]> {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -262,7 +270,8 @@ export async function getTopVoiceChannels(guildId: string, limit: number = 10, d
         .rpc('get_top_channels_by_voice', {
             p_guild_id: guildId,
             p_days: days,
-            p_limit: limit
+            p_limit: limit,
+            p_start_date: startDate
         })
 
     if (error) {
@@ -284,7 +293,7 @@ export async function getTopVoiceChannels(guildId: string, limit: number = 10, d
 }
 
 // Helper function to get leaderboard
-export async function getLeaderboard(limit: number = 50, days: number | null = null) {
+export async function getLeaderboard(limit: number = 50, days: number | null = null, startDate: string | null = null) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
@@ -292,7 +301,8 @@ export async function getLeaderboard(limit: number = 50, days: number | null = n
     const { data, error } = await supabaseAdmin
         .rpc('get_leaderboard', {
             p_limit: limit,
-            p_days: days
+            p_days: days,
+            p_start_date: startDate
         })
 
     if (error) {

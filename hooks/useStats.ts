@@ -12,7 +12,7 @@ import type {
     VoiceChannelStats
 } from '@/types'
 
-export function useServerStats(days: number = 30) {
+export function useServerStats(days: number = 30, startDate?: string) {
     const [data, setData] = useState<ServerStats | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -24,7 +24,9 @@ export function useServerStats(days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/server?days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/server?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch server stats')
                 const stats = await response.json()
                 setData(stats)
@@ -36,12 +38,12 @@ export function useServerStats(days: number = 30) {
         }
 
         fetchStats()
-    }, [days])
+    }, [days, startDate])
 
     return { data, loading, error }
 }
 
-export function useTopUsers(limit: number = 10, days: number = 30) {
+export function useTopUsers(limit: number = 10, days: number = 30, startDate?: string) {
     const [data, setData] = useState<UserStats[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -53,7 +55,9 @@ export function useTopUsers(limit: number = 10, days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/users?limit=${limit}&days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/users?limit=${limit}&days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch top users')
                 const users = await response.json()
                 setData(users)
@@ -65,12 +69,12 @@ export function useTopUsers(limit: number = 10, days: number = 30) {
         }
 
         fetchUsers()
-    }, [limit, days])
+    }, [limit, days, startDate])
 
     return { data, loading, error }
 }
 
-export function useTopChannels(limit: number = 10, days: number = 30) {
+export function useTopChannels(limit: number = 10, days: number = 30, startDate?: string) {
     const [data, setData] = useState<ChannelStats[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -83,7 +87,9 @@ export function useTopChannels(limit: number = 10, days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/channels?limit=${limit}&days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch top channels')
                 const channels = await response.json()
                 console.log(`[useTopChannels] Fetched ${channels.length} channels for days=${days}`)
@@ -97,12 +103,12 @@ export function useTopChannels(limit: number = 10, days: number = 30) {
 
         fetchChannels()
         return () => { ignore = true }
-    }, [limit, days])
+    }, [limit, days, startDate])
 
     return { data, loading, error }
 }
 
-export function useActivityOverTime(days: number = 30) {
+export function useActivityOverTime(days: number = 30, startDate?: string) {
     const [data, setData] = useState<DailyActivity[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -114,7 +120,9 @@ export function useActivityOverTime(days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/activity?days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/activity?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch activity stats')
                 const activity = await response.json()
                 setData(activity)
@@ -126,12 +134,12 @@ export function useActivityOverTime(days: number = 30) {
         }
 
         fetchActivity()
-    }, [days])
+    }, [days, startDate])
 
     return { data, loading, error }
 }
 
-export function useVoiceActivityOverTime(days: number = 30) {
+export function useVoiceActivityOverTime(days: number = 30, startDate?: string) {
     const [data, setData] = useState<DailyVoiceActivity[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -143,7 +151,9 @@ export function useVoiceActivityOverTime(days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/voice?days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/voice?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch voice stats')
                 const activity = await response.json()
                 setData(activity)
@@ -155,12 +165,12 @@ export function useVoiceActivityOverTime(days: number = 30) {
         }
 
         fetchActivity()
-    }, [days])
+    }, [days, startDate])
 
     return { data, loading, error }
 }
 
-export function useMemberStats(days: number = 30) {
+export function useMemberStats(days: number = 30, startDate?: string) {
     const [data, setData] = useState<DailyMemberStats[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -172,7 +182,9 @@ export function useMemberStats(days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/members?days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/members?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch member stats')
                 const stats = await response.json()
                 setData(stats)
@@ -184,12 +196,12 @@ export function useMemberStats(days: number = 30) {
         }
 
         fetchStats()
-    }, [days])
+    }, [days, startDate])
 
     return { data, loading, error }
 }
 
-export function useTopVoiceUsers(limit: number = 10, days: number = 30) {
+export function useTopVoiceUsers(limit: number = 10, days: number = 30, startDate?: string) {
     const [data, setData] = useState<VoiceUserStats[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -201,7 +213,9 @@ export function useTopVoiceUsers(limit: number = 10, days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/voice/users?limit=${limit}&days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/voice/users?limit=${limit}&days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch top voice users')
                 const users = await response.json()
                 setData(users)
@@ -213,12 +227,12 @@ export function useTopVoiceUsers(limit: number = 10, days: number = 30) {
         }
 
         fetchUsers()
-    }, [limit, days])
+    }, [limit, days, startDate])
 
     return { data, loading, error }
 }
 
-export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
+export function useTopVoiceChannels(limit: number = 10, days: number = 30, startDate?: string) {
     const [data, setData] = useState<VoiceChannelStats[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -231,7 +245,9 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/voice/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/voice/channels?limit=${limit}&days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch top voice channels')
                 const channels = await response.json()
                 if (!ignore) setData(channels)
@@ -244,7 +260,7 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
 
         fetchChannels()
         return () => { ignore = true }
-    }, [limit, days])
+    }, [limit, days, startDate])
 
     return { data, loading, error }
 }
@@ -307,7 +323,7 @@ export function useGiveawayStats(days: number = 30, limit: number = 20, activeOn
     return { data, loading, error }
 }
 
-export function useLeaderboard(limit: number = 50, period?: number) {
+export function useLeaderboard(limit: number = 50, period?: number, startDate?: string) {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -318,6 +334,7 @@ export function useLeaderboard(limit: number = 50, period?: number) {
                 setLoading(true);
                 const queryParams = new URLSearchParams({ limit: limit.toString() });
                 if (period) queryParams.append('days', period.toString());
+                if (startDate) queryParams.append('startDate', startDate);
 
                 const response = await fetch(`/api/stats/leaderboard?${queryParams}`);
                 if (!response.ok) throw new Error('Failed to fetch leaderboard');
@@ -331,7 +348,7 @@ export function useLeaderboard(limit: number = 50, period?: number) {
         }
 
         fetchLeaderboard();
-    }, [limit, period]);
+    }, [limit, period, startDate]);
 
     return { data, loading, error };
 }

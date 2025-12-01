@@ -38,21 +38,34 @@ export default function DashboardPage() {
         return 30
     }, [dateFilter])
 
+    const startDate = useMemo(() => {
+        if (dateFilter.type === 'month' && dateFilter.startDate) {
+            return dateFilter.startDate
+        }
+        if (dateFilter.type === 'custom' && dateFilter.startDate) {
+            return dateFilter.startDate
+        }
+        if (dateFilter.type === 'year' && dateFilter.startDate) {
+            return dateFilter.startDate
+        }
+        return undefined
+    }, [dateFilter])
+
     // Server Stats
-    const { data: serverStats, loading: serverLoading } = useServerStats(period)
+    const { data: serverStats, loading: serverLoading } = useServerStats(period, startDate)
 
     // Member Stats
-    const { data: memberStats, loading: memberLoading } = useMemberStats(period)
+    const { data: memberStats, loading: memberLoading } = useMemberStats(period, startDate)
 
     // Message Stats
-    const { data: messageActivity, loading: messageActivityLoading } = useActivityOverTime(period)
-    const { data: topUsers, loading: usersLoading } = useTopUsers(5, period)
-    const { data: topChannels, loading: channelsLoading } = useTopChannels(5, period)
+    const { data: messageActivity, loading: messageActivityLoading } = useActivityOverTime(period, startDate)
+    const { data: topUsers, loading: usersLoading } = useTopUsers(5, period, startDate)
+    const { data: topChannels, loading: channelsLoading } = useTopChannels(5, period, startDate)
 
     // Voice Stats
-    const { data: voiceActivity, loading: voiceActivityLoading } = useVoiceActivityOverTime(period)
-    const { data: topVoiceUsers, loading: voiceUsersLoading } = useTopVoiceUsers(5, period)
-    const { data: topVoiceChannels, loading: voiceChannelsLoading } = useTopVoiceChannels(5, period)
+    const { data: voiceActivity, loading: voiceActivityLoading } = useVoiceActivityOverTime(period, startDate)
+    const { data: topVoiceUsers, loading: voiceUsersLoading } = useTopVoiceUsers(5, period, startDate)
+    const { data: topVoiceChannels, loading: voiceChannelsLoading } = useTopVoiceChannels(5, period, startDate)
 
     return (
         <div className="space-y-12">

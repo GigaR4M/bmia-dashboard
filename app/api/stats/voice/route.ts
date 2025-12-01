@@ -7,6 +7,7 @@ export async function GET(request: Request) {
         const session = await auth()
         const { searchParams } = new URL(request.url)
         const days = parseInt(searchParams.get('days') || '30')
+        const startDate = searchParams.get('startDate')
         const guildId = searchParams.get('guildId')
 
         if (!session || !session.user.isAdmin) {
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
-        const stats = await getVoiceActivityOverTime(guildId, days)
+        const stats = await getVoiceActivityOverTime(guildId, days, startDate)
 
         return NextResponse.json(stats)
     } catch (error) {

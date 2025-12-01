@@ -36,7 +36,8 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
         const now = new Date()
         const year = now.getFullYear()
         const month = now.getMonth() + 1
-        const startDate = `${year}-${String(month).padStart(2, '0')}-01`
+        // Force Brasilia Timezone (UTC-3) start of month
+        const startDate = `${year}-${String(month).padStart(2, '0')}-01T00:00:00-03:00`
         const endDate = now.toISOString().split('T')[0]
 
         onChange({ type: 'month', startDate, endDate })
@@ -46,7 +47,8 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
     const handleYearClick = () => {
         const now = new Date()
         const year = now.getFullYear()
-        const startDate = `${year}-01-01`
+        // Force Brasilia Timezone (UTC-3) start of year
+        const startDate = `${year}-01-01T00:00:00-03:00`
         const endDate = now.toISOString().split('T')[0]
 
         onChange({ type: 'year', startDate, endDate })
@@ -59,7 +61,12 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
 
     const applyCustomRange = () => {
         if (customStart && customEnd) {
-            onChange({ type: 'custom', startDate: customStart, endDate: customEnd })
+            // Append UTC-3 offset to ensure correct timezone
+            onChange({
+                type: 'custom',
+                startDate: `${customStart}T00:00:00-03:00`,
+                endDate: customEnd
+            })
             setShowCustom(false)
         }
     }

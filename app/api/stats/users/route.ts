@@ -8,6 +8,7 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url)
         const limit = parseInt(searchParams.get('limit') || '10')
         const days = parseInt(searchParams.get('days') || '30')
+        const startDate = searchParams.get('startDate')
         const guildId = searchParams.get('guildId')
 
         if (!session || !session.user.isAdmin) {
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
-        const users = await getTopUsers(guildId, limit, days)
+        const users = await getTopUsers(guildId, limit, days, startDate)
 
         return NextResponse.json(users)
     } catch (error) {
