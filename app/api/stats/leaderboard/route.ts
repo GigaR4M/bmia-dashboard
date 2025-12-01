@@ -12,8 +12,10 @@ export async function GET(request: Request) {
 
         const { searchParams } = new URL(request.url)
         const limit = parseInt(searchParams.get('limit') || '50')
+        const daysParam = searchParams.get('days')
+        const days = daysParam ? parseInt(daysParam) : null
 
-        const leaderboard = await getLeaderboard(limit)
+        const leaderboard = await getLeaderboard(limit, days)
 
         return NextResponse.json(leaderboard)
     } catch (error) {

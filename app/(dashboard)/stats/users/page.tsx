@@ -1,16 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTopUsers, useTopVoiceUsers } from '@/hooks/useStats'
 import { formatNumber, formatDateTime, formatDuration, cn } from '@/lib/utils'
 import { MessageSquare, Mic } from 'lucide-react'
+import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
 
 type ViewType = 'messages' | 'voice'
 
 export default function UsersPage() {
     const [view, setView] = useState<ViewType>('messages')
-    const { data: messageUsers, loading: loadingMessages } = useTopUsers(20)
-    const { data: voiceUsers, loading: loadingVoice } = useTopVoiceUsers(20)
+    const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'days', days: 30 })
+
+    const period = useMemo(() => {
+        if (dateFilter.type === 'days' && dateFilter.days) {
+            return dateFilter.days
+        }
+        if (dateFilter.type === 'year') {
+            const now = new Date()
+            const startOfYear = new Date(now.getFullYear(), 0, 1)
+            const diffTime = Math.abs(now.getTime() - startOfYear.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return diffDays
+        }
+        if (dateFilter.startDate && dateFilter.endDate) {
+            const start = new Date(dateFilter.startDate)
+            const end = new Date(dateFilter.endDate)
+            const diffTime = Math.abs(end.getTime() - start.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return diffDays || 30
+        }
+        return 30
+    }, [dateFilter])
+
+    const { data: messageUsers, loading: loadingMessages } = useTopUsers(20, period)
+    const { data: voiceUsers, loading: loadingVoice } = useTopVoiceUsers(20, period)
 
     const loading = view === 'messages' ? loadingMessages : loadingVoice
     const data = view === 'messages' ? messageUsers : voiceUsers
@@ -23,31 +47,34 @@ export default function UsersPage() {
                     <p className="text-slate-400">Top usuários mais ativos do servidor</p>
                 </div>
 
-                <div className="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700/50">
-                    <button
-                        onClick={() => setView('messages')}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            view === 'messages'
-                                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-                                : "text-slate-400 hover:text-white hover:bg-slate-700/50"
-                        )}
-                    >
-                        <MessageSquare className="w-4 h-4" />
-                        Mensagens
-                    </button>
-                    <button
-                        onClick={() => setView('voice')}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
-                            view === 'voice'
-                                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-                                : "text-slate-400 hover:text-white hover:bg-slate-700/50"
-                        )}
-                    >
-                        <Mic className="w-4 h-4" />
-                        Tempo em Voz
-                    </button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <PeriodSelector value={dateFilter} onChange={setDateFilter} />
+                    <div className="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700/50 h-fit">
+                        <button
+                            onClick={() => setView('messages')}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
+                                view === 'messages'
+                                    ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
+                                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                            )}
+                        >
+                            <MessageSquare className="w-4 h-4" />
+                            Mensagens
+                        </button>
+                        <button
+                            onClick={() => setView('voice')}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
+                                view === 'voice'
+                                    ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
+                                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                            )}
+                        >
+                            <Mic className="w-4 h-4" />
+                            Tempo em Voz
+                        </button>
+                    </div>
                 </div>
             </div>
 

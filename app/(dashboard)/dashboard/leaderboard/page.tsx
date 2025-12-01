@@ -1,16 +1,45 @@
 'use client'
 
+import { useState, useMemo } from 'react'
 import { useLeaderboard } from '@/hooks/useStats'
 import { formatNumber } from '@/lib/utils'
+import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
 
 export default function LeaderboardPage() {
-    const { data: leaderboard, loading, error } = useLeaderboard(50)
+    const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'year' })
+
+    const period = useMemo(() => {
+        if (dateFilter.type === 'days' && dateFilter.days) {
+            return dateFilter.days
+        }
+        if (dateFilter.type === 'year') {
+            const now = new Date()
+            const startOfYear = new Date(now.getFullYear(), 0, 1)
+            const diffTime = Math.abs(now.getTime() - startOfYear.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return diffDays
+        }
+        if (dateFilter.startDate && dateFilter.endDate) {
+            const start = new Date(dateFilter.startDate)
+            const end = new Date(dateFilter.endDate)
+            const diffTime = Math.abs(end.getTime() - start.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            return diffDays || 30
+        }
+        return 30
+    }, [dateFilter])
+
+    const { data: leaderboard, loading, error } = useLeaderboard(50, period)
 
     return (
         <div className="space-y-6">
             <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
                 <p className="text-slate-400">Ranking de interação do servidor</p>
+            </div>
+
+            <div className="flex justify-end">
+                <PeriodSelector value={dateFilter} onChange={setDateFilter} />
             </div>
 
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 overflow-hidden">

@@ -76,6 +76,7 @@ export function useTopChannels(limit: number = 10, days: number = 30) {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        let ignore = false
         async function fetchChannels() {
             try {
                 setLoading(true)
@@ -85,15 +86,17 @@ export function useTopChannels(limit: number = 10, days: number = 30) {
                 const response = await fetch(`/api/stats/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top channels')
                 const channels = await response.json()
-                setData(channels)
+                console.log(`[useTopChannels] Fetched ${channels.length} channels for days=${days}`)
+                if (!ignore) setData(channels)
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred')
+                if (!ignore) setError(err instanceof Error ? err.message : 'An error occurred')
             } finally {
-                setLoading(false)
+                if (!ignore) setLoading(false)
             }
         }
 
         fetchChannels()
+        return () => { ignore = true }
     }, [limit, days])
 
     return { data, loading, error }
@@ -221,6 +224,7 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        let ignore = false
         async function fetchChannels() {
             try {
                 setLoading(true)
@@ -230,15 +234,16 @@ export function useTopVoiceChannels(limit: number = 10, days: number = 30) {
                 const response = await fetch(`/api/stats/voice/channels?limit=${limit}&days=${days}&guildId=${guildId}`)
                 if (!response.ok) throw new Error('Failed to fetch top voice channels')
                 const channels = await response.json()
-                setData(channels)
+                if (!ignore) setData(channels)
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred')
+                if (!ignore) setError(err instanceof Error ? err.message : 'An error occurred')
             } finally {
-                setLoading(false)
+                if (!ignore) setLoading(false)
             }
         }
 
         fetchChannels()
+        return () => { ignore = true }
     }, [limit, days])
 
     return { data, loading, error }
@@ -302,7 +307,7 @@ export function useGiveawayStats(days: number = 30, limit: number = 20, activeOn
     return { data, loading, error }
 }
 
-export function useLeaderboard(limit: number = 50) {
+export function useLeaderboard(limit: number = 50, period?: number) {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -311,7 +316,10 @@ export function useLeaderboard(limit: number = 50) {
         async function fetchLeaderboard() {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/stats/leaderboard?limit=${limit}`);
+                const queryParams = new URLSearchParams({ limit: limit.toString() });
+                if (period) queryParams.append('days', period.toString());
+
+                const response = await fetch(`/api/stats/leaderboard?${queryParams}`);
                 if (!response.ok) throw new Error('Failed to fetch leaderboard');
                 const leaderboard = await response.json();
                 setData(leaderboard);
@@ -323,7 +331,7 @@ export function useLeaderboard(limit: number = 50) {
         }
 
         fetchLeaderboard();
-    }, [limit]);
+    }, [limit, period]);
 
     return { data, loading, error };
 }
