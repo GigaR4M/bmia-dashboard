@@ -14,9 +14,11 @@ import {
     useVoiceActivityOverTime,
     useMemberStats,
     useTopVoiceUsers,
-    useTopVoiceChannels
+    useTopVoiceChannels,
+    useEventStats,
+    useModerationStats
 } from '@/hooks/useStats'
-import { Users, MessageSquare, Hash, TrendingUp, Mic } from 'lucide-react'
+import { Users, MessageSquare, Hash, TrendingUp, Mic, Calendar, ShieldAlert } from 'lucide-react'
 import { formatNumber } from '@/lib/utils'
 
 export default function DashboardPage() {
@@ -67,6 +69,10 @@ export default function DashboardPage() {
     const { data: topVoiceUsers, loading: voiceUsersLoading } = useTopVoiceUsers(5, period, startDate)
     const { data: topVoiceChannels, loading: voiceChannelsLoading } = useTopVoiceChannels(5, period, startDate)
 
+    // New Stats (Events & Moderation)
+    const { data: eventStats, loading: eventLoading } = useEventStats(startDate)
+    const { data: moderationStats, loading: moderationLoading } = useModerationStats(period, startDate)
+
     return (
         <div className="space-y-12">
             {/* Header & Period Selector */}
@@ -103,6 +109,18 @@ export default function DashboardPage() {
                     value={serverStats ? formatNumber(serverStats.total_channels) : '0'}
                     icon={<Hash className="w-8 h-8" />}
                     loading={serverLoading}
+                />
+                <StatsCard
+                    title="Eventos (Total)"
+                    value={eventStats ? formatNumber(eventStats.total_events) : '0'}
+                    icon={<Calendar className="w-8 h-8" />}
+                    loading={eventLoading}
+                />
+                <StatsCard
+                    title={`Moderação (${period}d)`}
+                    value={moderationStats ? formatNumber(moderationStats.total_moderated) : '0'}
+                    icon={<ShieldAlert className="w-8 h-8" />}
+                    loading={moderationLoading}
                 />
             </div>
 

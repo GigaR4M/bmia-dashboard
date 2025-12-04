@@ -9,7 +9,9 @@ import type {
     DailyVoiceActivity,
     DailyMemberStats,
     VoiceUserStats,
-    VoiceChannelStats
+    VoiceChannelStats,
+    EventStats,
+    ModerationStats
 } from '@/types'
 
 export function useServerStats(days: number = 30, startDate?: string) {
@@ -351,4 +353,68 @@ export function useLeaderboard(limit: number = 50, period?: number, startDate?: 
     }, [limit, period, startDate]);
 
     return { data, loading, error };
+}
+
+export function useEventStats(startDate?: string) {
+    const [data, setData] = useState<EventStats | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                setLoading(true)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                let url = `/api/stats/events?guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+
+                const response = await fetch(url)
+                if (!response.ok) throw new Error('Failed to fetch event stats')
+                const stats = await response.json()
+                setData(stats)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [startDate])
+
+    return { data, loading, error }
+}
+
+export function useModerationStats(days: number = 30, startDate?: string) {
+    const [data, setData] = useState<ModerationStats | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                setLoading(true)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                let url = `/api/stats/moderation?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+
+                const response = await fetch(url)
+                if (!response.ok) throw new Error('Failed to fetch moderation stats')
+                const stats = await response.json()
+                setData(stats)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [days, startDate])
+
+    return { data, loading, error }
 }

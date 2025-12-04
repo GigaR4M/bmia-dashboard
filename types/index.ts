@@ -61,3 +61,14 @@ export interface VoiceChannelStats {
     total_minutes: number
     join_count: number
 }
+
+export interface EventStats {
+    total_events: number
+    upcoming_events: number
+    total_participants: number
+}
+
+export interface ModerationStats {
+    total_moderated: number
+    last_24h: number
+}

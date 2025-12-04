@@ -321,3 +321,55 @@ export async function getLeaderboard(limit: number = 50, days: number | null = n
         avatar_url: null
     }))
 }
+
+// Helper function to get event stats
+export async function getEventStats(guildId: string, startDate: string | null = null) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
+    const { data, error } = await supabaseAdmin
+        .rpc('get_event_stats', {
+            p_guild_id: guildId,
+            p_start_date: startDate
+        })
+
+    if (error) {
+        console.error('Error fetching event stats:', error)
+        return null
+    }
+
+    if (!data || data.length === 0) return null
+
+    return {
+        total_events: Number(data[0].total_events),
+        upcoming_events: Number(data[0].upcoming_events),
+        total_participants: Number(data[0].total_participants)
+    }
+}
+
+// Helper function to get moderation stats
+export async function getModerationStats(guildId: string, days: number = 30, startDate: string | null = null) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
+    const { data, error } = await supabaseAdmin
+        .rpc('get_moderation_stats', {
+            p_guild_id: guildId,
+            p_days: days,
+            p_start_date: startDate
+        })
+
+    if (error) {
+        console.error('Error fetching moderation stats:', error)
+        return null
+    }
+
+    if (!data || data.length === 0) return null
+
+    return {
+        total_moderated: Number(data[0].total_moderated),
+        last_24h: Number(data[0].last_24h)
+    }
+}

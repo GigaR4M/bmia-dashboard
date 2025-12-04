@@ -6,10 +6,14 @@
 -- ==========================================
 
 DROP FUNCTION IF EXISTS get_leaderboard(INTEGER);
+DROP FUNCTION IF EXISTS get_leaderboard(INTEGER, INTEGER);
+DROP FUNCTION IF EXISTS get_leaderboard(INTEGER, INTEGER, TEXT);
+DROP FUNCTION IF EXISTS get_leaderboard(INTEGER, INTEGER, TIMESTAMP);
 
 CREATE OR REPLACE FUNCTION get_leaderboard(
   p_limit INTEGER DEFAULT 50,
-  p_days INTEGER DEFAULT NULL -- NULL means all time
+  p_days INTEGER DEFAULT NULL, -- NULL means all time
+  p_start_date TEXT DEFAULT NULL
 )
 RETURNS TABLE (
   rank BIGINT,
@@ -233,6 +237,19 @@ AS $$
 $$;
 
 -- Function to get top users by activity time
+DO $$
+DECLARE
+    func_record RECORD;
+BEGIN
+    FOR func_record IN 
+        SELECT oid::regprocedure as func_signature 
+        FROM pg_proc 
+        WHERE proname = 'get_top_users_by_activity'
+    LOOP
+        EXECUTE 'DROP FUNCTION ' || func_record.func_signature;
+    END LOOP;
+END $$;
+
 CREATE OR REPLACE FUNCTION get_top_users_by_activity(
   p_guild_id BIGINT,
   p_activity_name TEXT DEFAULT NULL,
