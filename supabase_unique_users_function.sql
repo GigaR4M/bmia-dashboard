@@ -8,10 +8,12 @@ RETURNS BIGINT
 LANGUAGE SQL
 SET search_path = public
 AS $$
-  SELECT COUNT(DISTINCT user_id)::BIGINT
-  FROM user_activities
-  WHERE guild_id = p_guild_id
-    AND started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
-    AND duration_seconds IS NOT NULL
-    AND duration_seconds > 0;
+  SELECT COUNT(DISTINCT a.user_id)::BIGINT
+  FROM user_activities a
+  INNER JOIN users u ON a.user_id = u.user_id
+  WHERE a.guild_id = p_guild_id
+    AND a.started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
+    AND a.duration_seconds IS NOT NULL
+    AND a.duration_seconds > 0
+    AND u.is_bot = FALSE;
 $$;

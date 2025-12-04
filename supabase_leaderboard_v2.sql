@@ -26,6 +26,7 @@ AS $$
   FROM users u
   INNER JOIN interaction_points ip ON u.user_id = ip.user_id
   WHERE (p_days IS NULL OR ip.created_at >= NOW() - (p_days || ' days')::INTERVAL)
+    AND u.is_bot = FALSE
   GROUP BY u.user_id, u.username, u.discriminator
   ORDER BY total_points DESC
   LIMIT p_limit;

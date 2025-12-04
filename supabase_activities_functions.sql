@@ -20,18 +20,20 @@ LANGUAGE SQL
 SET search_path = public
 AS $$
   SELECT 
-    activity_name,
-    COUNT(DISTINCT user_id) as unique_users,
+    a.activity_name,
+    COUNT(DISTINCT a.user_id) as unique_users,
     COUNT(*) as session_count,
-    COALESCE(SUM(duration_seconds), 0) as total_seconds,
-    COALESCE(AVG(duration_seconds), 0) as avg_seconds,
-    COALESCE(SUM(duration_seconds) / 3600.0, 0) as total_hours
-  FROM user_activities
-  WHERE guild_id = p_guild_id 
-    AND started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
-    AND duration_seconds IS NOT NULL
-    AND duration_seconds > 0
-  GROUP BY activity_name
+    COALESCE(SUM(a.duration_seconds), 0) as total_seconds,
+    COALESCE(AVG(a.duration_seconds), 0) as avg_seconds,
+    COALESCE(SUM(a.duration_seconds) / 3600.0, 0) as total_hours
+  FROM user_activities a
+  INNER JOIN users u ON a.user_id = u.user_id
+  WHERE a.guild_id = p_guild_id 
+    AND a.started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
+    AND a.duration_seconds IS NOT NULL
+    AND a.duration_seconds > 0
+    AND u.is_bot = FALSE
+  GROUP BY a.activity_name
   ORDER BY total_seconds DESC
   LIMIT p_limit;
 $$;
@@ -53,16 +55,18 @@ LANGUAGE SQL
 SET search_path = public
 AS $$
   SELECT
-    (started_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
+    (a.started_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
     COUNT(*) as total_sessions,
-    COUNT(DISTINCT user_id) as unique_users,
-    COALESCE(SUM(duration_seconds) / 3600.0, 0) as total_hours,
-    COALESCE(AVG(duration_seconds) / 60.0, 0) as avg_session_minutes
-  FROM user_activities
-  WHERE guild_id = p_guild_id
-    AND started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
-    AND duration_seconds IS NOT NULL
-    AND duration_seconds > 0
+    COUNT(DISTINCT a.user_id) as unique_users,
+    COALESCE(SUM(a.duration_seconds) / 3600.0, 0) as total_hours,
+    COALESCE(AVG(a.duration_seconds) / 60.0, 0) as avg_session_minutes
+  FROM user_activities a
+  INNER JOIN users u ON a.user_id = u.user_id
+  WHERE a.guild_id = p_guild_id
+    AND a.started_at >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone) - (p_days || ' days')::INTERVAL
+    AND a.duration_seconds IS NOT NULL
+    AND a.duration_seconds > 0
+    AND u.is_bot = FALSE
   GROUP BY 1
   ORDER BY 1;
 $$;
@@ -101,6 +105,7 @@ AS $$
     AND a.duration_seconds IS NOT NULL
     AND a.duration_seconds > 0
     AND (p_activity_name IS NULL OR a.activity_name = p_activity_name)
+    AND u.is_bot = FALSE
   GROUP BY u.user_id, u.username, u.discriminator
   ORDER BY total_seconds DESC
   LIMIT p_limit;
@@ -121,15 +126,17 @@ LANGUAGE SQL
 SET search_path = public
 AS $$
   SELECT 
-    COALESCE(activity_type, 'Unknown') as activity_type,
+    COALESCE(a.activity_type, 'Unknown') as activity_type,
     COUNT(*) as session_count,
-    COUNT(DISTINCT user_id) as unique_users,
-    COALESCE(SUM(duration_seconds) / 3600.0, 0) as total_hours
-  FROM user_activities
-  WHERE guild_id = p_guild_id
-    AND started_at >= NOW() - (p_days || ' days')::INTERVAL
-    AND duration_seconds IS NOT NULL
-    AND duration_seconds > 0
-  GROUP BY activity_type
+    COUNT(DISTINCT a.user_id) as unique_users,
+    COALESCE(SUM(a.duration_seconds) / 3600.0, 0) as total_hours
+  FROM user_activities a
+  INNER JOIN users u ON a.user_id = u.user_id
+  WHERE a.guild_id = p_guild_id
+    AND a.started_at >= NOW() - (p_days || ' days')::INTERVAL
+    AND a.duration_seconds IS NOT NULL
+    AND a.duration_seconds > 0
+    AND u.is_bot = FALSE
+  GROUP BY a.activity_type
   ORDER BY total_hours DESC;
 $$;

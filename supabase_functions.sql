@@ -38,6 +38,7 @@ AS $$
   INNER JOIN messages m ON u.user_id = m.user_id
   WHERE m.guild_id = p_guild_id
     AND m.created_at >= NOW() - (p_days || ' days')::INTERVAL
+    AND u.is_bot = FALSE
   GROUP BY u.user_id, u.username, u.discriminator, u.last_seen
   ORDER BY message_count DESC
   LIMIT p_limit;
@@ -89,12 +90,14 @@ LANGUAGE SQL
 SET search_path = public
 AS $$
   SELECT
-    (created_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
+    (m.created_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
     COUNT(*) as message_count,
-    COUNT(DISTINCT user_id) as active_users
-  FROM messages
-  WHERE guild_id = p_guild_id
-    AND created_at >= NOW() - (p_days || ' days')::INTERVAL
+    COUNT(DISTINCT m.user_id) as active_users
+  FROM messages m
+  INNER JOIN users u ON m.user_id = u.user_id
+  WHERE m.guild_id = p_guild_id
+    AND m.created_at >= NOW() - (p_days || ' days')::INTERVAL
+    AND u.is_bot = FALSE
   GROUP BY 1
   ORDER BY 1;
 $$;
@@ -114,12 +117,14 @@ LANGUAGE SQL
 SET search_path = public
 AS $$
   SELECT
-    (joined_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
-    COALESCE(SUM(duration_seconds) / 60, 0) as total_minutes,
-    COUNT(DISTINCT user_id) as active_users
-  FROM voice_activity
-  WHERE guild_id = p_guild_id
-    AND joined_at >= NOW() - (p_days || ' days')::INTERVAL
+    (v.joined_at AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE as date,
+    COALESCE(SUM(v.duration_seconds) / 60, 0) as total_minutes,
+    COUNT(DISTINCT v.user_id) as active_users
+  FROM voice_activity v
+  INNER JOIN users u ON v.user_id = u.user_id
+  WHERE v.guild_id = p_guild_id
+    AND v.joined_at >= NOW() - (p_days || ' days')::INTERVAL
+    AND u.is_bot = FALSE
   GROUP BY 1
   ORDER BY 1;
 $$;
@@ -185,6 +190,7 @@ AS $$
   INNER JOIN voice_activity v ON u.user_id = v.user_id
   WHERE v.guild_id = p_guild_id
     AND v.joined_at >= NOW() - (p_days || ' days')::INTERVAL
+    AND u.is_bot = FALSE
   GROUP BY u.user_id, u.username, u.discriminator
   ORDER BY total_minutes DESC
   LIMIT p_limit;
