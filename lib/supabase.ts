@@ -373,3 +373,59 @@ export async function getModerationStats(guildId: string, days: number = 30, sta
         last_24h: Number(data[0].last_24h)
     }
 }
+
+// Helper function to get all highlights
+export async function getHighlights(guildId: string, limit: number = 5) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
+    const queries = [
+        supabaseAdmin.rpc('get_highlight_highest_score', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_messages', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_voice_time', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_offensive', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_activity_time', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_longest_streaming', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_events', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_top_gamers', { p_guild_id: guildId, p_limit: limit })
+    ]
+
+    const results = await Promise.all(queries)
+
+    const [
+        highestScore,
+        mostMessages,
+        mostVoice,
+        mostOffensive,
+        mostActivity,
+        longestStreaming,
+        mostEvents,
+        topGamers
+    ] = results
+
+    // Helper to process response
+    const processResult = (res: any) => {
+        if (res.error) {
+            console.error('Error in highlight query:', res.error)
+            return []
+        }
+        return (res.data || []).map((user: any) => ({
+            ...user,
+            user_id: String(user.user_id),
+            value: user.value ? Number(user.value) : undefined,
+            value_seconds: user.value_seconds ? Number(user.value_seconds) : undefined
+        }))
+    }
+
+    return {
+        highestScore: processResult(highestScore),
+        mostMessages: processResult(mostMessages),
+        mostVoice: processResult(mostVoice),
+        mostOffensive: processResult(mostOffensive),
+        mostActivity: processResult(mostActivity),
+        longestStreaming: processResult(longestStreaming),
+        mostEvents: processResult(mostEvents),
+        topGamers: processResult(topGamers)
+    }
+}

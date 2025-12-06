@@ -418,3 +418,32 @@ export function useModerationStats(days: number = 30, startDate?: string) {
 
     return { data, loading, error }
 }
+
+export function useHighlights(limit: number = 5) {
+    const [data, setData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                setLoading(true)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/highlights?limit=${limit}&guildId=${guildId}`)
+                if (!response.ok) throw new Error('Failed to fetch highlights')
+                const stats = await response.json()
+                setData(stats)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [limit])
+
+    return { data, loading, error }
+}
