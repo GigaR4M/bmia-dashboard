@@ -2,16 +2,20 @@
 
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { MobileNav } from './MobileNav'
 
 export function Header() {
     const { data: session } = useSession()
 
     return (
-        <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 px-8 py-4">
+        <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 px-4 md:px-8 py-4">
             <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-white">Bem-vindo de volta!</h2>
-                    <p className="text-slate-400 text-sm">Aqui estão as estatísticas do seu servidor</p>
+                <div className="flex items-center gap-4">
+                    <MobileNav />
+                    <div>
+                        <h2 className="text-xl md:text-2xl font-bold text-white">Bem-vindo de volta!</h2>
+                        <p className="text-slate-400 text-xs md:text-sm">Aqui estão as estatísticas do seu servidor</p>
+                    </div>
                 </div>
 
                 {session?.user && (

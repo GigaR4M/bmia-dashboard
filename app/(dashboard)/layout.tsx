@@ -11,7 +11,7 @@ export default function DashboardLayout({
         <SessionProvider>
             <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
                 {/* Sidebar */}
-                <aside className="w-64 flex-shrink-0">
+                <aside className="hidden md:block w-64 flex-shrink-0">
                     <Sidebar />
                 </aside>
 

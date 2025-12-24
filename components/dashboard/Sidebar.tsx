@@ -19,11 +19,15 @@ const navigation = [
     { name: 'Embeds', href: '/dashboard/embed', icon: MessageSquare },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+    onClose?: () => void
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
     const pathname = usePathname()
 
     return (
-        <div className="flex flex-col h-full bg-slate-900/50 backdrop-blur-xl border-r border-slate-700/50">
+        <div className="flex flex-col h-full bg-slate-900 backdrop-blur-xl border-r border-slate-700/50">
             {/* Logo */}
             <div className="p-6 border-b border-slate-700/50 space-y-4">
                 <div>
@@ -43,6 +47,7 @@ export function Sidebar() {
                         <Link
                             key={item.name}
                             href={item.href}
+                            onClick={onClose}
                             className={cn(
                                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
                                 isActive
