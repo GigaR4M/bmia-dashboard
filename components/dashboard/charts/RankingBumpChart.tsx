@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
     Line,
     LineChart,
@@ -41,6 +41,8 @@ const COLORS = [
 ]
 
 export function RankingBumpChart({ data, loading }: RankingBumpChartProps) {
+    const [hoveredUser, setHoveredUser] = useState<string | null>(null)
+
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return []
 
@@ -53,7 +55,12 @@ export function RankingBumpChart({ data, loading }: RankingBumpChartProps) {
             if (!groupedByDate[dateStr]) {
                 groupedByDate[dateStr] = { name: dateStr }
             }
-            groupedByDate[dateStr][item.username] = item.rank
+            // Only plot rank if user has points to avoid 0-point ties at Rank 1
+            if (item.total_points > 0) {
+                groupedByDate[dateStr][item.username] = item.rank
+            } else {
+                groupedByDate[dateStr][item.username] = null
+            }
             users.add(item.username)
         })
 
@@ -84,7 +91,7 @@ export function RankingBumpChart({ data, loading }: RankingBumpChartProps) {
 
     return (
         <div className="w-full h-[400px] bg-slate-800/50 rounded-xl border border-slate-700/50 p-6">
-            <h3 className="text-lg font-bold text-white mb-6">Histórico de Ranking (Top 10)</h3>
+            <h3 className="text-lg font-bold text-white mb-6">Histórico de Ranking (Top 10 Atual)</h3>
             <div className="w-full h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
@@ -102,30 +109,59 @@ export function RankingBumpChart({ data, loading }: RankingBumpChartProps) {
                             fontSize={12}
                             tickLine={false}
                             axisLine={false}
-                            domain={[1, 10]}
+                            domain={[1, 'auto']}
                             allowDecimals={false}
                         />
                         <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#1e293b',
-                                border: '1px solid #334155',
-                                borderRadius: '8px',
-                                color: '#f8fafc'
+                            content={({ active, payload, label }) => {
+                                if (!active || !payload || payload.length === 0) return null
+
+                                // Filter payload if a user is hovered
+                                const filteredPayload = hoveredUser
+                                    ? payload.filter(item => item.name === hoveredUser)
+                                    : payload // Option: Sort by rank? payload.sort((a, b) => (a.value as number) - (b.value as number))
+
+                                if (filteredPayload.length === 0) return null
+
+                                return (
+                                    <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl">
+                                        <p className="text-slate-400 text-xs mb-2">{label}</p>
+                                        <div className="space-y-1">
+                                            {filteredPayload.map((item: any) => (
+                                                <div key={item.name} className="flex items-center gap-2 text-sm">
+                                                    <span
+                                                        className="w-2 h-2 rounded-full"
+                                                        style={{ backgroundColor: item.color }}
+                                                    />
+                                                    <span className="font-semibold text-white">#{item.value}</span>
+                                                    <span className="text-slate-300">{item.name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
                             }}
-                            itemStyle={{ fontSize: '12px' }}
-                            formatter={(value: number) => [`Rank ${value}`]}
+                            cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }}
                         />
-                        <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                        <Legend
+                            wrapperStyle={{ paddingTop: '10px' }}
+                            onMouseEnter={(e) => setHoveredUser(e.value)}
+                            onMouseLeave={() => setHoveredUser(null)}
+                        />
                         {userList.map((user, index) => (
                             <Line
                                 key={user}
                                 type="monotone"
                                 dataKey={user}
                                 stroke={COLORS[index % COLORS.length]}
-                                strokeWidth={2}
-                                dot={{ r: 3, strokeWidth: 0 }}
-                                activeDot={{ r: 6 }}
-                                connectNulls
+                                strokeWidth={hoveredUser === user ? 3 : 2}
+                                strokeOpacity={hoveredUser && hoveredUser !== user ? 0.1 : 1}
+                                dot={{ r: 3, strokeWidth: 0, fill: COLORS[index % COLORS.length] }}
+                                activeDot={{ r: 6, strokeWidth: 0 }}
+                                connectNulls={false} // Do not connect if there are gaps (e.g. 0 points)
+                                onMouseEnter={() => setHoveredUser(user)}
+                                onMouseLeave={() => setHoveredUser(null)}
+                                animationDuration={300}
                             />
                         ))}
                     </LineChart>

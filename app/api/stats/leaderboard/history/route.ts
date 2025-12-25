@@ -15,19 +15,41 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
     }
 
+    console.log('[API] Rate History - Request:', { guildId, days, limit })
+
     try {
         const { data, error } = await supabase.rpc('get_ranking_history', {
-            p_guild_id: BigInt(guildId),
+            p_guild_id: guildId, // Pass as string, PostgREST handles it
             p_days: days,
             p_limit: limit
         })
 
         if (error) {
-            console.error('Error fetching ranking history:', error)
+            console.error('[API] Error fetching ranking history:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json(data)
+        console.log(`[API] Ranking History fetched: ${data?.length || 0} rows`)
+
+        // Debug: Log first row if exists
+        if (data && data.length > 0) {
+            console.log('[API] First row sample:', data[0])
+        } else {
+            console.log('[API] No data returned from RPC')
+        }
+
+        // Convert BigInts to strings/numbers for JSON serialization
+        // user_id is a snowflake (too big for JS number), so string
+        // rank is small, number is fine
+        // total_points can be big, string is safer
+        const serializedData = data?.map((row: any) => ({
+            ...row,
+            user_id: row.user_id.toString(),
+            rank: Number(row.rank),
+            total_points: Number(row.total_points || 0) // Points usually fit in number, but string is safer if very huge. UI uses formatNumber.
+        }))
+
+        return NextResponse.json(serializedData)
     } catch (error) {
         console.error('Internal server error:', error)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
