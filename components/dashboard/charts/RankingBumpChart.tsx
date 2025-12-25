@@ -145,7 +145,7 @@ export function RankingBumpChart({ data, loading }: RankingBumpChartProps) {
                         />
                         <Legend
                             wrapperStyle={{ paddingTop: '10px' }}
-                            onMouseEnter={(e) => setHoveredUser(e.value)}
+                            onMouseEnter={(e) => setHoveredUser(e.value ?? null)}
                             onMouseLeave={() => setHoveredUser(null)}
                         />
                         {userList.map((user, index) => (
