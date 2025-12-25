@@ -2,16 +2,25 @@
 
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { MobileNav } from './MobileNav'
+import { Menu } from 'lucide-react'
+import { useDashboard } from './DashboardLayoutClient'
+// import { MobileNav } from './MobileNav' // We are replacing this with global toggle
 
 export function Header() {
     const { data: session } = useSession()
+    const { toggleSidebar } = useDashboard()
 
     return (
         <header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 px-4 md:px-8 py-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <MobileNav />
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors"
+                        aria-label="Toggle Sidebar"
+                    >
+                        <Menu className="w-6 h-6" />
+                    </button>
                     <div>
                         <h2 className="text-xl md:text-2xl font-bold text-white">Bem-vindo de volta!</h2>
                         <p className="text-slate-400 text-xs md:text-sm">Aqui estão as estatísticas do seu servidor</p>

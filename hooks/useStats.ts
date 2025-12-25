@@ -447,3 +447,32 @@ export function useHighlights(limit: number = 5) {
 
     return { data, loading, error }
 }
+
+export function useRankingHistory(days: number = 30) {
+    const [data, setData] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchHistory() {
+            try {
+                setLoading(true)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/leaderboard/history?days=${days}&guildId=${guildId}`)
+                if (!response.ok) throw new Error('Failed to fetch ranking history')
+                const history = await response.json()
+                setData(history)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchHistory()
+    }, [days])
+
+    return { data, loading, error }
+}
