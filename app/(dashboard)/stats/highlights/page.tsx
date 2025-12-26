@@ -11,7 +11,12 @@ import {
     Video,
     Calendar,
     Gamepad2,
-    Loader2
+    Loader2,
+    Heart,
+    Zap,
+    Library,
+    Timer,
+
 } from 'lucide-react'
 
 export default function HighlightsPage() {
@@ -107,6 +112,38 @@ export default function HighlightsPage() {
             format: (v: number) => formatTime(v),
             unit: '',
             color: 'text-indigo-500'
+        },
+        {
+            title: 'Imã da Galera (Reações Recebidas)',
+            icon: Heart,
+            data: stats.mostReactionsReceived,
+            format: formatNumber,
+            unit: 'reações',
+            color: 'text-rose-500'
+        },
+        {
+            title: 'O Reativo (Reações Dadas)',
+            icon: Zap,
+            data: stats.mostReactionsGiven,
+            format: formatNumber,
+            unit: 'reações',
+            color: 'text-amber-500'
+        },
+        {
+            title: 'Gamer Variado (Jogos Distintos)',
+            icon: Library,
+            data: stats.mostDistinctGames,
+            format: formatNumber,
+            unit: 'jogos',
+            color: 'text-cyan-500'
+        },
+        {
+            title: 'O Maratonista (Maior Sessão)',
+            icon: Timer,
+            data: stats.longestSession,
+            format: (v: number) => formatTime(v),
+            unit: '',
+            color: 'text-indigo-600'
         }
     ]
 

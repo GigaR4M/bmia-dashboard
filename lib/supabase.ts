@@ -388,7 +388,11 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         supabaseAdmin.rpc('get_highlight_most_activity_time', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_longest_streaming', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_most_events', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_top_gamers', { p_guild_id: guildId, p_limit: limit })
+        supabaseAdmin.rpc('get_highlight_top_gamers', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_reactions_received', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_reactions_given', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_most_distinct_games', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_longest_session', { p_guild_id: guildId, p_limit: limit })
     ]
 
     const results = await Promise.all(queries)
@@ -401,7 +405,11 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostActivity,
         longestStreaming,
         mostEvents,
-        topGamers
+        topGamers,
+        mostReactionsReceived,
+        mostReactionsGiven,
+        mostDistinctGames,
+        longestSession
     ] = results
 
     // Helper to process response
@@ -426,6 +434,10 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostActivity: processResult(mostActivity),
         longestStreaming: processResult(longestStreaming),
         mostEvents: processResult(mostEvents),
-        topGamers: processResult(topGamers)
+        topGamers: processResult(topGamers),
+        mostReactionsReceived: processResult(mostReactionsReceived),
+        mostReactionsGiven: processResult(mostReactionsGiven),
+        mostDistinctGames: processResult(mostDistinctGames),
+        longestSession: processResult(longestSession)
     }
 }
