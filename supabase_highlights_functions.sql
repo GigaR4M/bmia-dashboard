@@ -7,7 +7,7 @@ RETURNS TIMESTAMPTZ
 LANGUAGE SQL
 IMMUTABLE
 AS $$
-  SELECT DATE_TRUNC('year', NOW());
+  SELECT DATE_TRUNC('year', NOW() AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo';
 $$;
 
 -- 2. Highest Score (Maior Pontuação) - Current Year
