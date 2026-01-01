@@ -16,7 +16,7 @@ export async function GET(request: Request) {
         const days = daysParam ? parseInt(daysParam) : null
         const startDate = searchParams.get('startDate')
 
-        const leaderboard = await getLeaderboard(limit, days, startDate)
+        const leaderboard = await getLeaderboard(guildId, limit, days, startDate)
 
         return NextResponse.json(leaderboard)
     } catch (error) {

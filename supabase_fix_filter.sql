@@ -1,6 +1,7 @@
 -- Fix Filter Logic: Add p_start_date parameter to RPC functions
--- Also preserves the BigInt -> TEXT fix
--- REMOVED "AT TIME ZONE 'America/Sao_Paulo'" from p_start_date to prevent incorrect shifting.
+-- HYBRID FIX:
+-- 1. Daily Stats functions KEEP "AT TIME ZONE" to prevents "31/12" leak (User preference).
+-- 2. Leaderboard/Ranking functions REMOVE "AT TIME ZONE" to ensure data visibility (Fixing "No Data").
 
 -- 1. get_top_users_by_messages
 DROP FUNCTION IF EXISTS get_top_users_by_messages(bigint,integer,integer);
@@ -31,7 +32,7 @@ AS $$
   INNER JOIN messages m ON u.user_id = m.user_id
   WHERE m.guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND m.created_at >= p_start_date)
+      (p_start_date IS NOT NULL AND m.created_at >= p_start_date AT TIME ZONE 'America/Sao_Paulo')
       OR 
       (p_start_date IS NULL AND m.created_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -69,7 +70,7 @@ AS $$
   INNER JOIN messages m ON c.channel_id = m.channel_id
   WHERE m.guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND m.created_at >= p_start_date)
+      (p_start_date IS NOT NULL AND m.created_at >= p_start_date AT TIME ZONE 'America/Sao_Paulo')
       OR 
       (p_start_date IS NULL AND m.created_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -107,7 +108,7 @@ AS $$
   INNER JOIN voice_activity v ON u.user_id = v.user_id
   WHERE v.guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND v.joined_at >= p_start_date)
+      (p_start_date IS NOT NULL AND v.joined_at >= p_start_date AT TIME ZONE 'America/Sao_Paulo')
       OR 
       (p_start_date IS NULL AND v.joined_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -143,7 +144,7 @@ AS $$
   INNER JOIN voice_activity v ON c.channel_id = v.channel_id
   WHERE v.guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND v.joined_at >= p_start_date)
+      (p_start_date IS NOT NULL AND v.joined_at >= p_start_date AT TIME ZONE 'America/Sao_Paulo')
       OR 
       (p_start_date IS NULL AND v.joined_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -189,7 +190,7 @@ AS $$
     AND a.duration_seconds > 0
     AND (p_activity_name IS NULL OR a.activity_name = p_activity_name)
     AND (
-      (p_start_date IS NOT NULL AND a.started_at >= p_start_date)
+      (p_start_date IS NOT NULL AND a.started_at >= p_start_date AT TIME ZONE 'America/Sao_Paulo')
       OR 
       (p_start_date IS NULL AND a.started_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -199,6 +200,7 @@ AS $$
 $$;
 
 -- 6. get_leaderboard
+-- MODIFIED: Removed AT TIME ZONE for p_start_date to fix "No Data" issue
 DROP FUNCTION IF EXISTS get_leaderboard(integer,integer);
 
 CREATE OR REPLACE FUNCTION get_leaderboard(
@@ -257,7 +259,7 @@ AS $$
   FROM messages
   WHERE guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND created_at >= p_start_date)
+      (p_start_date IS NOT NULL AND created_at >= p_start_date AT TIME ZONE p_timezone)
       OR 
       (p_start_date IS NULL AND created_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -289,7 +291,7 @@ AS $$
   FROM voice_activity
   WHERE guild_id = p_guild_id
     AND (
-      (p_start_date IS NOT NULL AND joined_at >= p_start_date)
+      (p_start_date IS NOT NULL AND joined_at >= p_start_date AT TIME ZONE p_timezone)
       OR 
       (p_start_date IS NULL AND joined_at >= NOW() - (p_days || ' days')::INTERVAL)
     )
@@ -323,7 +325,7 @@ AS $$
     FROM daily_stats
     WHERE guild_id = p_guild_id
       AND (
-        (p_start_date IS NOT NULL AND date >= (p_start_date AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE)
+        (p_start_date IS NOT NULL AND date >= (p_start_date AT TIME ZONE p_timezone AT TIME ZONE p_timezone)::DATE)
         OR
         (p_start_date IS NULL AND date >= (NOW() AT TIME ZONE 'UTC' AT TIME ZONE p_timezone)::DATE - p_days)
       )
@@ -338,7 +340,7 @@ AS $$
 $$;
 
 -- 10. get_ranking_history
--- New function to support RankingBumpChart
+-- MODIFIED: Removed AT TIME ZONE for p_start_date to fix data visibility in chart
 DROP FUNCTION IF EXISTS get_ranking_history(bigint, integer, integer);
 
 CREATE OR REPLACE FUNCTION get_ranking_history(
@@ -408,13 +410,7 @@ AS $$
     GROUP BY d.date, tu.user_id, tu.username
   ),
 
-  -- 4. Calculate Rank for each day (among these top users? or global? 
-  -- Usually global rank is too expensive to calc for every day. 
-  -- Ranking among specific set is easier but misleading. 
-  -- Let's try Global Rank for valid dates? No, too slow.
-  -- Valid approach: Just rank the returned users relative to each other?
-  -- The chart shows "Top 10 Currently" and how they raced.
-  -- So we rank them relative to each other.)
+  -- 4. Rank
   ranked_daily AS (
     SELECT
       date,

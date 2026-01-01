@@ -254,7 +254,7 @@ AS $$
     AND u.is_bot = FALSE
     AND a.started_at >= get_start_of_year()
     AND a.duration_seconds > 0
-    AND a.activity_type = 'PLAYING'
+    AND a.activity_type = 'playing'
   GROUP BY u.user_id, u.username, u.discriminator
   ORDER BY value_seconds DESC
   LIMIT p_limit;

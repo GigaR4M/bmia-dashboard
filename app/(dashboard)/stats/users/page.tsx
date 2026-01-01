@@ -12,29 +12,29 @@ export default function UsersPage() {
     const [view, setView] = useState<ViewType>('messages')
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'days', days: 30 })
 
-    const period = useMemo(() => {
+    const { period, startDate } = useMemo(() => {
         if (dateFilter.type === 'days' && dateFilter.days) {
-            return dateFilter.days
+            return { period: dateFilter.days, startDate: undefined }
         }
         if (dateFilter.type === 'year') {
             const now = new Date()
             const startOfYear = new Date(now.getFullYear(), 0, 1)
             const diffTime = Math.abs(now.getTime() - startOfYear.getTime())
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            return diffDays
+            return { period: diffDays, startDate: startOfYear.toISOString() }
         }
         if (dateFilter.startDate && dateFilter.endDate) {
             const start = new Date(dateFilter.startDate)
             const end = new Date(dateFilter.endDate)
             const diffTime = Math.abs(end.getTime() - start.getTime())
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            return diffDays || 30
+            return { period: diffDays || 30, startDate: new Date(dateFilter.startDate).toISOString() }
         }
-        return 30
+        return { period: 30, startDate: undefined }
     }, [dateFilter])
 
-    const { data: messageUsers, loading: loadingMessages } = useTopUsers(20, period)
-    const { data: voiceUsers, loading: loadingVoice } = useTopVoiceUsers(20, period)
+    const { data: messageUsers, loading: loadingMessages } = useTopUsers(20, period, startDate)
+    const { data: voiceUsers, loading: loadingVoice } = useTopVoiceUsers(20, period, startDate)
 
     const loading = view === 'messages' ? loadingMessages : loadingVoice
     const data = view === 'messages' ? messageUsers : voiceUsers

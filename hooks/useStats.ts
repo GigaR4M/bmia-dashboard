@@ -474,7 +474,7 @@ export function useRankingHistory(days: number = 30, startDate?: string) {
         }
 
         fetchHistory()
-    }, [days])
+    }, [days, startDate])
 
     return { data, loading, error }
 }

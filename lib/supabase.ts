@@ -293,13 +293,14 @@ export async function getTopVoiceChannels(guildId: string, limit: number = 10, d
 }
 
 // Helper function to get leaderboard
-export async function getLeaderboard(limit: number = 50, days: number | null = null, startDate: string | null = null) {
+export async function getLeaderboard(guildId: string, limit: number = 50, days: number | null = null, startDate: string | null = null) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
 
     const { data, error } = await supabaseAdmin
         .rpc('get_leaderboard', {
+            p_guild_id: guildId,
             p_limit: limit,
             p_days: days,
             p_start_date: startDate
