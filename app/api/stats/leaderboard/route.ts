@@ -11,6 +11,12 @@ export async function GET(request: Request) {
         }
 
         const { searchParams } = new URL(request.url)
+        const guildId = searchParams.get('guildId')
+
+        if (!guildId) {
+            return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
+        }
+
         const limit = parseInt(searchParams.get('limit') || '50')
         const daysParam = searchParams.get('days')
         const days = daysParam ? parseInt(daysParam) : null
