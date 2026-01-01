@@ -334,12 +334,21 @@ export function useLeaderboard(limit: number = 50, period?: number, startDate?: 
         async function fetchLeaderboard() {
             try {
                 setLoading(true);
-                const queryParams = new URLSearchParams({ limit: limit.toString() });
+                const guildId = localStorage.getItem('selectedGuildId');
+                if (!guildId) throw new Error('No server selected');
+
+                const queryParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    guildId: guildId
+                });
                 if (period) queryParams.append('days', period.toString());
                 if (startDate) queryParams.append('startDate', startDate);
 
                 const response = await fetch(`/api/stats/leaderboard?${queryParams}`);
-                if (!response.ok) throw new Error('Failed to fetch leaderboard');
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Failed to fetch leaderboard: ${response.statusText}`);
+                }
                 const leaderboard = await response.json();
                 setData(leaderboard);
             } catch (err) {
@@ -463,7 +472,10 @@ export function useRankingHistory(days: number = 30, startDate?: string) {
                 let url = `/api/stats/leaderboard/history?days=${days}&guildId=${guildId}`
                 if (startDate) url += `&startDate=${startDate}`
                 const response = await fetch(url)
-                if (!response.ok) throw new Error('Failed to fetch ranking history')
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Failed to fetch ranking history: ${response.statusText}`);
+                }
                 const history = await response.json()
                 setData(history)
             } catch (err) {
