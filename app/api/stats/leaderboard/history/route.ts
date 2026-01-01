@@ -10,18 +10,20 @@ export async function GET(request: NextRequest) {
     const guildId = searchParams.get('guildId')
     const days = parseInt(searchParams.get('days') || '30')
     const limit = parseInt(searchParams.get('limit') || '10')
+    const startDate = searchParams.get('startDate')
 
     if (!guildId) {
         return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
     }
 
-    console.log('[API] Rate History - Request:', { guildId, days, limit })
+    console.log('[API] Rate History - Request:', { guildId, days, limit, startDate })
 
     try {
         const { data, error } = await supabase.rpc('get_ranking_history', {
             p_guild_id: guildId, // Pass as string, PostgREST handles it
             p_days: days,
-            p_limit: limit
+            p_limit: limit,
+            p_start_date: startDate || null
         })
 
         if (error) {

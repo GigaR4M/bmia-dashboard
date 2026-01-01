@@ -448,7 +448,7 @@ export function useHighlights(limit: number = 5) {
     return { data, loading, error }
 }
 
-export function useRankingHistory(days: number = 30) {
+export function useRankingHistory(days: number = 30, startDate?: string) {
     const [data, setData] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -460,7 +460,9 @@ export function useRankingHistory(days: number = 30) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/leaderboard/history?days=${days}&guildId=${guildId}`)
+                let url = `/api/stats/leaderboard/history?days=${days}&guildId=${guildId}`
+                if (startDate) url += `&startDate=${startDate}`
+                const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch ranking history')
                 const history = await response.json()
                 setData(history)

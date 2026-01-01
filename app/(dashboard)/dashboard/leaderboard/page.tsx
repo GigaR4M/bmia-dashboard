@@ -9,28 +9,28 @@ import { RankingBumpChart } from '@/components/dashboard/charts/RankingBumpChart
 export default function LeaderboardPage() {
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'year' })
 
-    const period = useMemo(() => {
+    const { period, startDate } = useMemo(() => {
         if (dateFilter.type === 'days' && dateFilter.days) {
-            return dateFilter.days
+            return { period: dateFilter.days, startDate: undefined }
         }
         if (dateFilter.type === 'year') {
             const now = new Date()
             const startOfYear = new Date(now.getFullYear(), 0, 1)
             const diffTime = Math.abs(now.getTime() - startOfYear.getTime())
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            return diffDays
+            return { period: diffDays, startDate: startOfYear.toISOString() }
         }
         if (dateFilter.startDate && dateFilter.endDate) {
             const start = new Date(dateFilter.startDate)
             const end = new Date(dateFilter.endDate)
             const diffTime = Math.abs(end.getTime() - start.getTime())
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-            return diffDays || 30
+            return { period: diffDays || 30, startDate: new Date(dateFilter.startDate).toISOString() }
         }
-        return 30
+        return { period: 30, startDate: undefined }
     }, [dateFilter])
 
-    const { data: leaderboard, loading, error } = useLeaderboard(50, period)
+    const { data: leaderboard, loading, error } = useLeaderboard(50, period, startDate)
 
     return (
         <div className="space-y-6">
@@ -44,7 +44,7 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Ranking History Chart */}
-            <RankingHistorySection period={period} />
+            <RankingHistorySection period={period} startDate={startDate} />
 
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -115,10 +115,10 @@ export default function LeaderboardPage() {
     )
 }
 
-function RankingHistorySection({ period }: { period: number }) {
+function RankingHistorySection({ period, startDate }: { period: number, startDate?: string }) {
     // Only show history if viewing by days or if period is reasonably short (e.g. < 90 days)
     // Long periods might be messy on a bump chart
-    const { data: history, loading } = useRankingHistory(period)
+    const { data: history, loading } = useRankingHistory(period, startDate)
 
     return (
         <RankingBumpChart data={history} loading={loading} />
