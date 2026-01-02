@@ -34,9 +34,9 @@ AS $$
   FROM users u
   INNER JOIN interaction_points ip ON u.user_id = ip.user_id
   WHERE 
-    ip.guild_id = p_guild_id
+    (ip.guild_id = p_guild_id OR ip.guild_id IS NULL) -- Allow legacy points
     AND (
-      (p_start_date IS NOT NULL AND ip.created_at >= p_start_date) -- Direct Comparison (Trust Frontend UTC)
+      (p_start_date IS NOT NULL AND ip.created_at >= p_start_date)
       OR
       (p_start_date IS NULL AND (p_days IS NULL OR ip.created_at >= NOW() - (p_days || ' days')::INTERVAL))
     )
@@ -73,7 +73,7 @@ AS $$
       SUM(ip.points) as total_period_points
     FROM users u
     INNER JOIN interaction_points ip ON u.user_id = ip.user_id
-    WHERE ip.guild_id = p_guild_id
+    WHERE (ip.guild_id = p_guild_id OR ip.guild_id IS NULL)
       AND (
         (p_start_date IS NOT NULL AND ip.created_at >= p_start_date)
         OR
@@ -107,7 +107,7 @@ AS $$
     CROSS JOIN top_users tu
     LEFT JOIN interaction_points ip ON ip.user_id = tu.user_id 
       AND (ip.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'America/Sao_Paulo')::DATE <= d.date
-      AND ip.guild_id = p_guild_id
+      AND (ip.guild_id = p_guild_id OR ip.guild_id IS NULL)
       AND (
         (p_start_date IS NOT NULL AND ip.created_at >= p_start_date)
         OR

@@ -308,7 +308,7 @@ export async function getLeaderboard(guildId: string, limit: number = 50, days: 
 
     if (error) {
         console.error('Error fetching leaderboard:', error)
-        return []
+        throw error
     }
 
     if (!data) return []
