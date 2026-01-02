@@ -54,6 +54,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(serializedData)
     } catch (error) {
         console.error('Internal server error:', error)
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+        return NextResponse.json({
+            error: `Failed to fetch ranking history: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+        }, { status: 500 })
     }
 }
