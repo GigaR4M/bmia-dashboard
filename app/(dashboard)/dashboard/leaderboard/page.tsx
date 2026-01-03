@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useLeaderboard, useRankingHistory } from '@/hooks/useStats'
+import { useLeaderboard } from '@/hooks/useStats'
 import { formatNumber } from '@/lib/utils'
 import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
-import { RankingBumpChart } from '@/components/dashboard/charts/RankingBumpChart'
 
 export default function LeaderboardPage() {
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'year' })
@@ -43,8 +42,7 @@ export default function LeaderboardPage() {
                 <PeriodSelector value={dateFilter} onChange={setDateFilter} />
             </div>
 
-            {/* Ranking History Chart */}
-            <RankingHistorySection period={period} startDate={startDate} />
+
 
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -115,12 +113,4 @@ export default function LeaderboardPage() {
     )
 }
 
-function RankingHistorySection({ period, startDate }: { period: number, startDate?: string }) {
-    // Only show history if viewing by days or if period is reasonably short (e.g. < 90 days)
-    // Long periods might be messy on a bump chart
-    const { data: history, loading } = useRankingHistory(period, startDate)
 
-    return (
-        <RankingBumpChart data={history} loading={loading} />
-    )
-}
