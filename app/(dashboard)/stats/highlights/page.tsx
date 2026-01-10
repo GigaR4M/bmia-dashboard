@@ -16,6 +16,10 @@ import {
     Zap,
     Library,
     Timer,
+    Sparkles,
+    Moon,
+    Image,
+    Globe,
 
 } from 'lucide-react'
 
@@ -144,6 +148,38 @@ export default function HighlightsPage() {
             format: (v: number) => formatTime(v),
             unit: '',
             color: 'text-indigo-600'
+        },
+        {
+            title: 'Jogo do Ano',
+            icon: Sparkles,
+            data: stats.gameOfTheYear,
+            format: (v: number) => formatTime(v),
+            unit: '',
+            color: 'text-amber-400'
+        },
+        {
+            title: 'O Corujão (Voz na Madrugada)',
+            icon: Moon,
+            data: stats.nightOwl,
+            format: (v: number) => formatTime(v),
+            unit: '',
+            color: 'text-indigo-900 dark:text-indigo-300'
+        },
+        {
+            title: 'O Mídia (Arquivos Enviados)',
+            icon: Image,
+            data: stats.mediaKing,
+            format: formatNumber,
+            unit: 'anexos',
+            color: 'text-pink-500'
+        },
+        {
+            title: 'O Onipresente (Dias Ativos)',
+            icon: Globe,
+            data: stats.omnipresent,
+            format: formatNumber,
+            unit: 'dias',
+            color: 'text-emerald-500'
         }
     ]
 
@@ -181,7 +217,7 @@ export default function HighlightsPage() {
                                                     {i + 1}
                                                 </div>
                                                 <span className="truncate text-sm font-medium">
-                                                    {item.username}
+                                                    {item.username || item.activity_name}
                                                 </span>
                                             </div>
                                             <div className="shrink-0 text-sm text-muted-foreground">

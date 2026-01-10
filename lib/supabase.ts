@@ -393,7 +393,12 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         supabaseAdmin.rpc('get_highlight_most_reactions_received', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_most_reactions_given', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_most_distinct_games', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_longest_session', { p_guild_id: guildId, p_limit: limit })
+        supabaseAdmin.rpc('get_highlight_longest_session', { p_guild_id: guildId, p_limit: limit }),
+        // New stats
+        supabaseAdmin.rpc('get_highlight_game_of_the_year', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_night_owl', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_media_king', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_omnipresent', { p_guild_id: guildId, p_limit: limit })
     ]
 
     const results = await Promise.all(queries)
@@ -410,7 +415,12 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostReactionsReceived,
         mostReactionsGiven,
         mostDistinctGames,
-        longestSession
+        longestSession,
+        // New stats
+        gameOfTheYear,
+        nightOwl,
+        mediaKing,
+        omnipresent
     ] = results
 
     // Helper to process response
@@ -422,8 +432,8 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         return (res.data || []).map((user: any) => ({
             ...user,
             user_id: String(user.user_id),
-            value: user.value ? Number(user.value) : undefined,
-            value_seconds: user.value_seconds ? Number(user.value_seconds) : undefined
+            value: user.value !== null && user.value !== undefined ? Number(user.value) : 0,
+            value_seconds: user.value_seconds !== null && user.value_seconds !== undefined ? Number(user.value_seconds) : 0
         }))
     }
 
@@ -439,6 +449,10 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostReactionsReceived: processResult(mostReactionsReceived),
         mostReactionsGiven: processResult(mostReactionsGiven),
         mostDistinctGames: processResult(mostDistinctGames),
-        longestSession: processResult(longestSession)
+        longestSession: processResult(longestSession),
+        gameOfTheYear: processResult(gameOfTheYear),
+        nightOwl: processResult(nightOwl),
+        mediaKing: processResult(mediaKing),
+        omnipresent: processResult(omnipresent)
     }
 }
