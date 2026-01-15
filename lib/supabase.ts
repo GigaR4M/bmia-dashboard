@@ -471,7 +471,7 @@ export async function getLeaderboardHistory(guildId: string, userIds: string[], 
     // Query daily_user_stats directly for the total_points snapshot
     const { data, error } = await supabaseAdmin
         .from('daily_user_stats')
-        .select('date, user_id, total_points')
+        .select('date, user_id::text, total_points')
         .eq('guild_id', guildId) // Assuming guild_id is available in stats
         .in('user_id', userIds)
         .gte('date', start.toISOString())

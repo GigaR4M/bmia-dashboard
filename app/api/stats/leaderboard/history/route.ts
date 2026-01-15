@@ -18,6 +18,7 @@ export async function GET(request: Request) {
         // We only show history for the top users currently on the leaderboard
         const leaderboard = await getLeaderboard(guildId, 10, days, startDate)
         const topUserIds = leaderboard.map((u: any) => u.user_id)
+        console.log('[LeaderboardAPI] Top User IDs:', topUserIds)
 
         if (topUserIds.length === 0) {
             return NextResponse.json([], { status: 200 })
@@ -25,6 +26,8 @@ export async function GET(request: Request) {
 
         // 2. Fetch History for these users
         const history = await getLeaderboardHistory(guildId, topUserIds, days, startDate)
+        console.log('[LeaderboardAPI] History Data Points:', history.length)
+        if (history.length > 0) console.log('[LeaderboardAPI] Sample History:', history[0])
 
         return NextResponse.json(history)
     } catch (error) {
