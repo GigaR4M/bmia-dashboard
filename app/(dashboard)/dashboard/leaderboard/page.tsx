@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useLeaderboard } from '@/hooks/useStats'
+import { useLeaderboard, useRankingHistory } from '@/hooks/useStats'
 import { formatNumber } from '@/lib/utils'
 import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
+import { HistoryChart } from '@/components/HistoryChart'
 
 export default function LeaderboardPage() {
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'year' })
@@ -31,6 +32,18 @@ export default function LeaderboardPage() {
 
     const { data: leaderboard, loading, error } = useLeaderboard(50, period, startDate)
 
+    // Fetch history for the chart
+    // Note: API ensures it fetches history only for the top users.
+    const { data: historyData, loading: historyLoading } = useRankingHistory(period, startDate)
+
+    // Prepare users list for the chart legend
+    const topUsers = useMemo(() => {
+        return leaderboard.slice(0, 10).map(u => ({
+            user_id: u.user_id,
+            username: u.username
+        }))
+    }, [leaderboard])
+
     return (
         <div className="space-y-6">
             <div>
@@ -42,7 +55,16 @@ export default function LeaderboardPage() {
                 <PeriodSelector value={dateFilter} onChange={setDateFilter} />
             </div>
 
-
+            {/* History Chart Section */}
+            <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 p-6">
+                {historyLoading ? (
+                    <div className="h-[400px] w-full flex items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <HistoryChart data={historyData} users={topUsers} />
+                )}
+            </div>
 
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 overflow-hidden">
                 <div className="overflow-x-auto">

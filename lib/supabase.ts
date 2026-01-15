@@ -456,3 +456,47 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         omnipresent: processResult(omnipresent)
     }
 }
+
+// Helper function to get leaderboard history (Phase 4: Direct DB Query)
+export async function getLeaderboardHistory(guildId: string, userIds: string[], days: number, startDate?: string) {
+    if (!supabaseAdmin) {
+        throw new Error('Supabase admin client not initialized')
+    }
+
+    const start = new Date(startDate || new Date())
+    if (days && !startDate) {
+        start.setDate(start.getDate() - days)
+    }
+
+    // Query daily_user_stats directly for the total_points snapshot
+    const { data, error } = await supabaseAdmin
+        .from('daily_user_stats')
+        .select('date, user_id, total_points')
+        .eq('guild_id', guildId) // Assuming guild_id is available in stats
+        .in('user_id', userIds)
+        .gte('date', start.toISOString())
+        .order('date', { ascending: true })
+
+    if (error) {
+        console.error('Error fetching leaderboard history:', error)
+        return []
+    }
+
+    if (!data) return []
+
+    // Pivot data: Array of { date: 'YYYY-MM-DD', 'user_123': 100, 'user_456': 200 }
+    const historyMap: Record<string, any> = {}
+
+    data.forEach((row: any) => {
+        const date = row.date
+        if (!historyMap[date]) {
+            historyMap[date] = { date }
+        }
+        // total_points is BigInt in DB, Supabase JS returns number or string depending on config.
+        // Usually safe to cast to Number for leaderboard unless > 2^53 (9 quadrillion).
+        historyMap[date][row.user_id] = Number(row.total_points || 0)
+    })
+
+    // Sort by date
+    return Object.values(historyMap).sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
+}
