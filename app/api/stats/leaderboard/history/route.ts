@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server'
+import { auth, validateGuildAccess } from '@/lib/auth'
 import { getLeaderboard, getLeaderboardHistory } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
     try {
+        const session = await auth()
+
+        if (!session || !session.user.isAdmin) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { searchParams } = new URL(request.url)
         const guildId = searchParams.get('guildId')
         const days = Number(searchParams.get('days') || 30)
@@ -12,6 +19,10 @@ export async function GET(request: Request) {
 
         if (!guildId) {
             return NextResponse.json({ error: 'Guild ID required' }, { status: 400 })
+        }
+
+        if (!validateGuildAccess(session, guildId)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
         // 1. Get Top Users to track (Top 10 by default)
