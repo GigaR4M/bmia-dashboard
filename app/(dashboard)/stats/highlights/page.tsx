@@ -54,13 +54,14 @@ export default function HighlightsPage() {
 
     const sections = [
         {
-            title: 'Maior Pontuação',
+            title: 'Maior Total de XP',
             icon: Trophy,
             data: stats.highestScore,
             format: formatNumber,
-            unit: 'pontos',
+            unit: 'XP',
             color: 'text-yellow-500'
         },
+
         {
             title: 'Mais Mensagens de Texto',
             icon: MessageSquare,
