@@ -24,38 +24,44 @@ const COLORS = [
 ]
 
 export function HistoryChart({ data, users }: HistoryChartProps) {
-    const [mode, setMode] = useState<'daily' | 'cumulative'>('daily')
+    const [mode, setMode] = useState<'daily' | 'cumulative'>('cumulative')
     const [hiddenUsers, setHiddenUsers] = useState<Set<string>>(new Set())
 
-    // Transform data if cumulative
-    // Transform data: API returns Totals (Cumulative History).
+    // Transform data if cumulative or calculate deltas with forward-fill
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return []
 
-        if (mode === 'cumulative') return data
+        const sortedData = [...data].sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        )
 
-        // Calculate Daily Deltas from Totals
+        // 1. Forward-fill: dia sem registro herda o último total conhecido do usuário,
+        //    nunca cai pra 0 artificialmente.
+        const lastKnown: Record<string, number> = {}
+        const filled = sortedData.map(day => {
+            const newDay: any = { date: day.date }
+            users.forEach(u => {
+                const raw = day[u.user_id]
+                if (raw !== undefined && raw !== null) {
+                    lastKnown[u.user_id] = Number(raw)
+                }
+                // Se o usuário nunca apareceu ainda, o total real era 0 mesmo.
+                newDay[u.user_id] = lastKnown[u.user_id] ?? 0
+            })
+            return newDay
+        })
+
+        if (mode === 'cumulative') return filled
+
+        // 2. Deltas calculados sobre a série já preenchida
         const dailyData = []
-        // We need to know the 'previous' total to get delta.
-        // Assuming data is sorted by date ascending.
-
-        // Initial previous totals need to be estimated or 0?
-        // Ideally API could return deltas, but we switched to Totals for safety.
-        // Delta[i] = Total[i] - Total[i-1].
-        // For i=0, we don't know Total[-1]. 
-        // We can either start at 0 (if Total[0] is small) or just show Total[0] as first delta.
-
-        const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-        for (let i = 0; i < sortedData.length; i++) {
-            const day = sortedData[i]
-            const prevDay = i > 0 ? sortedData[i - 1] : null
-
+        for (let i = 0; i < filled.length; i++) {
+            const day = filled[i]
+            const prevDay = i > 0 ? filled[i - 1] : null
             const newDay: any = { date: day.date }
             users.forEach(u => {
                 const currentTotal = Number(day[u.user_id] || 0)
-                const prevTotal = prevDay ? Number(prevDay[u.user_id] || 0) : 0 // Fallback to 0 implies starting from scratch
-                // If prevTotal > currentTotal (shouldn't happen with strictly additive, but possible if penalties), delta is negative.
+                const prevTotal = prevDay ? Number(prevDay[u.user_id] || 0) : currentTotal
                 newDay[u.user_id] = currentTotal - prevTotal
             })
             dailyData.push(newDay)

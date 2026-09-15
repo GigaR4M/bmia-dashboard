@@ -1,10 +1,21 @@
 'use server'
 
+import { auth, validateGuildAccess } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export async function sendEmbedRequest(guildId: string, channelId: string, embedData: any) {
+    const session = await auth()
+
+    if (!session || !session.user?.isAdmin) {
+        return { success: false, error: 'Unauthorized' }
+    }
+
+    if (!guildId || !validateGuildAccess(session, guildId)) {
+        return { success: false, error: 'Forbidden' }
+    }
+
     if (!supabaseAdmin) {
-        throw new Error('Supabase admin client not initialized')
+        return { success: false, error: 'Supabase admin client not initialized' }
     }
 
     try {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth, validateGuildAccess } from '@/lib/auth'
 import { getLeaderboard } from '@/lib/supabase'
 
 export async function GET(request: Request) {
@@ -15,6 +15,10 @@ export async function GET(request: Request) {
 
         if (!guildId) {
             return NextResponse.json({ error: 'Guild ID is required' }, { status: 400 })
+        }
+
+        if (!validateGuildAccess(session, guildId)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
         const limit = parseInt(searchParams.get('limit') || '50')
