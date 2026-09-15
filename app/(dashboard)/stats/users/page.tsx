@@ -5,6 +5,7 @@ import { useTopUsers, useTopVoiceUsers } from '@/hooks/useStats'
 import { formatNumber, formatDateTime, formatDuration, cn } from '@/lib/utils'
 import { MessageSquare, Mic } from 'lucide-react'
 import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
 type ViewType = 'messages' | 'voice'
 
@@ -113,9 +114,7 @@ export default function UsersPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                                                    {user.username.charAt(0).toUpperCase()}
-                                                </div>
+                                                <UserAvatar user={user} size="md" />
                                                 <span className="text-white font-medium">{user.username}</span>
                                             </div>
                                         </td>

@@ -13,7 +13,7 @@ export interface UserStats {
     guild_id: string
     username: string
     discriminator: string
-    avatar_url?: string
+    avatar_url?: string | null
     message_count: number
     last_message_at: string
 }
@@ -51,8 +51,18 @@ export interface VoiceUserStats {
     user_id: string
     username: string
     discriminator: string
+    avatar_url?: string | null
     total_minutes: number
     last_seen: string
+}
+
+export interface LeaderboardUser {
+    user_id: string
+    username: string
+    discriminator: string
+    total_points: number
+    rank: number
+    avatar_url?: string | null
 }
 
 export interface VoiceChannelStats {
@@ -66,6 +76,76 @@ export interface EventStats {
     total_events: number
     upcoming_events: number
     total_participants: number
+    active_events?: number
+    completed_events?: number
+}
+
+export interface ScheduledEventItem {
+    event_id: string
+    guild_id: string
+    name: string
+    description?: string | null
+    start_time: string
+    end_time?: string | null
+    status: string
+    creator_id?: string | null
+    creator_name?: string | null
+    creator_avatar?: string | null
+    entity_type?: string | null
+    location?: string | null
+    participant_count: number
+    interested_count: number
+    attended_count: number
+    created_at?: string
+}
+
+export interface TournamentStats {
+    total_tournaments: number
+    active_tournaments: number
+    finished_tournaments: number
+    total_participants: number
+}
+
+export interface TournamentParticipant {
+    user_id: string
+    username: string
+    discriminator?: string
+    avatar_url?: string | null
+    status: string
+}
+
+export interface TournamentItem {
+    id: number
+    guild_id: string
+    name: string
+    game_name: string
+    format: string
+    max_participants: number
+    participant_count: number
+    prize?: string | null
+    start_time?: string | null
+    status: 'open' | 'active' | 'finished' | 'cancelled' | string
+    final_score?: string | null
+    created_at: string
+    winner?: {
+        user_id: string
+        username: string
+        avatar_url?: string | null
+    } | null
+    second_place?: {
+        user_id: string
+        username: string
+        avatar_url?: string | null
+    } | null
+    third_place?: {
+        user_id: string
+        username: string
+        avatar_url?: string | null
+    } | null
+    winner_team?: TournamentParticipant[]
+    second_place_team?: TournamentParticipant[]
+    third_place_team?: TournamentParticipant[]
+    participants?: TournamentParticipant[]
 }
 
 export interface ModerationStats {

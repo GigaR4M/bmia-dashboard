@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, Hash, LogOut, Gamepad2, Gift, MessageSquare, Trophy, Star } from 'lucide-react'
+import { LayoutDashboard, Users, Hash, LogOut, Gamepad2, Gift, MessageSquare, Trophy, Star, Calendar, Swords } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +15,8 @@ const navigation = [
     { name: 'Canais', href: '/stats/channels', icon: Hash },
     { name: 'Atividades', href: '/stats/activities', icon: Gamepad2 },
     { name: 'Destaques', href: '/stats/highlights', icon: Star },
+    { name: 'Eventos', href: '/stats/events', icon: Calendar },
+    { name: 'Torneios', href: '/stats/tournaments', icon: Swords },
     { name: 'Sorteios', href: '/stats/giveaways', icon: Gift },
     { name: 'Embeds', href: '/dashboard/embed', icon: MessageSquare },
 ]

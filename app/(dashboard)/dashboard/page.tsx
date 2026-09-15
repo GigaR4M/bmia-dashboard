@@ -20,6 +20,7 @@ import {
 } from '@/hooks/useStats'
 import { Users, MessageSquare, Hash, TrendingUp, Mic, Calendar, ShieldAlert } from 'lucide-react'
 import { formatNumber } from '@/lib/utils'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
 export default function DashboardPage() {
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'days', days: 30 })
@@ -161,11 +162,12 @@ export default function DashboardPage() {
                             <div className="space-y-3">
                                 {topUsers.map((user, index) => (
                                     <div key={user.user_id} className="flex items-center gap-3 p-2 rounded hover:bg-slate-700/30">
-                                        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                        <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                             {index + 1}
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="text-white font-medium text-sm">{user.username}</p>
+                                        <UserAvatar user={user} size="sm" />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white font-medium text-sm truncate">{user.username}</p>
                                             <p className="text-slate-400 text-xs">{formatNumber(user.message_count)} msgs</p>
                                         </div>
                                     </div>
@@ -236,11 +238,12 @@ export default function DashboardPage() {
                             <div className="space-y-3">
                                 {topVoiceUsers.map((user, index) => (
                                     <div key={user.user_id} className="flex items-center gap-3 p-2 rounded hover:bg-slate-700/30">
-                                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                             {index + 1}
                                         </div>
-                                        <div className="flex-1">
-                                            <p className="text-white font-medium text-sm">{user.username}</p>
+                                        <UserAvatar user={user} size="sm" />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white font-medium text-sm truncate">{user.username}</p>
                                             <p className="text-slate-400 text-xs">{formatNumber(user.total_minutes)} min</p>
                                         </div>
                                     </div>

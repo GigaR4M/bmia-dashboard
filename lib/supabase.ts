@@ -97,7 +97,7 @@ export async function getTopUsers(guildId: string, limit: number = 10, days: num
         guild_id: guildId,
         username: user.username || 'Usuário Desconhecido',
         discriminator: user.discriminator || '0000',
-        avatar_url: null,
+        avatar_url: user.avatar_url || null,
         message_count: Number(user.message_count),
         last_message_at: user.last_seen || new Date().toISOString()
     }))
@@ -255,6 +255,7 @@ export async function getTopVoiceUsers(guildId: string, limit: number = 10, days
         user_id: String(user.user_id),
         username: user.username || 'Usuário Desconhecido',
         discriminator: user.discriminator || '0000',
+        avatar_url: user.avatar_url || null,
         total_minutes: Number(user.total_minutes),
         last_seen: user.last_seen || new Date().toISOString()
     }))
@@ -319,7 +320,7 @@ export async function getLeaderboard(guildId: string, limit: number = 50, days: 
         discriminator: user.discriminator || '0000',
         total_points: Number(user.total_points),
         rank: Number(user.rank),
-        avatar_url: null
+        avatar_url: user.avatar_url || null
     }))
 }
 

@@ -5,6 +5,7 @@ import { useLeaderboard, useRankingHistory } from '@/hooks/useStats'
 import { formatNumber } from '@/lib/utils'
 import { PeriodSelector, type DateFilter } from '@/components/dashboard/PeriodSelector'
 import { HistoryChart } from '@/components/HistoryChart'
+import { UserAvatar } from '@/components/ui/UserAvatar'
 
 export default function LeaderboardPage() {
     const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'year' })
@@ -111,9 +112,7 @@ export default function LeaderboardPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                                                    {user.username.substring(0, 2).toUpperCase()}
-                                                </div>
+                                                <UserAvatar user={user} size="md" />
                                                 <div>
                                                     <p className="text-white font-medium">{user.username}</p>
                                                 </div>

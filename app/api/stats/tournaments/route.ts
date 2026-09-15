@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth, validateGuildAccess } from '@/lib/auth'
-import { getEventsData } from '@/lib/events'
+import { getTournamentsData } from '@/lib/tournaments'
 
 export async function GET(request: Request) {
     try {
@@ -21,13 +21,13 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
-        const data = await getEventsData(guildId, limit)
+        const data = await getTournamentsData(guildId, limit)
 
         return NextResponse.json(data)
     } catch (error) {
-        console.error('Error fetching event stats:', error)
+        console.error('Error fetching tournament stats:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch event stats' },
+            { error: 'Failed to fetch tournament stats' },
             { status: 500 }
         )
     }

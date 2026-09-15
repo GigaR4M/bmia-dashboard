@@ -11,6 +11,9 @@ import type {
     VoiceUserStats,
     VoiceChannelStats,
     EventStats,
+    ScheduledEventItem,
+    TournamentStats,
+    TournamentItem,
     ModerationStats
 } from '@/types'
 
@@ -364,8 +367,8 @@ export function useLeaderboard(limit: number = 50, period?: number, startDate?: 
     return { data, loading, error };
 }
 
-export function useEventStats(startDate?: string) {
-    const [data, setData] = useState<EventStats | null>(null)
+export function useEventStats(startDate?: string, limit: number = 50) {
+    const [data, setData] = useState<{ stats: EventStats; events: ScheduledEventItem[] } | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -376,13 +379,22 @@ export function useEventStats(startDate?: string) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                let url = `/api/stats/events?guildId=${guildId}`
+                let url = `/api/stats/events?guildId=${guildId}&limit=${limit}`
                 if (startDate) url += `&startDate=${startDate}`
 
                 const response = await fetch(url)
                 if (!response.ok) throw new Error('Failed to fetch event stats')
-                const stats = await response.json()
-                setData(stats)
+                const resJson = await response.json()
+                
+                // Support both legacy { total_events, ... } and enriched { stats, events }
+                if (resJson.stats) {
+                    setData(resJson)
+                } else {
+                    setData({
+                        stats: resJson,
+                        events: []
+                    })
+                }
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred')
             } finally {
@@ -391,9 +403,49 @@ export function useEventStats(startDate?: string) {
         }
 
         fetchStats()
-    }, [startDate])
+    }, [startDate, limit])
 
-    return { data, loading, error }
+    return {
+        data: data?.stats || null,
+        events: data?.events || [],
+        fullData: data,
+        loading,
+        error
+    }
+}
+
+export function useTournaments(limit: number = 50) {
+    const [data, setData] = useState<{ stats: TournamentStats; tournaments: TournamentItem[] } | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchTournaments() {
+            try {
+                setLoading(true)
+                const guildId = localStorage.getItem('selectedGuildId')
+                if (!guildId) throw new Error('No server selected')
+
+                const response = await fetch(`/api/stats/tournaments?guildId=${guildId}&limit=${limit}`)
+                if (!response.ok) throw new Error('Failed to fetch tournaments')
+                const resJson = await response.json()
+                setData(resJson)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTournaments()
+    }, [limit])
+
+    return {
+        stats: data?.stats || { total_tournaments: 0, active_tournaments: 0, finished_tournaments: 0, total_participants: 0 },
+        tournaments: data?.tournaments || [],
+        loading,
+        error
+    }
 }
 
 export function useModerationStats(days: number = 30, startDate?: string) {
