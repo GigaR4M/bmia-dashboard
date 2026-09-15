@@ -187,6 +187,14 @@ export default function TournamentsPage() {
                                                     <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-slate-700/60 text-slate-300">
                                                         {tournament.format}
                                                     </span>
+                                                    <span className={cn(
+                                                        "px-2 py-0.5 rounded-md text-xs font-medium border",
+                                                        tournament.tournament_type === 'round_robin'
+                                                            ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
+                                                            : "bg-purple-500/10 text-purple-300 border-purple-500/30"
+                                                    )}>
+                                                        {tournament.tournament_type === 'round_robin' ? 'Pontos Corridos' : 'Mata-Mata'}
+                                                    </span>
                                                 </div>
                                                 <h4 className="text-xl font-bold text-white leading-tight">
                                                     {tournament.name}

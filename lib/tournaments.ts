@@ -94,6 +94,7 @@ export async function getTournamentsData(guildId: string, limit: number = 50): P
                 name: row.name || 'Torneio',
                 game_name: row.game_name || 'Geral',
                 format: row.format || '1v1',
+                tournament_type: row.tournament_type || 'bracket',
                 max_participants: Number(row.max_participants) || 16,
                 participant_count: Number(row.participant_count) || participants.length,
                 prize: row.prize || null,

@@ -120,6 +120,7 @@ export interface TournamentItem {
     name: string
     game_name: string
     format: string
+    tournament_type?: 'bracket' | 'round_robin' | string
     max_participants: number
     participant_count: number
     prize?: string | null
