@@ -13,7 +13,7 @@ import {
     Gamepad2,
     Loader2,
     Heart,
-    Zap,
+    Disc,
     Library,
     Timer,
     Sparkles,
@@ -29,20 +29,18 @@ export default function HighlightsPage() {
     if (loading) {
         return (
             <div className="flex h-[50vh] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         )
     }
 
-    if (error) {
+    if (error || !stats) {
         return (
-            <div className="flex h-[50vh] items-center justify-center text-red-500">
-                Erro ao carregar destaques: {error}
+            <div className="flex h-[50vh] items-center justify-center">
+                <p className="text-destructive">Erro ao carregar os destaques.</p>
             </div>
         )
     }
-
-    if (!stats) return null
 
     // Formatters
     const formatNumber = (val: number) => val.toLocaleString('pt-BR')
@@ -127,12 +125,12 @@ export default function HighlightsPage() {
             color: 'text-rose-500'
         },
         {
-            title: 'O Reativo (Reações Dadas)',
-            icon: Zap,
-            data: stats.mostReactionsGiven,
+            title: 'Rei das Demos (Jogos Demo)',
+            icon: Disc,
+            data: stats.demoKing,
             format: formatNumber,
-            unit: 'reações',
-            color: 'text-amber-500'
+            unit: 'demos',
+            color: 'text-violet-500'
         },
         {
             title: 'Gamer Variado (Jogos Distintos)',

@@ -392,7 +392,7 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         supabaseAdmin.rpc('get_highlight_most_events', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_top_gamers', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_most_reactions_received', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_reactions_given', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_demo_king', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_most_distinct_games', { p_guild_id: guildId, p_limit: limit }),
         supabaseAdmin.rpc('get_highlight_longest_session', { p_guild_id: guildId, p_limit: limit }),
         // New stats
@@ -414,7 +414,7 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostEvents,
         topGamers,
         mostReactionsReceived,
-        mostReactionsGiven,
+        demoKing,
         mostDistinctGames,
         longestSession,
         // New stats
@@ -448,7 +448,7 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         mostEvents: processResult(mostEvents),
         topGamers: processResult(topGamers),
         mostReactionsReceived: processResult(mostReactionsReceived),
-        mostReactionsGiven: processResult(mostReactionsGiven),
+        demoKing: processResult(demoKing),
         mostDistinctGames: processResult(mostDistinctGames),
         longestSession: processResult(longestSession),
         gameOfTheYear: processResult(gameOfTheYear),
