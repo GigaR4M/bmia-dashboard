@@ -319,6 +319,7 @@ export async function getLeaderboard(guildId: string, limit: number = 50, days: 
         username: user.username || 'Usuário Desconhecido',
         discriminator: user.discriminator || '0000',
         total_points: Number(user.total_points),
+        all_time_points: Number(user.all_time_points ?? user.total_points),
         rank: Number(user.rank),
         avatar_url: user.avatar_url || null
     }))

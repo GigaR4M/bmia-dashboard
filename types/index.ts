@@ -61,6 +61,7 @@ export interface LeaderboardUser {
     username: string
     discriminator: string
     total_points: number
+    all_time_points?: number
     rank: number
     avatar_url?: string | null
 }

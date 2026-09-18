@@ -102,7 +102,7 @@ export default function LeaderboardPage() {
                                 </tr>
                             ) : (
                                 leaderboard.map((user) => {
-                                    const progress = getLevelProgress(user.total_points)
+                                    const progress = getLevelProgress(user.all_time_points ?? user.total_points)
                                     return (
                                         <tr key={user.user_id} className="hover:bg-slate-700/30 transition-colors">
                                             <td className="px-6 py-4">
