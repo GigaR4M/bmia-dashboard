@@ -494,9 +494,11 @@ export async function getLeaderboardHistory(guildId: string, userIds: string[], 
         if (!historyMap[date]) {
             historyMap[date] = { date }
         }
-        // total_points is BigInt in DB, Supabase JS returns number or string depending on config.
-        // Usually safe to cast to Number for leaderboard unless > 2^53 (9 quadrillion).
-        historyMap[date][row.user_id] = Number(row.total_points || 0)
+        const pts = Number(row.total_points)
+        // Só registra se tiver um valor numérico válido > 0 para não sobrescrever histórico com zero
+        if (!isNaN(pts) && pts > 0) {
+            historyMap[date][row.user_id] = pts
+        }
     })
 
     // Sort by date

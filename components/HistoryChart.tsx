@@ -36,14 +36,20 @@ export function HistoryChart({ data, users }: HistoryChartProps) {
         )
 
         // 1. Forward-fill: dia sem registro herda o último total conhecido do usuário,
-        //    nunca cai pra 0 artificialmente.
+        //    nunca cai pra 0 artificialmente por snapshot nulo/zerado.
         const lastKnown: Record<string, number> = {}
         const filled = sortedData.map(day => {
             const newDay: any = { date: day.date }
             users.forEach(u => {
                 const raw = day[u.user_id]
                 if (raw !== undefined && raw !== null) {
-                    lastKnown[u.user_id] = Number(raw)
+                    const num = Number(raw)
+                    // Ignora leituras inválidas ou zeradas se já temos um histórico acumulado para o usuário
+                    if (!isNaN(num) && num > 0) {
+                        if (lastKnown[u.user_id] === undefined || num >= lastKnown[u.user_id]) {
+                            lastKnown[u.user_id] = num
+                        }
+                    }
                 }
                 // Se o usuário nunca apareceu ainda, o total real era 0 mesmo.
                 newDay[u.user_id] = lastKnown[u.user_id] ?? 0
@@ -53,7 +59,7 @@ export function HistoryChart({ data, users }: HistoryChartProps) {
 
         if (mode === 'cumulative') return filled
 
-        // 2. Deltas calculados sobre a série já preenchida
+        // 2. Deltas calculados sobre a série já preenchida e saneada
         const dailyData = []
         for (let i = 0; i < filled.length; i++) {
             const day = filled[i]
@@ -62,7 +68,8 @@ export function HistoryChart({ data, users }: HistoryChartProps) {
             users.forEach(u => {
                 const currentTotal = Number(day[u.user_id] || 0)
                 const prevTotal = prevDay ? Number(prevDay[u.user_id] || 0) : currentTotal
-                newDay[u.user_id] = currentTotal - prevTotal
+                // Garante que deltas diários não fiquem negativos devido a ruídos
+                newDay[u.user_id] = Math.max(0, currentTotal - prevTotal)
             })
             dailyData.push(newDay)
         }
