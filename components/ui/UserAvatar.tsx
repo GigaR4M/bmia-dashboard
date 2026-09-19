@@ -53,8 +53,9 @@ export function UserAvatar({
     size = 'md',
     className = '',
 }: UserAvatarProps) {
-    const userId = propUserId || user?.user_id
-    const username = propUsername || user?.username || 'User'
+    const userId = propUserId ? String(propUserId) : (user?.user_id ? String(user.user_id) : undefined)
+    const rawUsername = propUsername ?? user?.username ?? 'User'
+    const username = typeof rawUsername === 'string' ? rawUsername : String(rawUsername || 'User')
     const discriminator = propDiscriminator || user?.discriminator
     const avatarUrl = propAvatarUrl ?? user?.avatar_url
 
@@ -70,7 +71,7 @@ export function UserAvatar({
     }, [avatarUrl, userId, discriminator])
 
     const sizeConfig = SIZE_MAP[size] || SIZE_MAP.md
-    const initials = username.substring(0, 2).toUpperCase() || 'U'
+    const initials = (username.trim().substring(0, 2) || 'U').toUpperCase()
 
     const handleError = () => {
         if (!hasError && imgSrc !== getDiscordDefaultAvatar(userId, discriminator)) {
