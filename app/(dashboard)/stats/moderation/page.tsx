@@ -181,6 +181,7 @@ export default function ModerationPage() {
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => {
+                                                        setSearchQuery(report.target_user_id)
                                                         setActiveTab('search')
                                                         fetchDossier(report.target_user_id)
                                                     }}

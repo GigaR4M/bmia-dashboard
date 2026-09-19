@@ -321,7 +321,7 @@ export async function getGuildReports(guildId: string, status?: string): Promise
 
     let query = supabaseAdmin
         .from('user_reports')
-        .select('*')
+        .select('id, guild_id::text, target_user_id::text, reporter_user_id::text, category, reason, message_content, message_id::text, channel_id::text, attachment_urls, status, handled_by::text, handled_at, created_at')
         .eq('guild_id', guildId)
         .order('created_at', { ascending: false })
 
@@ -329,12 +329,48 @@ export async function getGuildReports(guildId: string, status?: string): Promise
         query = query.eq('status', status)
     }
 
-    const { data, error } = await query
-    if (error) {
+    const { data: reports, error } = await query
+    if (error || !reports) {
         console.error('Error fetching reports:', error)
         return []
     }
-    return data || []
+
+    // Collect all user IDs to fetch their usernames and avatars in a single batch
+    const userIds = new Set<string>()
+    reports.forEach((r: any) => {
+        if (r.target_user_id) userIds.add(String(r.target_user_id))
+        if (r.reporter_user_id) userIds.add(String(r.reporter_user_id))
+        if (r.handled_by) userIds.add(String(r.handled_by))
+    })
+
+    const usersMap: Record<string, { username: string; avatar_url: string }> = {}
+    if (userIds.size > 0) {
+        const { data: usersData } = await supabaseAdmin
+            .from('users')
+            .select('user_id::text, username, avatar_url')
+            .in('user_id', Array.from(userIds))
+
+        usersData?.forEach((u: any) => {
+            usersMap[String(u.user_id)] = {
+                username: u.username,
+                avatar_url: u.avatar_url
+            }
+        })
+    }
+
+    return reports.map((r: any) => {
+        const target = usersMap[String(r.target_user_id)]
+        const reporter = usersMap[String(r.reporter_user_id)]
+        const handler = r.handled_by ? usersMap[String(r.handled_by)] : undefined
+
+        return {
+            ...r,
+            target_username: target?.username || undefined,
+            target_avatar_url: target?.avatar_url || undefined,
+            reporter_username: reporter?.username || undefined,
+            handler_username: handler?.username || undefined
+        }
+    })
 }
 
 export async function updateReportStatus(reportId: number, status: 'approved' | 'rejected', handledBy: string): Promise<boolean> {
