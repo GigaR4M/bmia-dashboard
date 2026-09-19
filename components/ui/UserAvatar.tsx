@@ -64,6 +64,11 @@ export function UserAvatar({
     })
     const [hasError, setHasError] = useState(false)
 
+    React.useEffect(() => {
+        setImgSrc(avatarUrl || getDiscordDefaultAvatar(userId, discriminator))
+        setHasError(false)
+    }, [avatarUrl, userId, discriminator])
+
     const sizeConfig = SIZE_MAP[size] || SIZE_MAP.md
     const initials = username.substring(0, 2).toUpperCase() || 'U'
 
