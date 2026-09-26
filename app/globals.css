@@ -1,26 +1,127 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #06080d;
+  --foreground: #f8fafc;
+  --cyan-glow: #00f0ff;
+  --purple-glow: #b026ff;
+  --gold-glow: #ffd700;
+  --rose-glow: #ff0055;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-orbitron: var(--font-orbitron), sans-serif;
+  --font-rajdhani: var(--font-rajdhani), sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #06080d;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 10% 40%, rgba(176, 38, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 45%);
+  color: #f8fafc;
+  font-family: var(--font-rajdhani), var(--font-sans), sans-serif;
+  min-height: 100vh;
+}
+
+/* Typography Helpers */
+.font-orbitron {
+  font-family: var(--font-orbitron), sans-serif;
+}
+
+.font-rajdhani {
+  font-family: var(--font-rajdhani), sans-serif;
+}
+
+/* Cyber Glows & Laser Effects */
+.laser-top {
+  position: relative;
+}
+.laser-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f0ff, #b026ff, #ffd700);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+  border-radius: 999px;
+}
+
+.laser-top-cyan::before {
+  background: linear-gradient(90deg, transparent, #00f0ff, transparent);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.9);
+}
+
+.laser-top-purple::before {
+  background: linear-gradient(90deg, transparent, #b026ff, transparent);
+  box-shadow: 0 0 12px rgba(176, 38, 255, 0.9);
+}
+
+.laser-top-gold::before {
+  background: linear-gradient(90deg, transparent, #ffd700, transparent);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.9);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(176, 38, 255, 0.25);
+}
+
+.glow-gold {
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 12px rgba(176, 38, 255, 0.7);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.8);
+}
+
+/* Glassmorphism Cyber Card */
+.cyber-card {
+  background: rgba(11, 17, 33, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cyber-card:hover {
+  border-color: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 240, 255, 0.15);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #06080d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }

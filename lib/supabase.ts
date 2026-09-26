@@ -433,7 +433,7 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         }
         return (res.data || []).map((user: any) => ({
             ...user,
-            user_id: String(user.user_id),
+            user_id: user.user_id !== undefined && user.user_id !== null ? String(user.user_id) : undefined,
             value: user.value !== null && user.value !== undefined ? Number(user.value) : 0,
             value_seconds: user.value_seconds !== null && user.value_seconds !== undefined ? Number(user.value_seconds) : 0
         }))
@@ -470,21 +470,44 @@ export async function getLeaderboardHistory(guildId: string, userIds: string[], 
         start.setDate(start.getDate() - days)
     }
 
-    // Query daily_user_stats directly for the total_points snapshot
-    const { data, error } = await supabaseAdmin
-        .from('daily_user_stats')
-        .select('date, user_id::text, total_points')
-        .eq('guild_id', guildId) // Assuming guild_id is available in stats
-        .in('user_id', userIds)
-        .gte('date', start.toISOString())
-        .order('date', { ascending: true })
+    // Query daily_user_stats with pagination to bypass PostgREST's 1000 max_rows limit
+    const dateStr = start.toISOString().split('T')[0]
+    let allRows: any[] = []
+    let page = 0
+    const pageSize = 1000
+    let hasMore = true
 
-    if (error) {
-        console.error('Error fetching leaderboard history:', error)
-        return []
+    while (hasMore) {
+        const from = page * pageSize
+        const to = from + pageSize - 1
+        const { data, error } = await supabaseAdmin
+            .from('daily_user_stats')
+            .select('date, user_id::text, total_points')
+            .eq('guild_id', guildId)
+            .in('user_id', userIds)
+            .gte('date', dateStr)
+            .order('date', { ascending: true })
+            .range(from, to)
+
+        if (error) {
+            console.error('Error fetching leaderboard history page', page, error)
+            break
+        }
+
+        if (!data || data.length === 0) {
+            hasMore = false
+        } else {
+            allRows = allRows.concat(data)
+            if (data.length < pageSize) {
+                hasMore = false
+            } else {
+                page++
+            }
+        }
     }
 
-    if (!data) return []
+    if (allRows.length === 0) return []
+    const data = allRows
 
     // Pivot data: Array of { date: 'YYYY-MM-DD', 'user_123': 100, 'user_456': 200 }
     const historyMap: Record<string, any> = {}

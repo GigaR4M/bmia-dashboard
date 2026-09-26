@@ -33,7 +33,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
 
     return (
         <DashboardContext.Provider value={{ isSidebarOpen, toggleSidebar, closeSidebar }}>
-            <div className="flex h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 overflow-hidden">
+            <div suppressHydrationWarning className="flex h-screen bg-[#06080d] overflow-hidden">
                 {/* Mobile Overlay */}
                 <div
                     className={cn(
@@ -46,6 +46,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
 
                 {/* Sidebar */}
                 <aside
+                    suppressHydrationWarning
                     className={cn(
                         "fixed inset-y-0 left-0 z-[50] w-64 bg-slate-900 border-r border-slate-700/50 shadow-xl transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:shadow-none",
                         !isSidebarOpen && "-translate-x-full md:w-0 md:border-none md:overflow-hidden"
@@ -55,9 +56,9 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
                 </aside>
 
                 {/* Main Content */}
-                <div className="flex-1 flex flex-col overflow-hidden w-full transition-all duration-300">
+                <div suppressHydrationWarning className="flex-1 flex flex-col overflow-hidden w-full transition-all duration-300">
                     <Header />
-                    <main className="flex-1 overflow-y-auto p-4 md:p-8">
+                    <main suppressHydrationWarning className="flex-1 overflow-y-auto p-4 md:p-8">
                         {children}
                     </main>
                 </div>

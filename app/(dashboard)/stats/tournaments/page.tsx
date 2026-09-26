@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { StatsCard } from '@/components/dashboard/StatsCard'
 import { useTournaments } from '@/hooks/useStats'
-import { Swords, Trophy, Flame, CheckCircle2, Users, Gamepad2, Award, Clock } from 'lucide-react'
+import { Swords, Trophy, Flame, CheckCircle2, Users, Gamepad2, Award, Clock, Sparkles } from 'lucide-react'
 import { formatNumber, cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -25,35 +25,35 @@ export default function TournamentsPage() {
         switch (status) {
             case 'open':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-orbitron bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Inscrições Abertas
+                        INSCRIÇÕES ABERTAS
                     </span>
                 )
             case 'active':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                        <Flame className="w-3 h-3 text-amber-400" />
-                        Em Andamento
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-orbitron bg-amber-950/70 text-amber-400 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
+                        <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+                        EM ANDAMENTO
                     </span>
                 )
             case 'finished':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-300 border border-purple-500/20">
-                        <CheckCircle2 className="w-3 h-3 text-purple-400" />
-                        Finalizado
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-orbitron bg-purple-950/70 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(176,38,255,0.25)]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-400" />
+                        FINALIZADO
                     </span>
                 )
             case 'cancelled':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                        Cancelado
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-orbitron bg-rose-950/70 text-rose-400 border border-rose-500/40">
+                        CANCELADO
                     </span>
                 )
             default:
                 return (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-300">
-                        {status}
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-bold font-orbitron bg-slate-800 text-slate-300 border border-slate-700">
+                        {status.toUpperCase()}
                     </span>
                 )
         }
@@ -73,12 +73,16 @@ export default function TournamentsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Torneios e Campeonatos</h1>
-                    <p className="text-slate-400 text-sm">Histórico de torneios, pódios e jogadores</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-bold font-orbitron tracking-widest uppercase mb-2">
+                        <Sparkles className="w-3 h-3 text-cyan-400" />
+                        ARENA DE ESPORTS & CHAVEAMENTOS
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-black text-white font-orbitron tracking-tight">Torneios e Campeonatos</h1>
+                    <p className="text-slate-400 text-sm font-rajdhani font-medium">Histórico de confrontos, chaves de eliminatórias, pódios e campeões</p>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700/50 w-fit">
+                <div className="flex bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/60 backdrop-blur-xl w-fit">
                     {(['all', 'open', 'active', 'finished'] as TournamentFilter[]).map((tab) => {
                         const labels: Record<TournamentFilter, string> = {
                             all: 'Todos',
@@ -92,10 +96,10 @@ export default function TournamentsPage() {
                                 key={tab}
                                 onClick={() => setStatusFilter(tab)}
                                 className={cn(
-                                    "px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all",
+                                    "px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold font-orbitron transition-all duration-200",
                                     isActive
-                                        ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30"
-                                        : "text-slate-400 hover:text-white hover:bg-slate-700/40"
+                                        ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg shadow-cyan-500/25 border border-cyan-400/40"
+                                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                                 )}
                             >
                                 {labels[tab]}
@@ -110,55 +114,61 @@ export default function TournamentsPage() {
                 <StatsCard
                     title="Total de Torneios"
                     value={formatNumber(stats.total_tournaments)}
-                    icon={<Swords className="w-7 h-7 text-purple-400" />}
+                    icon={<Swords className="w-7 h-7 text-cyan-400" />}
                     loading={loading}
+                    accentColor="cyan"
                 />
                 <StatsCard
                     title="Torneios Abertos"
                     value={formatNumber(stats.active_tournaments)}
                     icon={<Flame className="w-7 h-7 text-amber-400" />}
                     loading={loading}
+                    accentColor="gold"
                 />
                 <StatsCard
                     title="Torneios Concluídos"
                     value={formatNumber(stats.finished_tournaments)}
                     icon={<Trophy className="w-7 h-7 text-yellow-400" />}
                     loading={loading}
+                    accentColor="gold"
                 />
                 <StatsCard
                     title="Total de Inscrições"
                     value={formatNumber(stats.total_participants)}
-                    icon={<Users className="w-7 h-7 text-pink-400" />}
+                    icon={<Users className="w-7 h-7 text-purple-400" />}
                     loading={loading}
+                    accentColor="purple"
                 />
             </div>
 
             {/* Tournaments Grid */}
             <div className="space-y-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-yellow-400" />
-                    Lista de Torneios ({filteredTournaments.length})
-                </h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-white font-orbitron flex items-center gap-2">
+                        <Trophy className="w-5 h-5 text-yellow-400" />
+                        Chaves de Torneio ({filteredTournaments.length})
+                    </h3>
+                </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {[...Array(4)].map((_, i) => (
-                            <div key={i} className="animate-pulse bg-slate-800/40 rounded-xl p-6 border border-slate-700/50 space-y-4">
-                                <div className="h-6 bg-slate-700 rounded w-1/3"></div>
-                                <div className="h-4 bg-slate-700 rounded w-2/3"></div>
-                                <div className="h-20 bg-slate-700/40 rounded"></div>
+                            <div key={i} className="animate-pulse cyber-card rounded-2xl p-6 space-y-4 border border-slate-800">
+                                <div className="h-6 bg-slate-800 rounded w-1/3"></div>
+                                <div className="h-4 bg-slate-800 rounded w-2/3"></div>
+                                <div className="h-24 bg-slate-800/40 rounded-xl"></div>
                             </div>
                         ))}
                     </div>
                 ) : error ? (
-                    <div className="bg-rose-500/10 border border-rose-500/20 text-rose-300 p-6 rounded-xl text-center">
+                    <div className="bg-rose-500/10 border border-rose-500/20 text-rose-300 p-6 rounded-2xl text-center font-rajdhani">
                         Erro ao carregar torneios: {error}
                     </div>
                 ) : filteredTournaments.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 bg-slate-800/30 rounded-xl border border-dashed border-slate-700 text-slate-400 text-center space-y-2">
+                    <div className="flex flex-col items-center justify-center p-12 cyber-card rounded-2xl border border-dashed border-slate-700 text-slate-400 text-center space-y-2">
                         <Swords className="w-12 h-12 text-slate-600 mb-2" />
-                        <p className="text-lg font-medium text-slate-300">Nenhum torneio encontrado</p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-lg font-bold font-orbitron text-slate-300">Nenhum torneio encontrado</p>
+                        <p className="text-sm font-rajdhani text-slate-500">
                             {statusFilter === 'all'
                                 ? 'Nenhum torneio foi criado ainda neste servidor.'
                                 : `Não há torneios com status "${statusFilter}".`}
@@ -169,67 +179,73 @@ export default function TournamentsPage() {
                         {filteredTournaments.map((tournament) => {
                             const percentFilled = Math.min(100, Math.round((tournament.participant_count / tournament.max_participants) * 100))
                             const hasWinners = tournament.winner || tournament.second_place || tournament.third_place
+                            const isFinished = tournament.status === 'finished' || !!tournament.winner
 
                             return (
                                 <div
                                     key={tournament.id}
-                                    className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/40 transition-all rounded-xl p-6 flex flex-col justify-between space-y-5 shadow-sm"
+                                    className={cn(
+                                        "cyber-card rounded-2xl p-6 flex flex-col justify-between space-y-5 relative overflow-hidden group",
+                                        isFinished ? "laser-top-gold hover:border-yellow-500/50" : "laser-top-cyan hover:border-cyan-500/50"
+                                    )}
                                 >
                                     {/* Header & Badges */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         <div className="flex items-start justify-between gap-3">
-                                            <div>
-                                                <div className="flex items-center gap-2 flex-wrap mb-1">
-                                                    <span className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
-                                                        <Gamepad2 className="w-3.5 h-3.5" />
-                                                        {tournament.game_name}
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="px-2.5 py-1 rounded-md text-xs font-bold font-orbitron bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                                                        <Gamepad2 className="w-3.5 h-3.5 text-cyan-400" />
+                                                        {tournament.game_name.toUpperCase()}
                                                     </span>
-                                                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-slate-700/60 text-slate-300">
+                                                    <span className="px-2.5 py-1 rounded-md text-xs font-bold font-orbitron bg-purple-950/60 text-purple-300 border border-purple-500/40">
                                                         {tournament.format}
                                                     </span>
                                                     <span className={cn(
-                                                        "px-2 py-0.5 rounded-md text-xs font-medium border",
+                                                        "px-2.5 py-1 rounded-md text-xs font-bold font-orbitron border",
                                                         tournament.tournament_type === 'round_robin'
-                                                            ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
-                                                            : "bg-purple-500/10 text-purple-300 border-purple-500/30"
+                                                            ? "bg-amber-950/60 text-amber-300 border-amber-500/40"
+                                                            : "bg-indigo-950/60 text-indigo-300 border-indigo-500/40"
                                                     )}>
-                                                        {tournament.tournament_type === 'round_robin' ? 'Pontos Corridos' : 'Mata-Mata'}
+                                                        {tournament.tournament_type === 'round_robin' ? 'PONTOS CORRIDOS' : 'MATA-MATA'}
                                                     </span>
                                                 </div>
-                                                <h4 className="text-xl font-bold text-white leading-tight">
+                                                <h4 className="text-xl sm:text-2xl font-black text-white font-orbitron tracking-wide leading-tight group-hover:text-cyan-300 transition-colors">
                                                     {tournament.name}
                                                 </h4>
                                             </div>
                                             {getStatusBadge(tournament.status)}
                                         </div>
 
-                                        {/* Prize & Info */}
-                                        <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-300 pt-1">
+                                        {/* Prize & Creation Date */}
+                                        <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm pt-1">
                                             {tournament.prize && (
-                                                <div className="flex items-center gap-1.5 text-yellow-400 font-medium bg-yellow-500/10 border border-yellow-500/20 px-2.5 py-1 rounded-lg">
-                                                    <Award className="w-4 h-4" />
-                                                    <span>Prêmio: {tournament.prize}</span>
+                                                <div className="flex items-center gap-2 text-yellow-300 font-bold font-orbitron bg-gradient-to-r from-yellow-950/80 to-amber-950/60 border border-yellow-500/50 px-3 py-1 rounded-lg shadow-[0_0_15px_rgba(255,215,0,0.15)]">
+                                                    <Award className="w-4 h-4 text-yellow-400" />
+                                                    <span>PRÊMIO: {tournament.prize}</span>
                                                 </div>
                                             )}
-                                            <div className="flex items-center gap-1.5 text-slate-400">
-                                                <Clock className="w-4 h-4 text-purple-400" />
+                                            <div className="flex items-center gap-1.5 text-slate-400 font-rajdhani font-medium">
+                                                <Clock className="w-3.5 h-3.5 text-cyan-400" />
                                                 <span>Criado em {formatDate(tournament.created_at)}</span>
                                             </div>
                                         </div>
 
                                         {/* Capacity Progress Bar */}
-                                        <div className="space-y-1.5 pt-2">
-                                            <div className="flex justify-between text-xs text-slate-400">
-                                                <span>Vagas preenchidas</span>
-                                                <span className="font-semibold text-slate-200">
+                                        <div className="space-y-1.5 pt-1">
+                                            <div className="flex justify-between text-xs font-rajdhani font-semibold">
+                                                <span className="text-slate-400">Vagas Preenchidas</span>
+                                                <span className="text-cyan-300 font-orbitron">
                                                     {tournament.participant_count} / {tournament.max_participants} ({percentFilled}%)
                                                 </span>
                                             </div>
-                                            <div className="w-full bg-slate-700/60 h-2 rounded-full overflow-hidden">
+                                            <div className="w-full bg-slate-900/90 h-2.5 rounded-full overflow-hidden border border-slate-800">
                                                 <div
                                                     className={cn(
-                                                        "h-full rounded-full transition-all duration-500",
-                                                        percentFilled >= 100 ? "bg-emerald-500" : "bg-purple-600"
+                                                        "h-full rounded-full transition-all duration-500 bg-gradient-to-r",
+                                                        percentFilled >= 100
+                                                            ? "from-emerald-500 to-cyan-400 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                                                            : "from-cyan-500 via-purple-500 to-pink-500 shadow-[0_0_10px_rgba(0,240,255,0.5)]"
                                                     )}
                                                     style={{ width: `${percentFilled}%` }}
                                                 />
@@ -237,7 +253,7 @@ export default function TournamentsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Podium / Winners Section */}
+                                    {/* Podium / Winners Section matching image_generator styles */}
                                     {hasWinners && (() => {
                                         const winnerTeam = (tournament.winner_team && tournament.winner_team.length > 0)
                                             ? tournament.winner_team
@@ -254,27 +270,27 @@ export default function TournamentsPage() {
                                         const getTeamLabel = (team: typeof winnerTeam, rank: 1 | 2 | 3) => {
                                             const isTeam = team.length > 1
                                             if (rank === 1) return isTeam ? (team.length === 2 ? 'Dupla Campeã' : 'Equipe Campeã') : 'Campeão'
-                                            if (rank === 2) return isTeam ? (team.length === 2 ? '2º Lugar (Dupla)' : '2º Lugar (Equipe)') : '2º Lugar'
-                                            return isTeam ? (team.length === 2 ? '3º Lugar (Dupla)' : '3º Lugar (Equipe)') : '3º Lugar'
+                                            if (rank === 2) return isTeam ? (team.length === 2 ? 'Vice (Dupla)' : 'Vice (Equipe)') : '2º Lugar'
+                                            return isTeam ? (team.length === 2 ? '3º (Dupla)' : '3º (Equipe)') : '3º Lugar'
                                         }
 
                                         return (
-                                            <div className="bg-slate-900/60 rounded-lg p-3.5 border border-slate-700/40 space-y-2">
-                                                <div className="flex items-center justify-between text-xs text-slate-400 mb-2 font-medium">
-                                                    <span className="flex items-center gap-1 text-yellow-400">
-                                                        <Trophy className="w-3.5 h-3.5" /> Pódio do Torneio
+                                            <div className="bg-slate-950/80 rounded-xl p-4 border border-yellow-500/30 shadow-[inset_0_0_20px_rgba(255,215,0,0.05)] space-y-3">
+                                                <div className="flex items-center justify-between text-xs font-orbitron font-bold">
+                                                    <span className="flex items-center gap-1.5 text-yellow-400">
+                                                        <Trophy className="w-4 h-4 text-yellow-400" /> PÓDIO DO CONFRONTO
                                                     </span>
                                                     {tournament.final_score && (
-                                                        <span className="text-slate-300">
-                                                            Placar: <strong className="text-white">{tournament.final_score}</strong>
+                                                        <span className="text-slate-300 font-mono bg-slate-900 px-2.5 py-0.5 rounded border border-slate-700">
+                                                            PLACAR: <strong className="text-cyan-400">{tournament.final_score}</strong>
                                                         </span>
                                                     )}
                                                 </div>
 
-                                                <div className="grid grid-cols-3 gap-2">
-                                                    {/* 1st Place */}
-                                                    <div className="flex flex-col items-center text-center p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-                                                        <div className="relative mb-1.5 flex items-center justify-center">
+                                                <div className="grid grid-cols-3 gap-2.5">
+                                                    {/* 1st Place - Gold */}
+                                                    <div className="flex flex-col items-center text-center p-2.5 rounded-xl bg-gradient-to-b from-yellow-950/60 to-amber-950/30 border border-yellow-500/50 shadow-[0_0_15px_rgba(255,215,0,0.15)] relative">
+                                                        <div className="relative mb-2 flex items-center justify-center">
                                                             {winnerTeam.length > 1 ? (
                                                                 <div className="flex -space-x-2 overflow-hidden py-0.5 px-1">
                                                                     {winnerTeam.map((member, idx) => (
@@ -282,7 +298,7 @@ export default function TournamentsPage() {
                                                                             key={member.user_id || idx}
                                                                             user={member}
                                                                             size="sm"
-                                                                            className="ring-2 ring-yellow-400 bg-slate-900"
+                                                                            className="ring-2 ring-yellow-400 bg-slate-900 shadow-[0_0_10px_rgba(255,215,0,0.5)]"
                                                                         />
                                                                     ))}
                                                                 </div>
@@ -290,24 +306,24 @@ export default function TournamentsPage() {
                                                                 <UserAvatar
                                                                     user={winnerTeam[0] || tournament.winner || undefined}
                                                                     size="sm"
-                                                                    className="ring-2 ring-yellow-400"
+                                                                    className="ring-2 ring-yellow-400 shadow-[0_0_12px_rgba(255,215,0,0.6)]"
                                                                 />
                                                             )}
-                                                            <span className="absolute -top-1 -right-1.5 w-4 h-4 rounded-full bg-yellow-500 text-slate-950 font-black text-[10px] flex items-center justify-center shadow">
+                                                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-yellow-400 text-slate-950 font-black font-orbitron text-[10px] flex items-center justify-center shadow-lg">
                                                                 1
                                                             </span>
                                                         </div>
-                                                        <span className="text-xs font-semibold text-yellow-300 truncate w-full" title={winnerTeam.map(m => m.username).join(' & ')}>
+                                                        <span className="text-xs font-bold font-rajdhani text-yellow-300 truncate w-full" title={winnerTeam.map(m => m.username).join(' & ')}>
                                                             {winnerTeam.length > 0 ? winnerTeam.map(m => m.username).join(' & ') : '—'}
                                                         </span>
-                                                        <span className="text-[10px] text-yellow-500 font-bold uppercase mt-0.5">
+                                                        <span className="text-[10px] font-bold font-orbitron text-yellow-500 uppercase mt-0.5 tracking-wider">
                                                             {getTeamLabel(winnerTeam, 1)}
                                                         </span>
                                                     </div>
 
-                                                    {/* 2nd Place */}
-                                                    <div className="flex flex-col items-center text-center p-2 rounded-lg bg-slate-700/30 border border-slate-600/40">
-                                                        <div className="relative mb-1.5 flex items-center justify-center">
+                                                    {/* 2nd Place - Silver */}
+                                                    <div className="flex flex-col items-center text-center p-2.5 rounded-xl bg-slate-900/60 border border-slate-500/40">
+                                                        <div className="relative mb-2 flex items-center justify-center">
                                                             {secondTeam.length > 1 ? (
                                                                 <div className="flex -space-x-2 overflow-hidden py-0.5 px-1">
                                                                     {secondTeam.map((member, idx) => (
@@ -326,21 +342,21 @@ export default function TournamentsPage() {
                                                                     className="ring-2 ring-slate-300"
                                                                 />
                                                             )}
-                                                            <span className="absolute -top-1 -right-1.5 w-4 h-4 rounded-full bg-slate-300 text-slate-950 font-black text-[10px] flex items-center justify-center shadow">
+                                                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-slate-300 text-slate-950 font-black font-orbitron text-[10px] flex items-center justify-center shadow">
                                                                 2
                                                             </span>
                                                         </div>
-                                                        <span className="text-xs font-medium text-slate-200 truncate w-full" title={secondTeam.map(m => m.username).join(' & ')}>
+                                                        <span className="text-xs font-semibold font-rajdhani text-slate-200 truncate w-full" title={secondTeam.map(m => m.username).join(' & ')}>
                                                             {secondTeam.length > 0 ? secondTeam.map(m => m.username).join(' & ') : '—'}
                                                         </span>
-                                                        <span className="text-[10px] text-slate-400 uppercase mt-0.5">
+                                                        <span className="text-[10px] font-bold font-orbitron text-slate-400 uppercase mt-0.5">
                                                             {getTeamLabel(secondTeam, 2)}
                                                         </span>
                                                     </div>
 
-                                                    {/* 3rd Place */}
-                                                    <div className="flex flex-col items-center text-center p-2 rounded-lg bg-amber-950/20 border border-amber-700/30">
-                                                        <div className="relative mb-1.5 flex items-center justify-center">
+                                                    {/* 3rd Place - Bronze */}
+                                                    <div className="flex flex-col items-center text-center p-2.5 rounded-xl bg-amber-950/20 border border-amber-700/40">
+                                                        <div className="relative mb-2 flex items-center justify-center">
                                                             {thirdTeam.length > 1 ? (
                                                                 <div className="flex -space-x-2 overflow-hidden py-0.5 px-1">
                                                                     {thirdTeam.map((member, idx) => (
@@ -359,14 +375,14 @@ export default function TournamentsPage() {
                                                                     className="ring-2 ring-amber-600"
                                                                 />
                                                             )}
-                                                            <span className="absolute -top-1 -right-1.5 w-4 h-4 rounded-full bg-amber-600 text-white font-black text-[10px] flex items-center justify-center shadow">
+                                                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-600 text-white font-black font-orbitron text-[10px] flex items-center justify-center shadow">
                                                                 3
                                                             </span>
                                                         </div>
-                                                        <span className="text-xs font-medium text-amber-200 truncate w-full" title={thirdTeam.map(m => m.username).join(' & ')}>
+                                                        <span className="text-xs font-semibold font-rajdhani text-amber-200 truncate w-full" title={thirdTeam.map(m => m.username).join(' & ')}>
                                                             {thirdTeam.length > 0 ? thirdTeam.map(m => m.username).join(' & ') : '—'}
                                                         </span>
-                                                        <span className="text-[10px] text-amber-600 uppercase mt-0.5">
+                                                        <span className="text-[10px] font-bold font-orbitron text-amber-600 uppercase mt-0.5">
                                                             {getTeamLabel(thirdTeam, 3)}
                                                         </span>
                                                     </div>
@@ -376,9 +392,9 @@ export default function TournamentsPage() {
                                     })()}
 
                                     {/* Footer */}
-                                    <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                                        <span>ID: #{tournament.id}</span>
-                                        <span>{tournament.participant_count} {tournament.participant_count === 1 ? 'inscrito' : 'inscritos'}</span>
+                                    <div className="flex items-center justify-between text-xs font-mono text-slate-500 pt-2 border-t border-slate-800">
+                                        <span className="text-cyan-400/80">#TORNEIO-{tournament.id}</span>
+                                        <span className="font-rajdhani font-semibold text-slate-400">{tournament.participant_count} {tournament.participant_count === 1 ? 'competidor' : 'competidores'}</span>
                                     </div>
                                 </div>
                             )
