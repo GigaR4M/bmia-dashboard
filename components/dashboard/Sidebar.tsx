@@ -10,7 +10,6 @@ import { ServerSelector } from './ServerSelector'
 
 const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Comandos', href: '/dashboard/commands', icon: TerminalSquare },
     { name: 'Leaderboard', href: '/dashboard/leaderboard', icon: Trophy },
     { name: 'Usuários', href: '/stats/users', icon: Users },
     { name: 'Moderação & Dossiês', href: '/stats/moderation', icon: ShieldAlert },
@@ -21,6 +20,7 @@ const navigation = [
     { name: 'Torneios', href: '/stats/tournaments', icon: Swords },
     { name: 'Sorteios', href: '/stats/giveaways', icon: Gift },
     { name: 'Embeds', href: '/dashboard/embed', icon: MessageSquare },
+    { name: 'Comandos', href: '/dashboard/commands', icon: TerminalSquare },
 ]
 
 interface SidebarProps {

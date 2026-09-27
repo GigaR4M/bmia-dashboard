@@ -19,10 +19,8 @@ import {
     ShieldCheck,
     Bot,
     MousePointerClick,
-    ExternalLink,
     Zap,
-    Users,
-    Flame
+    Users
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -53,28 +51,25 @@ interface CommandCategory {
     icon: any
     color: string
     borderAccent: string
-    badgeBg: string
     description: string
 }
 
 const CATEGORIES: CommandCategory[] = [
     {
         id: 'tournaments',
-        name: 'Torneios & Esports',
+        name: 'Torneios & Campeonatos',
         icon: Swords,
         color: 'text-cyan-400',
         borderAccent: 'border-cyan-500/40 hover:border-cyan-400/80',
-        badgeBg: 'bg-cyan-950/70 text-cyan-300 border-cyan-500/40',
-        description: 'Gestão completa de campeonatos multijogo (1v1 a 5v5, Mata-mata e Pontos Corridos) com geração visual de chaves e pódios.'
+        description: 'Gestão de torneios multijogo (1v1 a 5v5, Mata-mata e Pontos Corridos), geração de brackets visuais, sorteios de chaves e pódios.'
     },
     {
         id: 'steam',
-        name: 'Steam, Ofertas & Eventos',
+        name: 'Steam & Jogos Monitorados',
         icon: Tag,
         color: 'text-emerald-400',
         borderAccent: 'border-emerald-500/40 hover:border-emerald-400/80',
-        badgeBg: 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40',
-        description: 'Rastreamento de promoções diárias com histórico de menor preço e calendário oficial de festivais Steamworks.'
+        description: 'Calendário de festivais Steamworks e monitoramento de jogos da comunidade com histórico de menor preço.'
     },
     {
         id: 'security',
@@ -82,17 +77,15 @@ const CATEGORIES: CommandCategory[] = [
         icon: ShieldAlert,
         color: 'text-rose-400',
         borderAccent: 'border-rose-500/40 hover:border-rose-400/80',
-        badgeBg: 'bg-rose-950/70 text-rose-300 border-rose-500/40',
-        description: 'Dossiês de reputação (Trust Score), denúncias por clique direito com deleção automática de mensagens e AutoMod por IA.'
+        description: 'Dossiês confidenciais com Trust Score, denúncias por clique direito com deleção automática e AutoMod por IA Gemini.'
     },
     {
         id: 'giveaways',
-        name: 'Sorteios & Giveaways',
+        name: 'Sorteios & Premiações',
         icon: Gift,
         color: 'text-purple-400',
         borderAccent: 'border-purple-500/40 hover:border-purple-400/80',
-        badgeBg: 'bg-purple-950/70 text-purple-300 border-purple-500/40',
-        description: 'Sistemas de premiação com contagem regressiva, seleção de vencedores justos e suporte a rerolls.'
+        description: 'Criação e gerenciamento de sorteios com temporizador, apuração de ganhadores, rerolls e cancelamento.'
     },
     {
         id: 'stats',
@@ -100,35 +93,31 @@ const CATEGORIES: CommandCategory[] = [
         icon: Trophy,
         color: 'text-yellow-400',
         borderAccent: 'border-yellow-500/40 hover:border-yellow-400/80',
-        badgeBg: 'bg-yellow-950/70 text-yellow-300 border-yellow-500/40',
-        description: 'Rank Cards gerados em imagem, histórico de voz e mensagens, leaderboard global e retrospectiva anual de destaques.'
+        description: 'Rank Cards em imagem, pontuação por mensagens e voz, leaderboards persistentes, retrospectiva de destaques e gestão de XP.'
     },
     {
         id: 'games',
-        name: 'Enciclopédia de Games (RAWG)',
+        name: 'Jogos & Enciclopédia RAWG',
         icon: Gamepad2,
         color: 'text-indigo-400',
         borderAccent: 'border-indigo-500/40 hover:border-indigo-400/80',
-        badgeBg: 'bg-indigo-950/70 text-indigo-300 border-indigo-500/40',
-        description: 'Busca de notas Metacritic, detalhes de desenvolvedoras, plataformas e próximos lançamentos de games.'
+        description: 'Busca de fichas técnicas no RAWG com autocomplete em tempo real e rankings de jogos mais jogados no servidor.'
     },
     {
         id: 'roles',
-        name: 'Cargos Dinâmicos & Reações',
+        name: 'Cargos Automáticos',
         icon: Sliders,
         color: 'text-pink-400',
         borderAccent: 'border-pink-500/40 hover:border-pink-400/80',
-        badgeBg: 'bg-pink-950/70 text-pink-300 border-pink-500/40',
-        description: 'Progressão de cargos por tempo de casa e nível de XP, além de painéis interativos de auto-atribuição.'
+        description: 'Configuração e sincronização automática de cargos atribuídos por nível de XP ou tempo de casa (dias no servidor).'
     },
     {
         id: 'config',
-        name: 'Configurações & Administração',
+        name: 'Configurações & Moderação IA',
         icon: Settings,
         color: 'text-amber-400',
         borderAccent: 'border-amber-500/40 hover:border-amber-400/80',
-        badgeBg: 'bg-amber-950/70 text-amber-300 border-amber-500/40',
-        description: 'Controle de canais permitidos, canais de anúncios de moderação, auditoria e ativação do AutoMod Gemini.'
+        description: 'Configuração de canais pontuáveis, canais ignorados, canal de alertas da moderação e ativação do filtro de IA.'
     },
     {
         id: 'utils',
@@ -136,610 +125,1048 @@ const CATEGORIES: CommandCategory[] = [
         icon: HelpCircle,
         color: 'text-sky-400',
         borderAccent: 'border-sky-500/40 hover:border-sky-400/80',
-        badgeBg: 'bg-sky-950/70 text-sky-300 border-sky-500/40',
-        description: 'Pesquisa de GIFs Giphy, métricas de hardware, latência de WebSocket e tempo online do bot.'
+        description: 'Pesquisa rápida de GIFs animados via Giphy e guia explicativo do sistema de pontos.'
     }
 ]
 
 const COMMANDS: CommandItem[] = [
-    // --- TORNEIOS ---
+    // ==========================================
+    // 1. TORNEIOS & CAMPEONATOS (/torneio ...)
+    // ==========================================
     {
         name: '/torneio criar',
-        syntax: '/torneio criar',
-        description: 'Abre modal interativo para criar e configurar um novo torneio.',
-        detailedExplanation: 'Exibe uma janela modal para configurar nome do campeonato, jogo, formato (1v1, 2v2, 3v3, etc.), tipo de chaveamento (Mata-mata ou Pontos Corridos), limite de participantes (até 32 vagas) e premiação opcional.',
-        category: 'Torneios & Esports',
-        categoryId: 'tournaments',
-        permission: 'moderator',
-        type: 'slash',
-        example: '/torneio criar',
-        tags: ['Modal Interativo', 'Esports', 'Chaveamento']
-    },
-    {
-        name: '/torneio painel',
-        syntax: '/torneio painel [torneio_id]',
-        description: 'Envia o painel interativo com botões de inscrição e visualização da chave.',
-        detailedExplanation: 'Gera um painel dinâmico no canal com botões para os membros se inscreverem, registrarem suas duplas/equipes, verem o chaveamento renderizado e regras.',
-        category: 'Torneios & Esports',
+        syntax: '/torneio criar [nome] [jogo] [formato] [tipo] [vagas] [premio] [canal]',
+        description: 'Cria um novo torneio com embed interativo e botões de inscrição no canal.',
+        detailedExplanation: 'Inicia um campeonato definindo formato (1v1 a 5v5), modalidade (Mata-mata ou Pontos Corridos), limite de 2 a 32 participantes, premiação opcional e canal de anúncios.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'torneio_id', description: 'ID do torneio (opcional se houver apenas 1 ativo)', required: false, type: 'número' }
+            { name: 'nome', description: 'Nome oficial do torneio', required: true, type: 'texto' },
+            { name: 'jogo', description: 'Jogo disputado', required: true, type: 'texto' },
+            { name: 'formato', description: 'Formato do time (1v1, 2v2, 3v3, 4v4, 5v5)', required: true, type: 'opção' },
+            { name: 'tipo', description: 'Mata-mata (eliminatórias) ou Pontos Corridos (liga)', required: true, type: 'opção' },
+            { name: 'vagas', description: 'Quantidade máxima de vagas (2 a 32)', required: true, type: 'número' },
+            { name: 'premio', description: 'Premiação do torneio (opcional)', required: false, type: 'texto' },
+            { name: 'canal', description: 'Canal onde o painel será enviado (opcional)', required: false, type: 'canal' }
         ],
-        example: '/torneio painel torneio_id: 1',
-        tags: ['Painel Dinâmico', 'Inscrições']
+        example: '/torneio criar nome: Torneio de Verão jogo: Rocket League formato: 2v2 tipo: Mata-mata vagas: 8 premio: VIP 30 dias',
+        tags: ['Torneios', 'Inscrições', 'Esports']
     },
     {
-        name: '/torneio chave',
-        syntax: '/torneio chave [torneio_id]',
-        description: 'Renderiza e exibe a imagem oficial com o chaveamento atualizado (bracket).',
-        detailedExplanation: 'Gera uma imagem de alta resolução com as chaves eliminatórias, confrontos, nomes dos competidores/duplas e o estado do avanço.',
-        category: 'Torneios & Esports',
+        name: '/torneio formulario',
+        syntax: '/torneio formulario',
+        description: 'Abre o assistente com formulário visual (Modal) para criar um torneio.',
+        detailedExplanation: 'Abre uma janela modal intuitiva para preencher todos os dados do campeonato sem precisar digitar os parâmetros na linha de comando.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'moderator',
+        type: 'slash',
+        example: '/torneio formulario',
+        tags: ['Modal Interativo', 'Assistente']
+    },
+    {
+        name: '/torneio resultado',
+        syntax: '/torneio resultado [partida_id]',
+        description: 'Abre modal para lançar placar e classificação da partida.',
+        detailedExplanation: 'Interface visual para moderadores registrarem pontuações detalhadas de confrontos de mata-mata ou rodadas de liga.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'partida_id', description: 'ID da partida que deseja registrar o resultado', required: true, type: 'número' }
+        ],
+        example: '/torneio resultado partida_id: 12',
+        tags: ['Placar', 'Modal']
+    },
+    {
+        name: '/torneio chaveamento',
+        syntax: '/torneio chaveamento [torneio_id]',
+        description: 'Gera a imagem oficial do chaveamento/bracket do torneio (Mata-Mata).',
+        detailedExplanation: 'Renderiza graficamente a árvore de confrontos completa com avanço de vencedores até a grande final.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'torneio_id', description: 'ID do torneio a ser consultado', required: false, type: 'número' }
+            { name: 'torneio_id', description: 'ID do torneio (opcional se houver apenas um ativo)', required: false, type: 'número' }
         ],
-        example: '/torneio chave torneio_id: 2',
-        tags: ['Imagem Visual', 'Chaveamento']
+        example: '/torneio chaveamento torneio_id: 1',
+        tags: ['Bracket', 'Imagem Visual']
     },
     {
-        name: '/torneio partidas',
-        syntax: '/torneio partidas [torneio_id] [rodada]',
-        description: 'Lista todas as partidas e confrontos da rodada do torneio.',
-        detailedExplanation: 'Exibe o status de cada confronto da rodada atual, informando IDs de partida para lançamento de resultados pelos moderadores.',
-        category: 'Torneios & Esports',
+        name: '/torneio tabela',
+        syntax: '/torneio tabela [torneio_id]',
+        description: 'Gera a imagem oficial da tabela de classificação da liga (Pontos Corridos).',
+        detailedExplanation: 'Renderiza a tabela com jogos, vitórias, empates, derrotas, saldo e pontuação acumulada de cada participante.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'torneio_id', description: 'ID do torneio de liga', required: false, type: 'número' }
+        ],
+        example: '/torneio tabela torneio_id: 2',
+        tags: ['Classificação', 'Liga']
+    },
+    {
+        name: '/torneio sortear',
+        syntax: '/torneio sortear [torneio_id]',
+        description: 'Sorteia aleatoriamente as chaves eliminatórias ou rodadas da liga.',
+        detailedExplanation: 'Distribui os competidores ou duplas inscritas nas chaves e gera as partidas da primeira rodada.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'torneio_id', description: 'ID do torneio a ser sorteado', required: true, type: 'número' }
+        ],
+        example: '/torneio sortear torneio_id: 1',
+        tags: ['Sorteio de Chaves', 'Staff Only']
+    },
+    {
+        name: '/torneio partida',
+        syntax: '/torneio partida [partida_id] [vencedor] [placar]',
+        description: 'Registra o placar de uma partida e avança a fase ou pontua na liga.',
+        detailedExplanation: 'Define o vencedor do confronto, atualiza o placar e avança automaticamente o ganhador para a próxima fase no chaveamento.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'partida_id', description: 'ID numérico da partida', required: true, type: 'número' },
+            { name: 'vencedor', description: 'Membro ou capitão vencedor', required: true, type: 'usuário' },
+            { name: 'placar', description: 'Placar final (ex: 2x1, 16-10)', required: false, type: 'texto' }
+        ],
+        example: '/torneio partida partida_id: 5 vencedor: @Player placar: 2x0',
+        tags: ['Avanço Automático', 'Partidas']
+    },
+    {
+        name: '/torneio status',
+        syntax: '/torneio status [torneio_id]',
+        description: 'Exibe detalhes completos, regras e lista de inscritos de um torneio.',
+        detailedExplanation: 'Mostra o status atual das inscrições, competidores cadastrados, duplas formadas e histórico de rodadas.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'torneio_id', description: 'ID do torneio', required: false, type: 'número' }
+        ],
+        example: '/torneio status torneio_id: 1',
+        tags: ['Inscritos', 'Detalhes']
+    },
+    {
+        name: '/torneio rodadas',
+        syntax: '/torneio rodadas [torneio_id] [rodada]',
+        description: 'Exibe o calendário de jogos e resultados das rodadas da liga.',
+        detailedExplanation: 'Lista os confrontos programados e encerrados de uma rodada específica em torneios de pontos corridos.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
         permission: 'everyone',
         type: 'slash',
         params: [
             { name: 'torneio_id', description: 'ID do torneio', required: false, type: 'número' },
-            { name: 'rodada', description: 'Número específico da rodada para filtrar', required: false, type: 'número' }
+            { name: 'rodada', description: 'Número da rodada', required: false, type: 'número' }
         ],
-        example: '/torneio partidas torneio_id: 1 rodada: 1',
-        tags: ['Partidas', 'Rodadas']
+        example: '/torneio rodadas torneio_id: 2 rodada: 1',
+        tags: ['Rodadas', 'Liga']
     },
     {
-        name: '/torneio vencedor',
-        syntax: '/torneio vencedor [partida_id] [vencedor] [placar]',
-        description: 'Registra o vencedor de uma partida e avança o competidor na chave.',
-        detailedExplanation: 'Valida a pontuação, declara o ganhador da partida, atualiza a árvore de mata-mata automaticamente e notifica os competidores.',
-        category: 'Torneios & Esports',
+        name: '/torneio listar',
+        syntax: '/torneio listar [status] [jogo]',
+        description: 'Lista os torneios abertos ou recentes do servidor.',
+        detailedExplanation: 'Exibe todos os campeonatos cadastrados com filtros opcionais por estado (open, active, finished) e jogo.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'status', description: 'Filtrar por status (open, active, finished)', required: false, type: 'opção' },
+            { name: 'jogo', description: 'Filtrar por nome do jogo', required: false, type: 'texto' }
+        ],
+        example: '/torneio listar status: open',
+        tags: ['Histórico', 'Listagem']
+    },
+    {
+        name: '/torneio halldafama',
+        syntax: '/torneio halldafama [jogo]',
+        description: 'Exibe os maiores campeões e medalhistas de torneios do servidor.',
+        detailedExplanation: 'Mostra o ranking histórico de títulos (ouro, prata e bronze) acumulados pelos membros da comunidade.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'jogo', description: 'Filtrar histórico por jogo específico', required: false, type: 'texto' }
+        ],
+        example: '/torneio halldafama',
+        tags: ['Hall da Fama', 'Pódio']
+    },
+    {
+        name: '/torneio encerrar',
+        syntax: '/torneio encerrar [torneio_id] [vencedor] [segundo] [terceiro]',
+        description: 'Encerra um torneio, define o pódio oficial e distribui pontos de XP.',
+        detailedExplanation: 'Finaliza o campeonato, grava os campeões no banco de dados e concede as pontuações de premiação.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'partida_id', description: 'ID da partida registrado no torneio', required: true, type: 'número' },
-            { name: 'vencedor', description: 'Membro ou capitão vencedor', required: true, type: 'usuário' },
-            { name: 'placar', description: 'Placar final do confronto (ex: 2x1, 16-12)', required: false, type: 'texto' }
+            { name: 'torneio_id', description: 'ID do torneio a encerrar', required: true, type: 'número' },
+            { name: 'vencedor', description: 'Membro campeão (1º lugar)', required: true, type: 'usuário' },
+            { name: 'segundo', description: 'Membro vice-campeão (2º lugar)', required: false, type: 'usuário' },
+            { name: 'terceiro', description: 'Membro em 3º lugar', required: false, type: 'usuário' }
         ],
-        example: '/torneio vencedor partida_id: 4 vencedor: @Player1 placar: 2x1',
-        tags: ['Avanço Automático', 'Staff Only']
+        example: '/torneio encerrar torneio_id: 1 vencedor: @Ganhador segundo: @Vice',
+        tags: ['Encerramento', 'Premiação']
     },
     {
         name: '/torneio cancelar',
         syntax: '/torneio cancelar [torneio_id] [motivo]',
-        description: 'Cancela um torneio ativo ou em inscrições abertas.',
-        detailedExplanation: 'Encerra o torneio, fecha as inscrições e notifica os participantes com a justificativa informada.',
-        category: 'Torneios & Esports',
+        description: 'Cancela um torneio aberto ou em andamento.',
+        detailedExplanation: 'Cancela o campeonato e notifica os participantes com a justificativa informada.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'torneio_id', description: 'ID do torneio a ser cancelado', required: true, type: 'número' },
-            { name: 'motivo', description: 'Motivo do cancelamento', required: false, type: 'texto' }
+            { name: 'torneio_id', description: 'ID do torneio', required: true, type: 'número' },
+            { name: 'motivo', description: 'Motivo do cancelamento (opcional)', required: false, type: 'texto' }
         ],
-        example: '/torneio cancelar torneio_id: 3 motivo: Adiado para o próximo final de semana',
+        example: '/torneio cancelar torneio_id: 3 motivo: Falta de quórum',
         tags: ['Cancelamento', 'Staff Only']
     },
     {
-        name: '/torneio listar',
-        syntax: '/torneio listar',
-        description: 'Lista todos os torneios abertos, em andamento ou finalizados do servidor.',
-        detailedExplanation: 'Exibe uma listagem consolidada com status, vagas preenchidas, jogo e premiações.',
-        category: 'Torneios & Esports',
+        name: '/torneio participante_adicionar',
+        syntax: '/torneio participante_adicionar [membro] [torneio_id] [dupla]',
+        description: '[ADM] Inscreve manualmente um membro ou dupla no torneio.',
+        detailedExplanation: 'Inscreve diretamente um jogador no torneio sem necessidade de clique no botão do painel.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
-        permission: 'everyone',
+        permission: 'admin',
         type: 'slash',
-        example: '/torneio listar',
-        tags: ['Listagem', 'Histórico']
+        params: [
+            { name: 'membro', description: 'Membro que será inscrito', required: true, type: 'usuário' },
+            { name: 'torneio_id', description: 'ID do torneio', required: true, type: 'número' },
+            { name: 'dupla', description: 'Membro parceiro em torneios 2v2 (opcional)', required: false, type: 'usuário' }
+        ],
+        example: '/torneio participante_adicionar membro: @GigaR4M torneio_id: 1',
+        tags: ['Gerência', 'Admin Only']
     },
     {
-        name: '/torneio regras',
-        syntax: '/torneio regras [torneio_id]',
-        description: 'Exibe o regulamento oficial e orientações para os competidores.',
-        detailedExplanation: 'Mostra as diretrizes de conduta, prazos de tolerância, critérios de desempate e normas técnicas.',
-        category: 'Torneios & Esports',
+        name: '/torneio participante_remover',
+        syntax: '/torneio participante_remover [membro] [torneio_id]',
+        description: '[ADM] Remove manualmente um membro ou equipe do torneio.',
+        detailedExplanation: 'Desinscreve um competidor liberando a vaga no torneio.',
+        category: 'Torneios & Campeonatos',
         categoryId: 'tournaments',
-        permission: 'everyone',
+        permission: 'admin',
         type: 'slash',
-        example: '/torneio regras',
-        tags: ['Regulamento']
+        params: [
+            { name: 'membro', description: 'Membro que será removido', required: true, type: 'usuário' },
+            { name: 'torneio_id', description: 'ID do torneio', required: true, type: 'número' }
+        ],
+        example: '/torneio participante_remover membro: @Desistente torneio_id: 1',
+        tags: ['Gerência', 'Admin Only']
+    },
+    {
+        name: '/torneio participante_substituir',
+        syntax: '/torneio participante_substituir [membro_antigo] [novo_membro] [torneio_id]',
+        description: '[ADM] Substitui um jogador por outro mantendo as posições nas chaves.',
+        detailedExplanation: 'Substitui um competidor sem reiniciar ou alterar o chaveamento já sorteado.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'membro_antigo', description: 'Membro atual que vai sair', required: true, type: 'usuário' },
+            { name: 'novo_membro', description: 'Novo membro substituto', required: true, type: 'usuário' },
+            { name: 'torneio_id', description: 'ID do torneio', required: true, type: 'número' }
+        ],
+        example: '/torneio participante_substituir membro_antigo: @Ausente novo_membro: @Substituto torneio_id: 1',
+        tags: ['Substituição', 'Admin Only']
+    },
+    {
+        name: '/torneio evento_vincular',
+        syntax: '/torneio evento_vincular [torneio_id] [data_hora]',
+        description: 'Cria um Discord Scheduled Event oficial vinculado ao torneio.',
+        detailedExplanation: 'Gera um Evento Nativo do Discord no topo do servidor com contagem regressiva e aviso aos membros.',
+        category: 'Torneios & Campeonatos',
+        categoryId: 'tournaments',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'torneio_id', description: 'ID do torneio', required: true, type: 'número' },
+            { name: 'data_hora', description: 'Data e hora do evento (ex: 28/09/2026 19:00)', required: false, type: 'texto' }
+        ],
+        example: '/torneio evento_vincular torneio_id: 1 data_hora: 30/09/2026 20:00',
+        tags: ['Discord Event', 'Notificações']
     },
 
-    // --- STEAM & OFERTAS ---
-    {
-        name: '/steam promocoes',
-        syntax: '/steam promocoes',
-        description: 'Exibe as melhores promoções ativas com recorde histórico de menor preço.',
-        detailedExplanation: 'Consulta em tempo real a Steam Store e a API GG.deals para listar jogos em oferta, exibindo preço original, preço com desconto, porcentagem de desconto e menor preço já registrado (All-Time Low).',
-        category: 'Steam, Ofertas & Eventos',
-        categoryId: 'steam',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/steam promocoes',
-        tags: ['Promoções', 'Menor Preço', 'Steam']
-    },
+    // ==========================================
+    // 2. STEAM & JOGOS MONITORADOS (/steam, /jogos)
+    // ==========================================
     {
         name: '/steam eventos',
-        syntax: '/steam eventos',
-        description: 'Exibe o calendário oficial de eventos sazonais e festivais da Steam (Steamworks).',
-        detailedExplanation: 'Lista os próximos festivais temáticos, Steam Next Fest e Grandes Promoções Sazonais (Spring, Summer, Autumn, Winter Sale) com datas confirmadas e contagem regressiva.',
-        category: 'Steam, Ofertas & Eventos',
+        syntax: '/steam eventos [limite]',
+        description: 'Exibe o calendário oficial de eventos sazonais e festivais da Steam.',
+        detailedExplanation: 'Lista os próximos festivais temáticos, Grandes Promoções Sazonais e Next Fest do calendário oficial da Valve Steamworks com contagem regressiva.',
+        category: 'Steam & Jogos Monitorados',
         categoryId: 'steam',
         permission: 'everyone',
         type: 'slash',
-        example: '/steam eventos',
-        tags: ['Eventos Sazonais', 'Steamworks', 'Calendário']
+        params: [
+            { name: 'limite', description: 'Quantidade de eventos para listar (1 a 10, padrão: 5)', required: false, type: 'número' }
+        ],
+        example: '/steam eventos limite: 5',
+        tags: ['Steamworks', 'Festivais', 'Sazonal']
     },
     {
-        name: '/steam rastreados',
-        syntax: '/steam rastreados',
-        description: 'Lista todos os jogos da Steam monitorados automaticamente pelo servidor.',
-        detailedExplanation: 'Mostra os jogos cadastrados na lista de observação de descontos diários do servidor, informando status e canais configurados.',
-        category: 'Steam, Ofertas & Eventos',
+        name: '/steam evento_banner',
+        syntax: '/steam evento_banner [evento_slug] [banner_url]',
+        description: '[Admin] Atualiza a URL do banner visual para um evento da Steam.',
+        detailedExplanation: 'Permite aos administradores personalizar a imagem de destaque de qualquer evento do calendário com autocomplete de slugs.',
+        category: 'Steam & Jogos Monitorados',
+        categoryId: 'steam',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'evento_slug', description: 'Slug do evento (com autocomplete)', required: true, type: 'texto' },
+            { name: 'banner_url', description: 'Link direto da imagem do banner', required: false, type: 'texto' }
+        ],
+        example: '/steam evento_banner evento_slug: autumn-sale-2026 banner_url: https://...',
+        tags: ['Banners', 'Admin Only']
+    },
+    {
+        name: '/jogos monitorados',
+        syntax: '/jogos monitorados',
+        description: 'Exibe os jogos monitorados pela comunidade e promoções ativas.',
+        detailedExplanation: 'Lista todos os títulos cadastrados na lista de observação de ofertas do servidor, exibindo preço atual, desconto % e menor preço histórico.',
+        category: 'Steam & Jogos Monitorados',
         categoryId: 'steam',
         permission: 'everyone',
         type: 'slash',
-        example: '/steam rastreados',
-        tags: ['Monitoramento', 'Wishlist do Servidor']
+        example: '/jogos monitorados',
+        tags: ['Ofertas', 'Lista de Desejos']
     },
     {
-        name: '/steam rastrear',
-        syntax: '/steam rastrear [app_id_ou_link]',
-        description: 'Adiciona um novo jogo da Steam para rastreamento automático de ofertas.',
-        detailedExplanation: 'Insere o AppID ou URL da loja Steam no banco de dados. O bot verificará reduções de preço periodicamente e alertará o canal configurado.',
-        category: 'Steam, Ofertas & Eventos',
+        name: '/jogos adicionar',
+        syntax: '/jogos adicionar [link_ou_id]',
+        description: 'Adiciona um jogo da Steam à lista de monitoramento de ofertas.',
+        detailedExplanation: 'Insere o AppID ou link da Steam. O bot passa a checar quedas de preço periodicamente e avisa o canal do servidor.',
+        category: 'Steam & Jogos Monitorados',
         categoryId: 'steam',
-        permission: 'moderator',
+        permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'app_id_ou_link', description: 'AppID numérico ou link da loja Steam do jogo', required: true, type: 'texto' }
+            { name: 'link_ou_id', description: 'Link da loja Steam ou AppID numérico', required: true, type: 'texto' }
         ],
-        example: '/steam rastrear app_id_ou_link: https://store.steampowered.com/app/2358720/',
-        tags: ['Adicionar Jogo', 'Staff Only']
+        example: '/jogos adicionar link_ou_id: https://store.steampowered.com/app/2680010/',
+        tags: ['Adicionar Jogo', 'Monitoramento']
     },
     {
-        name: '/steam desrastrear',
-        syntax: '/steam desrastrear [app_id]',
-        description: 'Remove um jogo da lista de rastreamento de promoções.',
-        detailedExplanation: 'Interrompe o monitoramento de ofertas para o AppID especificado.',
-        category: 'Steam, Ofertas & Eventos',
+        name: '/jogos remover',
+        syntax: '/jogos remover [link_ou_id]',
+        description: '[Admin] Remove um jogo da lista de monitoramento do servidor.',
+        detailedExplanation: 'Interrompe a checagem de preços para o jogo especificado.',
+        category: 'Steam & Jogos Monitorados',
         categoryId: 'steam',
-        permission: 'moderator',
+        permission: 'admin',
         type: 'slash',
         params: [
-            { name: 'app_id', description: 'AppID numérico do jogo Steam a remover', required: true, type: 'número' }
+            { name: 'link_ou_id', description: 'Link da Steam ou AppID a ser removido', required: true, type: 'texto' }
         ],
-        example: '/steam desrastrear app_id: 2358720',
-        tags: ['Remover Jogo', 'Staff Only']
+        example: '/jogos remover link_ou_id: 2680010',
+        tags: ['Remover Jogo', 'Admin Only']
+    },
+    {
+        name: '/jogos verificar',
+        syntax: '/jogos verificar',
+        description: '[Admin] Força uma verificação imediata de preços em todos os jogos monitorados.',
+        detailedExplanation: 'Atualiza instantaneamente os preços, descontos e menores preços históricos de todos os jogos cadastrados.',
+        category: 'Steam & Jogos Monitorados',
+        categoryId: 'steam',
+        permission: 'admin',
+        type: 'slash',
+        example: '/jogos verificar',
+        tags: ['Sincronização', 'Admin Only']
     },
 
-    // --- SEGURANÇA & DOSSIÊS ---
+    // ==========================================
+    // 3. SEGURANÇA & MODERAÇÃO
+    // ==========================================
     {
         name: '/seguranca dossie',
         syntax: '/seguranca dossie [membro]',
-        description: 'Exibe o dossiê confidencial de segurança e Trust Score de um usuário.',
-        detailedExplanation: 'Consulta de inteligência restrita à moderação. Exibe tempo de conta, tempo no servidor, link de convite utilizado, histórico de advertências/mutes/bans, mensagens deletadas pela IA e cálculo do Trust Score (0 a 100 pontos).',
+        description: 'Exibe o dossiê completo de reputação e histórico de um membro (Staff Only).',
+        detailedExplanation: 'Consulta confidencial para moderadores. Mostra idade da conta, tempo de casa, convite utilizado, histórico de advertências/mutes/bans, mensagens deletadas pela IA e cálculo do Trust Score (0-100).',
         category: 'Segurança, Dossiê & Moderação',
         categoryId: 'security',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'membro', description: 'Membro que deseja analisar o histórico', required: true, type: 'usuário' }
+            { name: 'membro', description: 'Membro que deseja analisar', required: true, type: 'usuário' }
         ],
-        example: '/seguranca dossie membro: @Suspeito',
-        tags: ['Dossiê Confidencial', 'Trust Score', 'Staff Only']
+        example: '/seguranca dossie membro: @Usuario',
+        tags: ['Dossiê', 'Trust Score', 'Staff Only']
     },
     {
         name: '/report',
         syntax: '/report [membro]',
-        description: 'Abre um modal seguro para denunciar um membro por infrações.',
-        detailedExplanation: 'Permite a qualquer usuário enviar uma denúncia privada com categoria (Spam, Scam, NSFW, Ofensas, etc.), explicação detalhada e links de prints.',
+        description: 'Denuncie um usuário por má conduta ou violação de regras.',
+        detailedExplanation: 'Abre um modal privado para denunciar infrações (spam, scam, nsfw, assédio, etc.) com justificativa e links de provas para a equipe de moderação.',
         category: 'Segurança, Dossiê & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'membro', description: 'Membro que você está denunciando', required: true, type: 'usuário' }
+            { name: 'membro', description: 'Membro que você deseja denunciar', required: true, type: 'usuário' }
         ],
-        example: '/report membro: @UsuarioInfrator',
-        tags: ['Denúncia Segura', 'Comunidade']
+        example: '/report membro: @Infrator',
+        tags: ['Denúncias', 'Segurança']
     },
     {
-        name: 'Reportar Mensagem (Clique Direito)',
-        syntax: 'Clique Direito na Mensagem -> Aplicativos -> Reportar Mensagem',
-        description: 'Menu de contexto para denunciar uma mensagem diretamente.',
-        detailedExplanation: 'Vincula o ID da mensagem exata e o canal à denúncia. Quando os moderadores aprovam a denúncia pelo painel, a mensagem original é apagada automaticamente.',
+        name: 'Reportar Mensagem (Context Menu)',
+        syntax: 'Botão Direito na Mensagem -> Aplicativos -> Reportar Mensagem',
+        description: 'Denuncia uma mensagem ofensiva diretamente com exclusão automática após aprovação.',
+        detailedExplanation: 'Vincula a mensagem exata à denúncia. Quando aprovada pela moderação, a mensagem original é apagada automaticamente.',
         category: 'Segurança, Dossiê & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'context',
-        example: 'Clique com botão direito em qualquer mensagem -> Apps -> Reportar Mensagem',
-        tags: ['Menu de Contexto', 'Deleção Automática']
+        example: 'Clique direito na mensagem -> Apps -> Reportar Mensagem',
+        tags: ['Menu de Contexto', 'Auto Deleção']
     },
     {
-        name: 'Reportar Usuário (Clique Direito)',
-        syntax: 'Clique Direito no Usuário -> Aplicativos -> Reportar Usuário',
-        description: 'Menu de contexto no perfil para denunciar um usuário diretamente.',
-        detailedExplanation: 'Atalho rápido para abrir o formulário de denúncia sem precisar digitar o comando.',
+        name: 'Reportar Usuário (Context Menu)',
+        syntax: 'Botão Direito no Usuário -> Aplicativos -> Reportar Usuário',
+        description: 'Denuncia um usuário diretamente através do seu perfil.',
+        detailedExplanation: 'Atalho direto no perfil do Discord para abrir o formulário de denúncia.',
         category: 'Segurança, Dossiê & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'context',
-        example: 'Clique com botão direito no avatar do membro -> Apps -> Reportar Usuário',
+        example: 'Clique direito no usuário -> Apps -> Reportar Usuário',
         tags: ['Menu de Contexto']
     },
     {
         name: 'AutoMod com IA (Gemini)',
-        syntax: 'Autônomo (Em Segundo Plano)',
-        description: 'Detecção em tempo real de discurso de ódio, assédio e NSFW por IA.',
-        detailedExplanation: 'O bot analisa lotes de mensagens em tempo real com o modelo Gemini. Mensagens que violam as diretrizes são apagadas imediatamente, com registro de infração no histórico e alerta detalhado com o motivo no canal de moderação da Staff.',
+        syntax: 'Automático em Segundo Plano',
+        description: 'Análise contínua em lote com detecção de assédio, discurso de ódio e NSFW.',
+        detailedExplanation: 'Modera mensagens ofensivas em tempo real, remove do canal, registra infração e notifica a administração com a justificativa.',
         category: 'Segurança, Dossiê & Moderação',
         categoryId: 'security',
         permission: 'admin',
         type: 'automod',
-        example: 'Processamento automático via background tasks',
-        tags: ['IA Gemini', 'Moderação Automática', 'Auditoria']
+        example: 'Execução contínua via tasks assíncronas',
+        tags: ['IA Gemini', 'AutoMod', 'Auditoria']
     },
 
-    // --- SORTEIOS ---
+    // ==========================================
+    // 4. SORTEIOS (/giveaway ...)
+    // ==========================================
     {
-        name: '/sorteio criar',
-        syntax: '/sorteio criar [duracao] [vencedores] [premio] [cargo_obrigatorio]',
-        description: 'Cria um novo sorteio com temporizador e regras de participação.',
-        detailedExplanation: 'Inicia um sorteio no canal com embed estilizado e botão de entrada. Ao expirar o tempo, seleciona aleatoriamente os vencedores com verificação de cargo obrigatório.',
-        category: 'Sorteios & Giveaways',
+        name: '/giveaway create',
+        syntax: '/giveaway create [premio] [duracao] [vencedores] [imagem]',
+        description: 'Cria um novo sorteio no canal com temporizador.',
+        detailedExplanation: 'Inicia um sorteio com embed oficial, botão de participação e tempo personalizado (ex: 1h, 30m, 2d, 1w).',
+        category: 'Sorteios & Premiações',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'duracao', description: 'Tempo do sorteio (ex: 1d, 12h, 30m)', required: true, type: 'texto' },
-            { name: 'vencedores', description: 'Quantidade de ganhadores', required: true, type: 'número' },
-            { name: 'premio', description: 'O que está sendo sorteado', required: true, type: 'texto' },
-            { name: 'cargo_obrigatorio', description: 'Cargo necessário para poder participar (opcional)', required: false, type: 'cargo' }
+            { name: 'premio', description: 'O que será sorteado', required: true, type: 'texto' },
+            { name: 'duracao', description: 'Duração do sorteio (ex: 1h, 30m, 2d, 1w)', required: true, type: 'texto' },
+            { name: 'vencedores', description: 'Número de vencedores (1 a 20, padrão: 1)', required: false, type: 'número' },
+            { name: 'imagem', description: 'Imagem ou banner opcional para o sorteio', required: false, type: 'anexo' }
         ],
-        example: '/sorteio criar duracao: 2d vencedores: 1 premio: Nitro 1 Mês cargo_obrigatorio: @VIP',
-        tags: ['Sorteio', 'Premiações']
+        example: '/giveaway create premio: Jogo Steam duracao: 1d vencedores: 1',
+        tags: ['Sorteios', 'Premiações']
     },
     {
-        name: '/sorteio encerrar',
-        syntax: '/sorteio encerrar [mensagem_id]',
-        description: 'Encerra um sorteio ativo imediatamente e apura os ganhadores.',
-        detailedExplanation: 'Finaliza o sorteio antes da contagem regressiva original e sorteia os vencedores na hora.',
-        category: 'Sorteios & Giveaways',
+        name: '/giveaway end',
+        syntax: '/giveaway end [message_id]',
+        description: 'Finaliza um sorteio manualmente antes do prazo previsto.',
+        detailedExplanation: 'Encerra o sorteio imediatamente e apura os ganhadores.',
+        category: 'Sorteios & Premiações',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'mensagem_id', description: 'ID da mensagem do sorteio a encerrar', required: true, type: 'texto' }
+            { name: 'message_id', description: 'ID da mensagem do sorteio', required: true, type: 'texto' }
         ],
-        example: '/sorteio encerrar mensagem_id: 1327836428524191766',
-        tags: ['Encerramento Antecipado', 'Staff Only']
+        example: '/giveaway end message_id: 1327836428524191766',
+        tags: ['Encerramento', 'Staff Only']
     },
     {
-        name: '/sorteio reroll',
-        syntax: '/sorteio reroll [mensagem_id] [vencedores]',
-        description: 'Sorteia novos vencedores para um sorteio já encerrado.',
-        detailedExplanation: 'Utilizado quando um ganhador não reivindica o prêmio ou não cumpre os requisitos.',
-        category: 'Sorteios & Giveaways',
+        name: '/giveaway reroll',
+        syntax: '/giveaway reroll [message_id] [quantidade]',
+        description: 'Sorteia novos vencedores para um sorteio já finalizado.',
+        detailedExplanation: 'Realiza um novo sorteio entre os participantes caso o ganhador anterior não cumpra os requisitos.',
+        category: 'Sorteios & Premiações',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
         params: [
-            { name: 'mensagem_id', description: 'ID da mensagem do sorteio', required: true, type: 'texto' },
-            { name: 'vencedores', description: 'Quantidade de novos ganhadores para sortear', required: false, type: 'número' }
+            { name: 'message_id', description: 'ID da mensagem do sorteio', required: true, type: 'texto' },
+            { name: 'quantidade', description: 'Número de novos vencedores a sortear', required: false, type: 'número' }
         ],
-        example: '/sorteio reroll mensagem_id: 1327836428524191766 vencedores: 1',
-        tags: ['Novo Sorteio', 'Staff Only']
+        example: '/giveaway reroll message_id: 1327836428524191766 quantidade: 1',
+        tags: ['Reroll', 'Staff Only']
     },
     {
-        name: '/sorteio listar',
-        syntax: '/sorteio listar',
-        description: 'Lista todos os sorteios em andamento no servidor.',
-        detailedExplanation: 'Exibe os prêmios, número de participantes inscritos e tempo restante para término.',
-        category: 'Sorteios & Giveaways',
+        name: '/giveaway list',
+        syntax: '/giveaway list',
+        description: 'Lista todos os sorteios ativos do servidor.',
+        detailedExplanation: 'Exibe os sorteios em andamento com prêmios, canais, participantes e tempo restante.',
+        category: 'Sorteios & Premiações',
         categoryId: 'giveaways',
         permission: 'everyone',
         type: 'slash',
-        example: '/sorteio listar',
+        example: '/giveaway list',
         tags: ['Listagem']
     },
+    {
+        name: '/giveaway delete',
+        syntax: '/giveaway delete [message_id]',
+        description: 'Cancela e deleta um sorteio do banco de dados.',
+        detailedExplanation: 'Remove o sorteio e apaga a mensagem do canal.',
+        category: 'Sorteios & Premiações',
+        categoryId: 'giveaways',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'message_id', description: 'ID da mensagem do sorteio', required: true, type: 'texto' }
+        ],
+        example: '/giveaway delete message_id: 1327836428524191766',
+        tags: ['Deleção', 'Staff Only']
+    },
 
-    // --- XP & STATS ---
+    // ==========================================
+    // 5. XP, RANK CARDS & ESTATÍSTICAS
+    // ==========================================
     {
         name: '/rank (ou /perfil)',
         syntax: '/rank [membro]',
-        description: 'Gera o Rank Card visual com XP, nível atual e progresso.',
-        detailedExplanation: 'Renderiza uma imagem personalizada mostrando o nível do usuário, barra de progresso para o próximo nível, posição no ranking e estatísticas de mensagens e voz.',
+        description: 'Exibe o seu Rank Card ou de outro membro em imagem de alta fidelidade.',
+        detailedExplanation: 'Gera um card visual estilizado mostrando seu nível, barra de progresso de XP, posição no ranking do servidor, contagem de mensagens e minutos em voz.',
         category: 'XP, Rank Cards & Estatísticas',
         categoryId: 'stats',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'membro', description: 'Membro para consultar o card (opcional, padrão: você)', required: false, type: 'usuário' }
+            { name: 'membro', description: 'Membro que deseja visualizar o Rank Card (opcional)', required: false, type: 'usuário' }
         ],
-        example: '/rank membro: @Amigo',
-        tags: ['Rank Card', 'Imagem Visual', 'Gamificação']
-    },
-    {
-        name: '/stats usuario',
-        syntax: '/stats usuario [membro]',
-        description: 'Exibe métricas detalhadas de atividade de um membro.',
-        detailedExplanation: 'Mostra total de mensagens enviadas, minutos em canais de voz, dias mais ativos e horário de pico.',
-        category: 'XP, Rank Cards & Estatísticas',
-        categoryId: 'stats',
-        permission: 'everyone',
-        type: 'slash',
-        params: [
-            { name: 'membro', description: 'Membro a consultar', required: false, type: 'usuário' }
-        ],
-        example: '/stats usuario membro: @GigaR4M',
-        tags: ['Estatísticas', 'Métricas']
-    },
-    {
-        name: '/stats servidor',
-        syntax: '/stats servidor',
-        description: 'Mostra o resumo geral de atividade do servidor.',
-        detailedExplanation: 'Exibe total de mensagens trocadas, horas totais em call, canais mais movimentados e membros mais engajados.',
-        category: 'XP, Rank Cards & Estatísticas',
-        categoryId: 'stats',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/stats servidor',
-        tags: ['Servidor', 'Engajamento']
-    },
-    {
-        name: '/stats leaderboard',
-        syntax: '/stats leaderboard',
-        description: 'Exibe o Top 10 membros com mais XP e atividade do servidor.',
-        detailedExplanation: 'Mostra a tabela de líderes atualizada com níveis, pontuações e avatares dos mais bem colocados.',
-        category: 'XP, Rank Cards & Estatísticas',
-        categoryId: 'stats',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/stats leaderboard',
-        tags: ['Leaderboard', 'Top 10']
+        example: '/rank membro: @GigaR4M',
+        tags: ['Rank Card', 'Imagem Visual', 'Níveis']
     },
     {
         name: '/destaques',
         syntax: '/destaques [ano]',
-        description: 'Exibe a galeria visual da retrospectiva anual de destaques.',
-        detailedExplanation: 'Mostra os momentos mais marcantes, maiores pontuadores de XP, usuários com mais tempo em voz e campeões de torneios do ano.',
+        description: 'Mostra a Retrospectiva e os Destaques do Ano do Servidor em Galeria Visual.',
+        detailedExplanation: 'Gera uma galeria de imagens completa (MVP do ano, Tagarela, Rei da Call, O Corujão, Streamer, Top Gamers, etc.).',
         category: 'XP, Rank Cards & Estatísticas',
         categoryId: 'stats',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'ano', description: 'Ano da retrospectiva (padrão: ano atual)', required: false, type: 'número' }
+            { name: 'ano', description: 'Ano dos destaques para consulta (padrão: ano atual)', required: false, type: 'número' }
         ],
         example: '/destaques ano: 2026',
         tags: ['Retrospectiva', 'Destaques do Ano']
     },
-
-    // --- GAMES (RAWG) ---
     {
-        name: '/jogo buscar',
-        syntax: '/jogo buscar [nome]',
-        description: 'Consulta informações completas, notas e plataformas de qualquer jogo.',
-        detailedExplanation: 'Busca na base de dados RAWG a data de lançamento, desenvolvedora, nota no Metacritic, gêneros e plataformas disponíveis.',
-        category: 'Enciclopédia de Games (RAWG)',
+        name: '/stats rank',
+        syntax: '/stats rank [membro]',
+        description: 'Exibe o Rank Card de XP e nível de um membro.',
+        detailedExplanation: 'Versão do comando de Rank Card dentro do grupo /stats.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro que deseja consultar', required: false, type: 'usuário' }
+        ],
+        example: '/stats rank',
+        tags: ['Rank Card']
+    },
+    {
+        name: '/stats me',
+        syntax: '/stats me [days]',
+        description: 'Suas estatísticas pessoais e ficha de XP/Nível.',
+        detailedExplanation: 'Exibe métricas detalhadas de atividade, mensagens enviadas e tempo em call.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'days', description: 'Número de dias para análise (padrão: Ano Atual)', required: false, type: 'número' }
+        ],
+        example: '/stats me',
+        tags: ['Minhas Estatísticas']
+    },
+    {
+        name: '/stats user',
+        syntax: '/stats user [user] [days]',
+        description: 'Estatísticas de um usuário específico (Apenas Staff).',
+        detailedExplanation: 'Permite à equipe de moderação consultar o histórico de atividade detalhado de qualquer membro.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'moderator',
+        type: 'slash',
+        params: [
+            { name: 'user', description: 'Usuário para ver estatísticas', required: true, type: 'usuário' },
+            { name: 'days', description: 'Dias para análise', required: false, type: 'número' }
+        ],
+        example: '/stats user user: @Membro days: 30',
+        tags: ['Auditoria', 'Staff Only']
+    },
+    {
+        name: '/stats server',
+        syntax: '/stats server [days]',
+        description: 'Estatísticas gerais de atividade do servidor.',
+        detailedExplanation: 'Mostra total de mensagens, horas em canais de voz, canais mais movimentados e membros mais ativos.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'days', description: 'Número de dias para análise (padrão: 30)', required: false, type: 'número' }
+        ],
+        example: '/stats server days: 30',
+        tags: ['Métricas do Servidor']
+    },
+    {
+        name: '/stats leaderboard',
+        syntax: '/stats leaderboard [limit] [days]',
+        description: 'Mostra o ranking de XP e níveis dos membros.',
+        detailedExplanation: 'Exibe o Top ranking de usuários com maior pontuação acumulada.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'limit', description: 'Número de usuários (1 a 25, padrão: 10)', required: false, type: 'número' },
+            { name: 'days', description: 'Dias para análise (padrão: ano atual)', required: false, type: 'número' }
+        ],
+        example: '/stats leaderboard limit: 10',
+        tags: ['Ranking', 'Top XP']
+    },
+    {
+        name: '/stats top',
+        syntax: '/stats top [limit] [days]',
+        description: 'Top usuários mais ativos por mensagens de texto.',
+        detailedExplanation: 'Lista os membros que mais enviaram mensagens nos canais de texto.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'limit', description: 'Quantidade de usuários (padrão: 10)', required: false, type: 'número' },
+            { name: 'days', description: 'Período em dias', required: false, type: 'número' }
+        ],
+        example: '/stats top limit: 10 days: 7',
+        tags: ['Top Mensagens']
+    },
+    {
+        name: '/stats channels',
+        syntax: '/stats channels [limit] [days]',
+        description: 'Canais mais ativos do servidor.',
+        detailedExplanation: 'Mostra os canais de texto com maior volume de tráfego.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'limit', description: 'Número de canais (padrão: 10)', required: false, type: 'número' },
+            { name: 'days', description: 'Período em dias', required: false, type: 'número' }
+        ],
+        example: '/stats channels',
+        tags: ['Canais Ativos']
+    },
+    {
+        name: '/stats setup_leaderboard',
+        syntax: '/stats setup_leaderboard',
+        description: 'Configura um leaderboard persistente e auto-atualizável no canal.',
+        detailedExplanation: 'Cria uma mensagem fixada de ranking que se atualiza automaticamente com os pontos dos membros.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'moderator',
+        type: 'slash',
+        example: '/stats setup_leaderboard',
+        tags: ['Leaderboard Automático', 'Staff Only']
+    },
+    {
+        name: '/stats xp_adicionar',
+        syntax: '/stats xp_adicionar [membro] [xp] [motivo]',
+        description: 'Adiciona XP manualmente a um membro (Apenas Administradores).',
+        detailedExplanation: 'Concede pontos bônus de XP com registro de auditoria.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro beneficiado', required: true, type: 'usuário' },
+            { name: 'xp', description: 'Quantidade de XP', required: true, type: 'número' },
+            { name: 'motivo', description: 'Motivo da premiação', required: false, type: 'texto' }
+        ],
+        example: '/stats xp_adicionar membro: @Membro xp: 500 motivo: Vencedor do minigame',
+        tags: ['Gerenciar XP', 'Admin Only']
+    },
+    {
+        name: '/stats xp_remover',
+        syntax: '/stats xp_remover [membro] [xp] [motivo]',
+        description: 'Remove XP de um membro (Apenas Administradores).',
+        detailedExplanation: 'Aplica penalidade removendo pontuação com registro no histórico.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro penalizado', required: true, type: 'usuário' },
+            { name: 'xp', description: 'Quantidade de XP a remover', required: true, type: 'número' },
+            { name: 'motivo', description: 'Motivo da penalidade', required: false, type: 'texto' }
+        ],
+        example: '/stats xp_remover membro: @Membro xp: 200 motivo: Spam',
+        tags: ['Gerenciar XP', 'Admin Only']
+    },
+
+    // ==========================================
+    // 6. JOGOS & RAWG
+    // ==========================================
+    {
+        name: '/jogo',
+        syntax: '/jogo [nome] [plataforma] [detalhes]',
+        description: 'Pesquise jogos no banco de dados RAWG com autocomplete em tempo real.',
+        detailedExplanation: 'Busca fichas técnicas completas com notas Metacritic, desenvolvedores, plataformas, tempo de jogo, requisitos de sistema para PC e links de lojas.',
+        category: 'Jogos & Enciclopédia RAWG',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'nome', description: 'Nome do jogo a ser pesquisado', required: true, type: 'texto' }
+            { name: 'nome', description: 'Digite as iniciais ou nome do jogo (use sugestões do menu)', required: true, type: 'texto' },
+            { name: 'plataforma', description: 'Filtre por plataforma (PC, PlayStation, Xbox, Switch, etc.)', required: false, type: 'opção' },
+            { name: 'detalhes', description: 'Exibir ficha técnica completa com requisitos e lojas', required: false, type: 'booleano' }
         ],
-        example: '/jogo buscar nome: Black Myth Wukong',
+        example: '/jogo nome: God of War Ragnarök plataforma: PlayStation detalhes: True',
         tags: ['RAWG', 'Metacritic', 'Ficha Técnica']
     },
     {
-        name: '/jogo lancamentos',
-        syntax: '/jogo lancamentos',
-        description: 'Lista os jogos mais aguardados com lançamento previsto para os próximos meses.',
-        detailedExplanation: 'Mostra os principais títulos em pré-lançamento com datas de estreia e plataformas confirmadas.',
-        category: 'Enciclopédia de Games (RAWG)',
-        categoryId: 'games',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/jogo lancamentos',
-        tags: ['Lançamentos', 'Agenda Gamer']
-    },
-    {
-        name: '/jogo populares',
-        syntax: '/jogo populares',
-        description: 'Lista os jogos mais bem avaliados e populares do momento.',
-        detailedExplanation: 'Exibe os títulos com maiores pontuações recentes e alta contagem de avaliações da comunidade.',
-        category: 'Enciclopédia de Games (RAWG)',
-        categoryId: 'games',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/jogo populares',
-        tags: ['Populares', 'Top Games']
-    },
-    {
-        name: '/jogo recomendados',
-        syntax: '/jogo recomendados [genero]',
-        description: 'Recomenda jogos aclamados pela crítica com base no gênero.',
-        detailedExplanation: 'Sugere títulos consagrados filtrados por categoria (RPG, Ação, Estratégia, Terror, etc.).',
-        category: 'Enciclopédia de Games (RAWG)',
+        name: '/games top',
+        syntax: '/games top [limit] [days]',
+        description: 'Jogos mais jogados pelos membros no servidor.',
+        detailedExplanation: 'Exibe o ranking de jogos com mais horas jogadas com base nas presenças e status do Discord.',
+        category: 'Jogos & Enciclopédia RAWG',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'genero', description: 'Gênero desejado (ex: rpg, acao, indie)', required: false, type: 'texto' }
+            { name: 'limit', description: 'Quantidade de jogos (padrão: 10)', required: false, type: 'número' },
+            { name: 'days', description: 'Dias para análise', required: false, type: 'número' }
         ],
-        example: '/jogo recomendados genero: soulslike',
-        tags: ['Recomendações', 'Descobrir Jogos']
-    },
-
-    // --- CARGOS & REAÇÕES ---
-    {
-        name: '/cargos sincronizar',
-        syntax: '/cargos sincronizar',
-        description: 'Força a sincronização imediata dos cargos automáticos por tempo e XP.',
-        detailedExplanation: 'Varre todos os membros do servidor, checando tempo de permanência e nível atingido para atribuir/atualizar cargos de forma precisa.',
-        category: 'Cargos Dinâmicos & Reações',
-        categoryId: 'roles',
-        permission: 'admin',
-        type: 'slash',
-        example: '/cargos sincronizar',
-        tags: ['Sincronização', 'Admin Only']
+        example: '/games top limit: 10 days: 30',
+        tags: ['Mais Jogados', 'Atividades']
     },
     {
-        name: '/cargos configurar',
-        syntax: '/cargos configurar [tipo] [valor] [cargo]',
-        description: 'Configura atribuição automática de cargos por tempo ou nível de XP.',
-        detailedExplanation: 'Define regras como: atribuir o cargo "Veterano" ao completar 1 ano, ou cargo "Mestre" ao atingir Nível 50.',
-        category: 'Cargos Dinâmicos & Reações',
-        categoryId: 'roles',
-        permission: 'admin',
-        type: 'slash',
-        params: [
-            { name: 'tipo', description: 'Tipo de requisito (nivel ou tempo_dias)', required: true, type: 'opção' },
-            { name: 'valor', description: 'Valor numérico necessário (ex: 20 para nível 20, 365 para 1 ano)', required: true, type: 'número' },
-            { name: 'cargo', description: 'Cargo que será concedido', required: true, type: 'cargo' }
-        ],
-        example: '/cargos configurar tipo: nivel valor: 25 cargo: @Elite',
-        tags: ['Progressão', 'Admin Only']
-    },
-    {
-        name: '/reactionrole criar',
-        syntax: '/reactionrole criar [titulo] [descricao]',
-        description: 'Cria um painel interativo com botões para os membros escolherem cargos.',
-        detailedExplanation: 'Gera uma mensagem personalizável onde os usuários podem clicar em botões para adicionar ou remover cargos de jogos, notificações e cores.',
-        category: 'Cargos Dinâmicos & Reações',
-        categoryId: 'roles',
-        permission: 'admin',
-        type: 'slash',
-        params: [
-            { name: 'titulo', description: 'Título do painel de cargos', required: true, type: 'texto' },
-            { name: 'descricao', description: 'Texto explicativo do painel', required: true, type: 'texto' }
-        ],
-        example: '/reactionrole criar titulo: Escolha seus Jogos descricao: Clique para receber as notificações',
-        tags: ['Painel de Reação', 'Auto Role']
-    },
-
-    // --- CONFIGURAÇÃO & ADMIN ---
-    {
-        name: '/config canais',
-        syntax: '/config canais',
-        description: 'Configura os canais de XP, canais ignorados e canal de anúncios/moderação.',
-        detailedExplanation: 'Define onde os membros podem ganhar XP, quais canais de voz não geram pontos e qual canal deve receber alertas de moderação e denúncias.',
-        category: 'Configurações & Administração',
-        categoryId: 'config',
-        permission: 'admin',
-        type: 'slash',
-        example: '/config canais',
-        tags: ['Canais', 'Setup', 'Admin Only']
-    },
-    {
-        name: '/config moderacao_ia',
-        syntax: '/config moderacao_ia [status]',
-        description: 'Ativa ou desativa a moderação inteligente de mensagens com IA.',
-        detailedExplanation: 'Habilita o filtro em lote que remove mensagens com assédio, toxicidade extrema ou pornografia e notifica a administração.',
-        category: 'Configurações & Administração',
-        categoryId: 'config',
-        permission: 'admin',
-        type: 'slash',
-        params: [
-            { name: 'status', description: 'Ativar (true) ou Desativar (false)', required: true, type: 'booleano' }
-        ],
-        example: '/config moderacao_ia status: Verdadeiro',
-        tags: ['IA Gemini', 'Admin Only']
-    },
-    {
-        name: '/config boas_vindas',
-        syntax: '/config boas_vindas [canal] [mensagem]',
-        description: 'Configura a mensagem e card visual de boas-vindas para novos membros.',
-        detailedExplanation: 'Define onde novos ingressantes serão recepcionados e personaliza o texto com placeholders ({user}, {server}, etc.).',
-        category: 'Configurações & Administração',
-        categoryId: 'config',
-        permission: 'admin',
-        type: 'slash',
-        params: [
-            { name: 'canal', description: 'Canal de texto onde a mensagem será enviada', required: true, type: 'canal' },
-            { name: 'mensagem', description: 'Mensagem personalizada', required: false, type: 'texto' }
-        ],
-        example: '/config boas_vindas canal: #boas-vindas mensagem: Bem-vindo {user} ao {server}!',
-        tags: ['Boas-Vindas', 'Admin Only']
-    },
-
-    // --- UTILIDADES & INFO ---
-    {
-        name: '/ajuda',
-        syntax: '/ajuda',
-        description: 'Menu interativo de auxílio com guia de todos os recursos do bot.',
-        detailedExplanation: 'Abre um guia estruturado por categorias no Discord para navegação rápida entre os comandos.',
-        category: 'Utilidades, GIFs & Info',
-        categoryId: 'utils',
+        name: '/games user',
+        syntax: '/games user [user] [days]',
+        description: 'Jogos mais jogados por um usuário específico.',
+        detailedExplanation: 'Mostra o tempo de jogo e títulos preferidos de um membro.',
+        category: 'Jogos & Enciclopédia RAWG',
+        categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
-        example: '/ajuda',
-        tags: ['Ajuda', 'Suporte']
+        params: [
+            { name: 'user', description: 'Usuário para ver estatísticas de jogos', required: false, type: 'usuário' },
+            { name: 'days', description: 'Período em dias', required: false, type: 'número' }
+        ],
+        example: '/games user user: @GigaR4M',
+        tags: ['Histórico Gamer']
     },
+    {
+        name: '/games yearly',
+        syntax: '/games yearly [year]',
+        description: 'Retrospectiva anual de jogos do servidor.',
+        detailedExplanation: 'Resumo dos jogos que dominaram a comunidade ao longo do ano.',
+        category: 'Jogos & Enciclopédia RAWG',
+        categoryId: 'games',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'year', description: 'Ano da retrospectiva (padrão: ano atual)', required: false, type: 'número' }
+        ],
+        example: '/games yearly year: 2026',
+        tags: ['Retrospectiva Gamer']
+    },
+    {
+        name: '/games stats',
+        syntax: '/games stats [days]',
+        description: 'Estatísticas gerais de atividades de jogos.',
+        detailedExplanation: 'Métricas agregadas de tempo jogado pela comunidade.',
+        category: 'Jogos & Enciclopédia RAWG',
+        categoryId: 'games',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'days', description: 'Dias para análise', required: false, type: 'número' }
+        ],
+        example: '/games stats',
+        tags: ['Métricas']
+    },
+
+    // ==========================================
+    // 7. CARGOS AUTOMÁTICOS (/roles ...)
+    // ==========================================
+    {
+        name: '/roles add',
+        syntax: '/roles add [role] [type] [requirement]',
+        description: 'Adiciona um cargo automático por tempo ou nível de XP.',
+        detailedExplanation: 'Configura atribuição automática (ex: cargo por atingir nível 25, ou cargo por completar 180 dias no servidor).',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'role', description: 'Cargo a ser concedido', required: true, type: 'cargo' },
+            { name: 'type', description: 'Tipo de requisito (level ou days)', required: true, type: 'opção' },
+            { name: 'requirement', description: 'Valor necessário (ex: 20 para nível 20, 365 para 1 ano)', required: true, type: 'número' }
+        ],
+        example: '/roles add role: @Veterano type: days requirement: 365',
+        tags: ['Cargos Dinâmicos', 'Admin Only']
+    },
+    {
+        name: '/roles remove',
+        syntax: '/roles remove [role] [type]',
+        description: 'Remove um cargo automático configurado.',
+        detailedExplanation: 'Desativa a regra de atribuição automática do cargo especificado.',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'role', description: 'Cargo a ser desvinculado', required: true, type: 'cargo' },
+            { name: 'type', description: 'Tipo do requisito (level ou days)', required: true, type: 'opção' }
+        ],
+        example: '/roles remove role: @Veterano type: days',
+        tags: ['Remover Regra', 'Admin Only']
+    },
+    {
+        name: '/roles list',
+        syntax: '/roles list',
+        description: 'Lista todos os cargos automáticos configurados no servidor.',
+        detailedExplanation: 'Exibe a tabela com todos os cargos por nível e tempo de casa ativos.',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/roles list',
+        tags: ['Lista de Cargos']
+    },
+    {
+        name: '/roles check',
+        syntax: '/roles check [member]',
+        description: 'Verifica o status e elegibilidade de cargos de um membro.',
+        detailedExplanation: 'Informa quais cargos automáticos o membro já conquistou e o progresso para os próximos.',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'member', description: 'Membro para checar (opcional)', required: false, type: 'usuário' }
+        ],
+        example: '/roles check member: @Amigo',
+        tags: ['Status de Cargos']
+    },
+    {
+        name: '/roles sync',
+        syntax: '/roles sync',
+        description: 'Força a sincronização de cargos para todos os membros existentes.',
+        detailedExplanation: 'Varre todos os membros do servidor e atualiza os cargos de acordo com os níveis e tempo de cada um.',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'admin',
+        type: 'slash',
+        example: '/roles sync',
+        tags: ['Sincronizar', 'Admin Only']
+    },
+    {
+        name: '/roles explicar',
+        syntax: '/roles explicar',
+        description: 'Explica os requisitos e funcionamento dos cargos especiais do servidor.',
+        detailedExplanation: 'Envia um guia explicativo no canal detalhando as regras de progressão.',
+        category: 'Cargos Automáticos',
+        categoryId: 'roles',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/roles explicar',
+        tags: ['Guia de Cargos']
+    },
+
+    // ==========================================
+    // 8. CONFIGURAÇÕES & MODERAÇÃO IA
+    // ==========================================
+    {
+        name: '/config canal-pontos-adicionar',
+        syntax: '/config canal-pontos-adicionar [canal]',
+        description: 'Adiciona um canal à lista de canais que dão pontos de XP.',
+        detailedExplanation: 'Habilita ganho de XP por mensagens no canal selecionado.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'canal', description: 'Canal de texto que dará pontos', required: true, type: 'canal' }
+        ],
+        example: '/config canal-pontos-adicionar canal: #geral',
+        tags: ['Canais de XP', 'Admin Only']
+    },
+    {
+        name: '/config canal-pontos-remover',
+        syntax: '/config canal-pontos-remover [canal]',
+        description: 'Remove um canal da lista de canais que dão pontos de XP.',
+        detailedExplanation: 'Desativa o acúmulo de XP para mensagens enviadas no canal.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'canal', description: 'Canal de texto a ser removido', required: true, type: 'canal' }
+        ],
+        example: '/config canal-pontos-remover canal: #off-topic',
+        tags: ['Canais de XP', 'Admin Only']
+    },
+    {
+        name: '/config canais-pontos-listar',
+        syntax: '/config canais-pontos-listar',
+        description: 'Lista todos os canais que dão pontos de XP neste servidor.',
+        detailedExplanation: 'Exibe a lista atual de canais com ganho de XP ativo.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        example: '/config canais-pontos-listar',
+        tags: ['Listagem', 'Admin Only']
+    },
+    {
+        name: '/config voz-ignorar-adicionar',
+        syntax: '/config voz-ignorar-adicionar [canal]',
+        description: 'Adiciona canal de voz à lista de canais ignorados (sem pontos).',
+        detailedExplanation: 'Impede ganho de XP de voz em canais como AFK, Salas Privadas ou Staff.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'canal', description: 'Canal de voz a ser ignorado', required: true, type: 'canal' }
+        ],
+        example: '/config voz-ignorar-adicionar canal: 🔇 AFK',
+        tags: ['Voz AFK', 'Admin Only']
+    },
+    {
+        name: '/config voz-ignorar-remover',
+        syntax: '/config voz-ignorar-remover [canal]',
+        description: 'Remove canal de voz da lista de ignorados.',
+        detailedExplanation: 'Reativa ganho de XP de voz no canal especificado.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'canal', description: 'Canal de voz a ser reativado', required: true, type: 'canal' }
+        ],
+        example: '/config voz-ignorar-remover canal: 🔊 Bate-Papo',
+        tags: ['Voz', 'Admin Only']
+    },
+    {
+        name: '/config canal-moderacao',
+        syntax: '/config canal-moderacao [canal]',
+        description: 'Define o canal onde serão enviados alertas de moderação e denúncias.',
+        detailedExplanation: 'Configura o canal de anúncios restrito à equipe para receber os relatórios de mensagens moderadas por IA e denúncias de membros.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'canal', description: 'Canal de moderação/anúncios da Staff', required: true, type: 'canal' }
+        ],
+        example: '/config canal-moderacao canal: #staff-logs',
+        tags: ['Moderação Staff', 'Admin Only']
+    },
+    {
+        name: '/config moderacao',
+        syntax: '/config moderacao [ativar]',
+        description: 'Ativa ou desativa a moderação por IA neste servidor.',
+        detailedExplanation: 'Habilita ou pausa o processador em lote com IA Gemini para filtragem de mensagens impróprias.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'ativar', description: 'True para ativar, False para desativar', required: true, type: 'booleano' }
+        ],
+        example: '/config moderacao ativar: True',
+        tags: ['Moderação IA', 'Admin Only']
+    },
+    {
+        name: '/config ver',
+        syntax: '/config ver',
+        description: 'Mostra a configuração atual completa do bot neste servidor.',
+        detailedExplanation: 'Exibe status da moderação por IA, canais de pontos, canais de voz ignorados e canal de staff.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        example: '/config ver',
+        tags: ['Configuração Atual', 'Admin Only']
+    },
+    {
+        name: '/moderacao ia',
+        syntax: '/moderacao ia [ativar]',
+        description: '[Alias] Ativa ou desativa a moderação por Inteligência Artificial.',
+        detailedExplanation: 'Atalho alternativo para controle da moderação automática por IA.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'ativar', description: 'True para ativar, False para desativar', required: true, type: 'booleano' }
+        ],
+        example: '/moderacao ia ativar: True',
+        tags: ['Moderação IA', 'Admin Only']
+    },
+
+    // ==========================================
+    // 9. UTILIDADES & INFO
+    // ==========================================
     {
         name: '/gif',
-        syntax: '/gif [termo]',
-        description: 'Pesquisa e envia um GIF animado relevante pelo Giphy.',
-        detailedExplanation: 'Realiza a busca rápida de animações com suporte a termos em português e inglês.',
+        syntax: '/gif [busca]',
+        description: 'Pesquisa e envia um GIF animado do GIPHY no canal.',
+        detailedExplanation: 'Busca rápida de GIFs e memes com suporte a qualquer termo ou emoção.',
         category: 'Utilidades, GIFs & Info',
         categoryId: 'utils',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'termo', description: 'Termo de pesquisa do GIF', required: true, type: 'texto' }
+            { name: 'busca', description: 'Termo ou emoção para pesquisar o GIF (ex: comemoração, anime)', required: true, type: 'texto' }
         ],
-        example: '/gif termo: gg wp victory',
+        example: '/gif busca: vitoria gg',
         tags: ['Giphy', 'GIFs']
     },
     {
-        name: '/botinfo',
-        syntax: '/botinfo',
-        description: 'Exibe informações técnicas sobre o BMIA, versão e estatísticas.',
-        detailedExplanation: 'Mostra versão do bot, consumo de memória RAM, total de servidores, quantidade de usuários gerenciados e versão do discord.py.',
+        name: '/sistema_xp (ou /sistema_pontos)',
+        syntax: '/sistema_xp',
+        description: 'Explica como funciona o sistema oficial de XP, níveis e recompensas.',
+        detailedExplanation: 'Envia um guia completo detalhando regras de ganho de XP por texto, tempo em voz, multiplicadores e subida de nível.',
         category: 'Utilidades, GIFs & Info',
         categoryId: 'utils',
         permission: 'everyone',
         type: 'slash',
-        example: '/botinfo',
-        tags: ['Status', 'Hardware']
-    },
-    {
-        name: '/ping',
-        syntax: '/ping',
-        description: 'Testa a latência e tempo de resposta do WebSocket com o Discord.',
-        detailedExplanation: 'Calcula o ping de ida e volta da API em milissegundos para diagnóstico de conexão.',
-        category: 'Utilidades, GIFs & Info',
-        categoryId: 'utils',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/ping',
-        tags: ['Latência', 'Diagnóstico']
-    },
-    {
-        name: '/uptime',
-        syntax: '/uptime',
-        description: 'Informa quanto tempo o bot está online ininterruptamente.',
-        detailedExplanation: 'Exibe a data de inicialização do processo e o tempo total de operação sem quedas.',
-        category: 'Utilidades, GIFs & Info',
-        categoryId: 'utils',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/uptime',
-        tags: ['Disponibilidade', 'Uptime']
+        example: '/sistema_xp',
+        tags: ['Guia de XP', 'Ajuda']
     }
 ]
 
@@ -857,24 +1284,24 @@ export default function CommandsPage() {
                 <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-bold font-orbitron tracking-widest uppercase mb-2 shadow-[0_0_12px_rgba(0,240,255,0.2)]">
                         <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                        DOCUMENTAÇÃO & CATÁLOGO DO BOT
+                        DOCUMENTAÇÃO OFICIAL DO BOT
                     </div>
                     <h1 className="text-3xl sm:text-4xl font-black text-white font-orbitron tracking-tight">
                         Central de Comandos
                     </h1>
                     <p className="text-slate-400 text-sm sm:text-base font-rajdhani font-medium max-w-2xl mt-1">
-                        Consulte a documentação completa de todos os comandos slash, menus de contexto e automações por IA do BMIA.
+                        Catálogo consolidado de todos os slash commands, menus de contexto e recursos de moderação por IA reais do BMIA.
                     </p>
                 </div>
 
                 {/* Stat Counters */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="cyber-card rounded-xl p-3 border border-slate-800 bg-slate-900/60 flex flex-col items-center text-center">
-                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Total</span>
+                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Comandos</span>
                         <span className="text-xl font-black font-orbitron text-cyan-400">{COMMANDS.length}</span>
                     </div>
                     <div className="cyber-card rounded-xl p-3 border border-slate-800 bg-slate-900/60 flex flex-col items-center text-center">
-                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Grupos</span>
+                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Categorias</span>
                         <span className="text-xl font-black font-orbitron text-purple-400">{CATEGORIES.length}</span>
                     </div>
                     <div className="cyber-card rounded-xl p-3 border border-slate-800 bg-slate-900/60 flex flex-col items-center text-center">
@@ -882,7 +1309,7 @@ export default function CommandsPage() {
                         <span className="text-xl font-black font-orbitron text-emerald-400">{totalPublicCount}</span>
                     </div>
                     <div className="cyber-card rounded-xl p-3 border border-slate-800 bg-slate-900/60 flex flex-col items-center text-center">
-                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Staff / Mod</span>
+                        <span className="text-xs font-rajdhani font-bold text-slate-400 uppercase">Staff / Admin</span>
                         <span className="text-xl font-black font-orbitron text-amber-400">{totalStaffCount}</span>
                     </div>
                 </div>
@@ -896,7 +1323,7 @@ export default function CommandsPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Buscar por comando, funcionalidade, parâmetro ou tag (ex: /torneio, steam, dossiê, xp)..."
+                            placeholder="Buscar comando, funcionalidade, parâmetro ou tag (ex: /torneio, steam, dossie, rank, give)..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-12 pr-4 py-3 bg-slate-950/80 border border-slate-700 rounded-xl text-white placeholder-slate-500 text-sm font-rajdhani font-medium focus:outline-none focus:border-cyan-500 transition-colors shadow-inner"
