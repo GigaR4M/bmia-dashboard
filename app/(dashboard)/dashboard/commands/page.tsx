@@ -61,7 +61,7 @@ const CATEGORIES: CommandCategory[] = [
         icon: Swords,
         color: 'text-cyan-400',
         borderAccent: 'border-cyan-500/40 hover:border-cyan-400/80',
-        description: 'Gestão de torneios multijogo (1v1 a 5v5, Mata-mata e Pontos Corridos), geração de brackets visuais, sorteios de chaves e pódios.'
+        description: 'Gestão de campeonatos multijogo (/torneio) com chaveamento visual, inscrições, sorteios de chaves e pódios.'
     },
     {
         id: 'steam',
@@ -69,23 +69,23 @@ const CATEGORIES: CommandCategory[] = [
         icon: Tag,
         color: 'text-emerald-400',
         borderAccent: 'border-emerald-500/40 hover:border-emerald-400/80',
-        description: 'Calendário de festivais Steamworks e monitoramento de jogos da comunidade com histórico de menor preço.'
+        description: 'Calendário de eventos Steamworks (/steam) e monitoramento de jogos da comunidade (/jogos).'
     },
     {
         id: 'security',
-        name: 'Segurança, Dossiê & Moderação',
+        name: 'Segurança & Moderação',
         icon: ShieldAlert,
         color: 'text-rose-400',
         borderAccent: 'border-rose-500/40 hover:border-rose-400/80',
-        description: 'Dossiês confidenciais com Trust Score, denúncias por clique direito com deleção automática e AutoMod por IA Gemini.'
+        description: 'Dossiês de segurança (/seguranca dossie), denúncias (/report), menus de contexto e AutoMod com IA Gemini.'
     },
     {
         id: 'giveaways',
-        name: 'Sorteios & Premiações',
+        name: 'Sorteios (/giveaway)',
         icon: Gift,
         color: 'text-purple-400',
         borderAccent: 'border-purple-500/40 hover:border-purple-400/80',
-        description: 'Criação e gerenciamento de sorteios com temporizador, apuração de ganhadores, rerolls e cancelamento.'
+        description: 'Criação e gerenciamento de sorteios com apuração de ganhadores, rerolls e cancelamento.'
     },
     {
         id: 'stats',
@@ -93,23 +93,23 @@ const CATEGORIES: CommandCategory[] = [
         icon: Trophy,
         color: 'text-yellow-400',
         borderAccent: 'border-yellow-500/40 hover:border-yellow-400/80',
-        description: 'Rank Cards em imagem, pontuação por mensagens e voz, leaderboards persistentes, retrospectiva de destaques e gestão de XP.'
+        description: 'Rank Cards (/rank, /perfil), retrospectiva anual (/destaques), métricas e leaderboards (/stats).'
     },
     {
         id: 'games',
-        name: 'Jogos & Enciclopédia RAWG',
+        name: 'Jogos & RAWG Database',
         icon: Gamepad2,
         color: 'text-indigo-400',
         borderAccent: 'border-indigo-500/40 hover:border-indigo-400/80',
-        description: 'Busca de fichas técnicas no RAWG com autocomplete em tempo real e rankings de jogos mais jogados no servidor.'
+        description: 'Fichas técnicas no RAWG (/jogo) com busca em tempo real e estatísticas de atividades de jogos (/games).'
     },
     {
         id: 'roles',
-        name: 'Cargos Automáticos',
+        name: 'Cargos Automáticos (/autorole)',
         icon: Sliders,
         color: 'text-pink-400',
         borderAccent: 'border-pink-500/40 hover:border-pink-400/80',
-        description: 'Configuração e sincronização automática de cargos atribuídos por nível de XP ou tempo de casa (dias no servidor).'
+        description: 'Configuração e sincronização automática de cargos atribuídos por tempo de casa no servidor.'
     },
     {
         id: 'config',
@@ -117,15 +117,15 @@ const CATEGORIES: CommandCategory[] = [
         icon: Settings,
         color: 'text-amber-400',
         borderAccent: 'border-amber-500/40 hover:border-amber-400/80',
-        description: 'Configuração de canais pontuáveis, canais ignorados, canal de alertas da moderação e ativação do filtro de IA.'
+        description: 'Configuração de canais pontuáveis (/config), ativação da IA (/moderacao ia) e contexto do servidor (/context).'
     },
     {
-        id: 'utils',
-        name: 'Utilidades, GIFs & Info',
+        id: 'info',
+        name: 'Informações & Utilidades',
         icon: HelpCircle,
         color: 'text-sky-400',
         borderAccent: 'border-sky-500/40 hover:border-sky-400/80',
-        description: 'Pesquisa rápida de GIFs animados via Giphy e guia explicativo do sistema de pontos.'
+        description: 'Guia oficial do sistema de XP e níveis (/info) e busca de animações Giphy (/gif).'
     }
 ]
 
@@ -407,7 +407,7 @@ const COMMANDS: CommandItem[] = [
     },
 
     // ==========================================
-    // 2. STEAM & JOGOS MONITORADOS (/steam, /jogos)
+    // 2. STEAM & JOGOS MONITORADOS
     // ==========================================
     {
         name: '/steam eventos',
@@ -503,7 +503,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/seguranca dossie [membro]',
         description: 'Exibe o dossiê completo de reputação e histórico de um membro (Staff Only).',
         detailedExplanation: 'Consulta confidencial para moderadores. Mostra idade da conta, tempo de casa, convite utilizado, histórico de advertências/mutes/bans, mensagens deletadas pela IA e cálculo do Trust Score (0-100).',
-        category: 'Segurança, Dossiê & Moderação',
+        category: 'Segurança & Moderação',
         categoryId: 'security',
         permission: 'moderator',
         type: 'slash',
@@ -518,7 +518,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/report [membro]',
         description: 'Denuncie um usuário por má conduta ou violação de regras.',
         detailedExplanation: 'Abre um modal privado para denunciar infrações (spam, scam, nsfw, assédio, etc.) com justificativa e links de provas para a equipe de moderação.',
-        category: 'Segurança, Dossiê & Moderação',
+        category: 'Segurança & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'slash',
@@ -533,7 +533,7 @@ const COMMANDS: CommandItem[] = [
         syntax: 'Botão Direito na Mensagem -> Aplicativos -> Reportar Mensagem',
         description: 'Denuncia uma mensagem ofensiva diretamente com exclusão automática após aprovação.',
         detailedExplanation: 'Vincula a mensagem exata à denúncia. Quando aprovada pela moderação, a mensagem original é apagada automaticamente.',
-        category: 'Segurança, Dossiê & Moderação',
+        category: 'Segurança & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'context',
@@ -545,7 +545,7 @@ const COMMANDS: CommandItem[] = [
         syntax: 'Botão Direito no Usuário -> Aplicativos -> Reportar Usuário',
         description: 'Denuncia um usuário diretamente através do seu perfil.',
         detailedExplanation: 'Atalho direto no perfil do Discord para abrir o formulário de denúncia.',
-        category: 'Segurança, Dossiê & Moderação',
+        category: 'Segurança & Moderação',
         categoryId: 'security',
         permission: 'everyone',
         type: 'context',
@@ -557,7 +557,7 @@ const COMMANDS: CommandItem[] = [
         syntax: 'Automático em Segundo Plano',
         description: 'Análise contínua em lote com detecção de assédio, discurso de ódio e NSFW.',
         detailedExplanation: 'Modera mensagens ofensivas em tempo real, remove do canal, registra infração e notifica a administração com a justificativa.',
-        category: 'Segurança, Dossiê & Moderação',
+        category: 'Segurança & Moderação',
         categoryId: 'security',
         permission: 'admin',
         type: 'automod',
@@ -573,7 +573,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/giveaway create [premio] [duracao] [vencedores] [imagem]',
         description: 'Cria um novo sorteio no canal com temporizador.',
         detailedExplanation: 'Inicia um sorteio com embed oficial, botão de participação e tempo personalizado (ex: 1h, 30m, 2d, 1w).',
-        category: 'Sorteios & Premiações',
+        category: 'Sorteios (/giveaway)',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
@@ -591,7 +591,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/giveaway end [message_id]',
         description: 'Finaliza um sorteio manualmente antes do prazo previsto.',
         detailedExplanation: 'Encerra o sorteio imediatamente e apura os ganhadores.',
-        category: 'Sorteios & Premiações',
+        category: 'Sorteios (/giveaway)',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
@@ -606,7 +606,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/giveaway reroll [message_id] [quantidade]',
         description: 'Sorteia novos vencedores para um sorteio já finalizado.',
         detailedExplanation: 'Realiza um novo sorteio entre os participantes caso o ganhador anterior não cumpra os requisitos.',
-        category: 'Sorteios & Premiações',
+        category: 'Sorteios (/giveaway)',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
@@ -622,7 +622,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/giveaway list',
         description: 'Lista todos os sorteios ativos do servidor.',
         detailedExplanation: 'Exibe os sorteios em andamento com prêmios, canais, participantes e tempo restante.',
-        category: 'Sorteios & Premiações',
+        category: 'Sorteios (/giveaway)',
         categoryId: 'giveaways',
         permission: 'everyone',
         type: 'slash',
@@ -634,7 +634,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/giveaway delete [message_id]',
         description: 'Cancela e deleta um sorteio do banco de dados.',
         detailedExplanation: 'Remove o sorteio e apaga a mensagem do canal.',
-        category: 'Sorteios & Premiações',
+        category: 'Sorteios (/giveaway)',
         categoryId: 'giveaways',
         permission: 'moderator',
         type: 'slash',
@@ -649,7 +649,7 @@ const COMMANDS: CommandItem[] = [
     // 5. XP, RANK CARDS & ESTATÍSTICAS
     // ==========================================
     {
-        name: '/rank (ou /perfil)',
+        name: '/rank',
         syntax: '/rank [membro]',
         description: 'Exibe o seu Rank Card ou de outro membro em imagem de alta fidelidade.',
         detailedExplanation: 'Gera um card visual estilizado mostrando seu nível, barra de progresso de XP, posição no ranking do servidor, contagem de mensagens e minutos em voz.',
@@ -662,6 +662,21 @@ const COMMANDS: CommandItem[] = [
         ],
         example: '/rank membro: @GigaR4M',
         tags: ['Rank Card', 'Imagem Visual', 'Níveis']
+    },
+    {
+        name: '/perfil',
+        syntax: '/perfil [membro]',
+        description: 'Exibe o seu perfil com Rank Card de XP e Nível.',
+        detailedExplanation: 'Comando alternativo idêntico ao /rank para exibição do Rank Card visual.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'everyone',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro que deseja visualizar o perfil (opcional)', required: false, type: 'usuário' }
+        ],
+        example: '/perfil',
+        tags: ['Perfil', 'Rank Card']
     },
     {
         name: '/destaques',
@@ -817,6 +832,23 @@ const COMMANDS: CommandItem[] = [
         tags: ['Gerenciar XP', 'Admin Only']
     },
     {
+        name: '/stats pontos_adicionar',
+        syntax: '/stats pontos_adicionar [membro] [pontos] [motivo]',
+        description: '[Alias] Adiciona XP/pontos a um membro (Apenas Administradores).',
+        detailedExplanation: 'Alias para concessão de pontos bônus de XP com registro de auditoria.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro beneficiado', required: true, type: 'usuário' },
+            { name: 'pontos', description: 'Quantidade de pontos/XP', required: true, type: 'número' },
+            { name: 'motivo', description: 'Motivo da premiação', required: false, type: 'texto' }
+        ],
+        example: '/stats pontos_adicionar membro: @Membro pontos: 500',
+        tags: ['Gerenciar XP', 'Admin Only']
+    },
+    {
         name: '/stats xp_remover',
         syntax: '/stats xp_remover [membro] [xp] [motivo]',
         description: 'Remove XP de um membro (Apenas Administradores).',
@@ -833,6 +865,23 @@ const COMMANDS: CommandItem[] = [
         example: '/stats xp_remover membro: @Membro xp: 200 motivo: Spam',
         tags: ['Gerenciar XP', 'Admin Only']
     },
+    {
+        name: '/stats pontos_remover',
+        syntax: '/stats pontos_remover [membro] [pontos] [motivo]',
+        description: '[Alias] Remove pontos/XP de um membro (Apenas Administradores).',
+        detailedExplanation: 'Alias para remoção de pontos com registro de auditoria.',
+        category: 'XP, Rank Cards & Estatísticas',
+        categoryId: 'stats',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'membro', description: 'Membro penalizado', required: true, type: 'usuário' },
+            { name: 'pontos', description: 'Quantidade de pontos a remover', required: true, type: 'número' },
+            { name: 'motivo', description: 'Motivo da penalidade', required: false, type: 'texto' }
+        ],
+        example: '/stats pontos_remover membro: @Membro pontos: 200',
+        tags: ['Gerenciar XP', 'Admin Only']
+    },
 
     // ==========================================
     // 6. JOGOS & RAWG
@@ -842,7 +891,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/jogo [nome] [plataforma] [detalhes]',
         description: 'Pesquise jogos no banco de dados RAWG com autocomplete em tempo real.',
         detailedExplanation: 'Busca fichas técnicas completas com notas Metacritic, desenvolvedores, plataformas, tempo de jogo, requisitos de sistema para PC e links de lojas.',
-        category: 'Jogos & Enciclopédia RAWG',
+        category: 'Jogos & RAWG Database',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
@@ -859,7 +908,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/games top [limit] [days]',
         description: 'Jogos mais jogados pelos membros no servidor.',
         detailedExplanation: 'Exibe o ranking de jogos com mais horas jogadas com base nas presenças e status do Discord.',
-        category: 'Jogos & Enciclopédia RAWG',
+        category: 'Jogos & RAWG Database',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
@@ -875,7 +924,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/games user [user] [days]',
         description: 'Jogos mais jogados por um usuário específico.',
         detailedExplanation: 'Mostra o tempo de jogo e títulos preferidos de um membro.',
-        category: 'Jogos & Enciclopédia RAWG',
+        category: 'Jogos & RAWG Database',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
@@ -891,7 +940,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/games yearly [year]',
         description: 'Retrospectiva anual de jogos do servidor.',
         detailedExplanation: 'Resumo dos jogos que dominaram a comunidade ao longo do ano.',
-        category: 'Jogos & Enciclopédia RAWG',
+        category: 'Jogos & RAWG Database',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
@@ -906,7 +955,7 @@ const COMMANDS: CommandItem[] = [
         syntax: '/games stats [days]',
         description: 'Estatísticas gerais de atividades de jogos.',
         detailedExplanation: 'Métricas agregadas de tempo jogado pela comunidade.',
-        category: 'Jogos & Enciclopédia RAWG',
+        category: 'Jogos & RAWG Database',
         categoryId: 'games',
         permission: 'everyone',
         type: 'slash',
@@ -918,91 +967,89 @@ const COMMANDS: CommandItem[] = [
     },
 
     // ==========================================
-    // 7. CARGOS AUTOMÁTICOS (/roles ...)
+    // 7. CARGOS AUTOMÁTICOS (/autorole ...)
     // ==========================================
     {
-        name: '/roles add',
-        syntax: '/roles add [role] [type] [requirement]',
-        description: 'Adiciona um cargo automático por tempo ou nível de XP.',
-        detailedExplanation: 'Configura atribuição automática (ex: cargo por atingir nível 25, ou cargo por completar 180 dias no servidor).',
-        category: 'Cargos Automáticos',
+        name: '/autorole add',
+        syntax: '/autorole add [cargo] [dias]',
+        description: 'Adiciona uma configuração de cargo automático por tempo no servidor.',
+        detailedExplanation: 'Configura atribuição automática de um cargo quando o membro atinge uma quantidade específica de dias no servidor.',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'admin',
         type: 'slash',
         params: [
-            { name: 'role', description: 'Cargo a ser concedido', required: true, type: 'cargo' },
-            { name: 'type', description: 'Tipo de requisito (level ou days)', required: true, type: 'opção' },
-            { name: 'requirement', description: 'Valor necessário (ex: 20 para nível 20, 365 para 1 ano)', required: true, type: 'número' }
+            { name: 'cargo', description: 'Cargo a ser atribuído automaticamente', required: true, type: 'cargo' },
+            { name: 'dias', description: 'Número de dias necessários no servidor', required: true, type: 'número' }
         ],
-        example: '/roles add role: @Veterano type: days requirement: 365',
-        tags: ['Cargos Dinâmicos', 'Admin Only']
+        example: '/autorole add cargo: @Veterano dias: 365',
+        tags: ['Cargos Automáticos', 'Admin Only']
     },
     {
-        name: '/roles remove',
-        syntax: '/roles remove [role] [type]',
-        description: 'Remove um cargo automático configurado.',
+        name: '/autorole remove',
+        syntax: '/autorole remove [cargo]',
+        description: 'Remove uma configuração de cargo automático.',
         detailedExplanation: 'Desativa a regra de atribuição automática do cargo especificado.',
-        category: 'Cargos Automáticos',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'admin',
         type: 'slash',
         params: [
-            { name: 'role', description: 'Cargo a ser desvinculado', required: true, type: 'cargo' },
-            { name: 'type', description: 'Tipo do requisito (level ou days)', required: true, type: 'opção' }
+            { name: 'cargo', description: 'Cargo a ser removido da configuração', required: true, type: 'cargo' }
         ],
-        example: '/roles remove role: @Veterano type: days',
+        example: '/autorole remove cargo: @Veterano',
         tags: ['Remover Regra', 'Admin Only']
     },
     {
-        name: '/roles list',
-        syntax: '/roles list',
-        description: 'Lista todos os cargos automáticos configurados no servidor.',
-        detailedExplanation: 'Exibe a tabela com todos os cargos por nível e tempo de casa ativos.',
-        category: 'Cargos Automáticos',
+        name: '/autorole list',
+        syntax: '/autorole list',
+        description: 'Lista todos os cargos automáticos configurados.',
+        detailedExplanation: 'Exibe a lista de cargos atribuídos automaticamente com base no tempo de casa no servidor.',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'everyone',
         type: 'slash',
-        example: '/roles list',
+        example: '/autorole list',
         tags: ['Lista de Cargos']
     },
     {
-        name: '/roles check',
-        syntax: '/roles check [member]',
-        description: 'Verifica o status e elegibilidade de cargos de um membro.',
-        detailedExplanation: 'Informa quais cargos automáticos o membro já conquistou e o progresso para os próximos.',
-        category: 'Cargos Automáticos',
+        name: '/autorole check',
+        syntax: '/autorole check [membro]',
+        description: 'Verifica o status de cargos automáticos de um membro.',
+        detailedExplanation: 'Informa quantos dias o membro tem no servidor, quais cargos automáticos já possui e quantos dias faltam para os próximos.',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'member', description: 'Membro para checar (opcional)', required: false, type: 'usuário' }
+            { name: 'membro', description: 'Membro para verificar (deixe vazio para verificar você mesmo)', required: false, type: 'usuário' }
         ],
-        example: '/roles check member: @Amigo',
+        example: '/autorole check membro: @Amigo',
         tags: ['Status de Cargos']
     },
     {
-        name: '/roles sync',
-        syntax: '/roles sync',
-        description: 'Força a sincronização de cargos para todos os membros existentes.',
-        detailedExplanation: 'Varre todos os membros do servidor e atualiza os cargos de acordo com os níveis e tempo de cada um.',
-        category: 'Cargos Automáticos',
+        name: '/autorole sync',
+        syntax: '/autorole sync',
+        description: 'Sincroniza todos os membros existentes com o banco de dados.',
+        detailedExplanation: 'Varre todos os membros do servidor e atualiza os cargos de tempo de casa de acordo com suas datas de entrada.',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'admin',
         type: 'slash',
-        example: '/roles sync',
+        example: '/autorole sync',
         tags: ['Sincronizar', 'Admin Only']
     },
     {
-        name: '/roles explicar',
-        syntax: '/roles explicar',
-        description: 'Explica os requisitos e funcionamento dos cargos especiais do servidor.',
-        detailedExplanation: 'Envia um guia explicativo no canal detalhando as regras de progressão.',
-        category: 'Cargos Automáticos',
+        name: '/autorole explicar',
+        syntax: '/autorole explicar',
+        description: 'Explica os requisitos para os cargos especiais e conquistas dinâmicas.',
+        detailedExplanation: 'Lista e detalha todos os cargos especiais dinâmicos (Top 1 Global, Voz do Sistema, Streamer, Mestre da Conversa, Boca Suja, etc.).',
+        category: 'Cargos Automáticos (/autorole)',
         categoryId: 'roles',
         permission: 'everyone',
         type: 'slash',
-        example: '/roles explicar',
-        tags: ['Guia de Cargos']
+        example: '/autorole explicar',
+        tags: ['Conquistas', 'Guia de Cargos']
     },
 
     // ==========================================
@@ -1125,48 +1172,129 @@ const COMMANDS: CommandItem[] = [
     {
         name: '/moderacao ia',
         syntax: '/moderacao ia [ativar]',
-        description: '[Alias] Ativa ou desativa a moderação por Inteligência Artificial.',
-        detailedExplanation: 'Atalho alternativo para controle da moderação automática por IA.',
+        description: 'Ativa ou desativa a moderação por Inteligência Artificial.',
+        detailedExplanation: 'Configuração direta do módulo de moderação automática por IA.',
         category: 'Configurações & Moderação IA',
         categoryId: 'config',
         permission: 'admin',
         type: 'slash',
         params: [
-            { name: 'ativar', description: 'True para ativar, False para desativar', required: true, type: 'booleano' }
+            { name: 'ativar', description: 'Se True, a IA moderará mensagens ofensivas. Se False, desativa.', required: true, type: 'booleano' }
         ],
         example: '/moderacao ia ativar: True',
         tags: ['Moderação IA', 'Admin Only']
     },
+    {
+        name: '/context theme',
+        syntax: '/context theme [tema]',
+        description: 'Define o tema do servidor (Ex: "Games e Diversão") para a IA.',
+        detailedExplanation: 'Ajuda a IA a entender o contexto da comunidade.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'tema', description: 'Tema do servidor', required: true, type: 'texto' }
+        ],
+        example: '/context theme tema: Comunidade de Jogos e Animes',
+        tags: ['IA Contexto', 'Admin Only']
+    },
+    {
+        name: '/context rules',
+        syntax: '/context rules [regras]',
+        description: 'Define regras principais que o bot deve saber.',
+        detailedExplanation: 'Informa as regras do servidor para a IA do bot.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'regras', description: 'Regras do servidor', required: true, type: 'texto' }
+        ],
+        example: '/context rules regras: Sem spoilers e respeito mútuo',
+        tags: ['IA Contexto', 'Admin Only']
+    },
+    {
+        name: '/context tone',
+        syntax: '/context tone [tom]',
+        description: 'Define o tom de resposta desejado (Ex: "Zoeiro", "Formal").',
+        detailedExplanation: 'Ajusta a personalidade das respostas da IA no servidor.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'admin',
+        type: 'slash',
+        params: [
+            { name: 'tom', description: 'Tom de resposta', required: true, type: 'texto' }
+        ],
+        example: '/context tone tom: Zoeiro e bem-humorado',
+        tags: ['IA Personalidade', 'Admin Only']
+    },
+    {
+        name: '/context view',
+        syntax: '/context view',
+        description: 'Vê o contexto e configurações de IA atuais do servidor.',
+        detailedExplanation: 'Exibe o tema, regras e tom configurados para a IA.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/context view',
+        tags: ['IA Contexto']
+    },
+    {
+        name: '/context reset_user',
+        syntax: '/context reset_user',
+        description: 'Reseta suas preferências e memória de curto prazo com o bot.',
+        detailedExplanation: 'Limpa a memória contextual do usuário.',
+        category: 'Configurações & Moderação IA',
+        categoryId: 'config',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/context reset_user',
+        tags: ['IA Contexto']
+    },
 
     // ==========================================
-    // 9. UTILIDADES & INFO
+    // 9. INFORMAÇÕES & UTILIDADES
     // ==========================================
+    {
+        name: '/info sistema_xp',
+        syntax: '/info sistema_xp',
+        description: 'Explica como funciona o sistema oficial de XP e Níveis.',
+        detailedExplanation: 'Exibe os detalhes de ganho de XP por texto, chats de voz, streaming, jogos na call, chat revival e progressão de níveis.',
+        category: 'Informações & Utilidades',
+        categoryId: 'info',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/info sistema_xp',
+        tags: ['Guia de XP', 'Níveis']
+    },
+    {
+        name: '/info sistema_pontos',
+        syntax: '/info sistema_pontos',
+        description: '[Alias] Explica como funciona o sistema de XP e níveis.',
+        detailedExplanation: 'Comando alias com a mesma explicação do sistema oficial de XP e pontuações.',
+        category: 'Informações & Utilidades',
+        categoryId: 'info',
+        permission: 'everyone',
+        type: 'slash',
+        example: '/info sistema_pontos',
+        tags: ['Guia de XP', 'Alias']
+    },
     {
         name: '/gif',
         syntax: '/gif [busca]',
         description: 'Pesquisa e envia um GIF animado do GIPHY no canal.',
-        detailedExplanation: 'Busca rápida de GIFs e memes com suporte a qualquer termo ou emoção.',
-        category: 'Utilidades, GIFs & Info',
-        categoryId: 'utils',
+        detailedExplanation: 'Busca rápida de animações com qualquer termo ou emoção diretamente pelo Giphy.',
+        category: 'Informações & Utilidades',
+        categoryId: 'info',
         permission: 'everyone',
         type: 'slash',
         params: [
-            { name: 'busca', description: 'Termo ou emoção para pesquisar o GIF (ex: comemoração, anime)', required: true, type: 'texto' }
+            { name: 'busca', description: 'Termo ou emoção para pesquisar o GIF (ex: risada, comemoração, anime)', required: true, type: 'texto' }
         ],
         example: '/gif busca: vitoria gg',
         tags: ['Giphy', 'GIFs']
-    },
-    {
-        name: '/sistema_xp (ou /sistema_pontos)',
-        syntax: '/sistema_xp',
-        description: 'Explica como funciona o sistema oficial de XP, níveis e recompensas.',
-        detailedExplanation: 'Envia um guia completo detalhando regras de ganho de XP por texto, tempo em voz, multiplicadores e subida de nível.',
-        category: 'Utilidades, GIFs & Info',
-        categoryId: 'utils',
-        permission: 'everyone',
-        type: 'slash',
-        example: '/sistema_xp',
-        tags: ['Guia de XP', 'Ajuda']
     }
 ]
 
@@ -1323,7 +1451,7 @@ export default function CommandsPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Buscar comando, funcionalidade, parâmetro ou tag (ex: /torneio, steam, dossie, rank, give)..."
+                            placeholder="Buscar comando, funcionalidade, parâmetro ou tag (ex: /torneio, /autorole, /info, /stats, /giveaway)..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-12 pr-4 py-3 bg-slate-950/80 border border-slate-700 rounded-xl text-white placeholder-slate-500 text-sm font-rajdhani font-medium focus:outline-none focus:border-cyan-500 transition-colors shadow-inner"
@@ -1411,7 +1539,7 @@ export default function CommandsPage() {
                     <HelpCircle className="w-12 h-12 text-slate-600" />
                     <h3 className="text-xl font-bold font-orbitron text-slate-300">Nenhum comando encontrado</h3>
                     <p className="text-sm font-rajdhani text-slate-500 max-w-md">
-                        Nenhum comando correspondeu aos filtros atuais. Tente buscar por outros termos como &quot;torneio&quot;, &quot;steam&quot;, &quot;rank&quot; ou limpe os filtros.
+                        Nenhum comando correspondeu aos filtros atuais. Tente buscar por outros termos como &quot;torneio&quot;, &quot;autorole&quot;, &quot;rank&quot; ou limpe os filtros.
                     </p>
                     <button
                         onClick={() => {
