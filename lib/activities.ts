@@ -34,6 +34,32 @@ export interface ActivityTypeDistribution {
     total_hours: number
 }
 
+const KNOWN_GAMES: Record<string, string> = {
+    'roblox': 'Roblox',
+    'ea sports fc 24': 'EA Sports FC 24',
+    'ea sports fc 25': 'EA Sports FC 25',
+    'ea sports fc 26': 'EA Sports FC 26',
+    'valorant': 'VALORANT',
+    'counter-strike 2': 'Counter-Strike 2',
+    'cs2': 'Counter-Strike 2',
+    'league of legends': 'League of Legends',
+    'rocket league': 'Rocket League',
+    'dead by daylight': 'Dead by Daylight',
+    'visual studio code': 'Visual Studio Code',
+    'tlauncher': 'TLauncher',
+    'curseforge': 'CurseForge',
+    'no man\'s sky': 'No Man\'s Sky',
+    'project zomboid': 'Project Zomboid',
+    'valheim': 'Valheim'
+}
+
+function normalizeGameName(name: string): string {
+    if (!name) return 'Unknown'
+    const clean = name.trim().replace(/\s+/g, ' ')
+    const lower = clean.toLowerCase()
+    return KNOWN_GAMES[lower] || clean
+}
+
 // Get top activities by total time
 export async function getTopActivities(
     guildId: string,
@@ -59,14 +85,42 @@ export async function getTopActivities(
 
     if (!data) return []
 
-    return data.map((row: any) => ({
-        activity_name: row.activity_name || 'Unknown',
-        unique_users: Number(row.unique_users),
-        session_count: Number(row.session_count),
-        total_seconds: Number(row.total_seconds),
-        avg_seconds: Number(row.avg_seconds),
-        total_hours: Number(row.total_hours)
-    }))
+    // Filtra Hang Status / Spotify e consolida case-insensitive
+    const rawRows = (data || []).filter((row: any) => {
+        const name = (row.activity_name || '').trim().toLowerCase()
+        return name !== 'hang status' && name !== 'spotify' && name !== ''
+    })
+
+    const map = new Map<string, TopActivity>()
+    for (const row of rawRows) {
+        const normName = normalizeGameName(row.activity_name)
+        const key = normName.toLowerCase()
+        const totalSeconds = Number(row.total_seconds) || 0
+        const sessionCount = Number(row.session_count) || 0
+        const uniqueUsers = Number(row.unique_users) || 0
+        const totalHours = Number(row.total_hours) || (totalSeconds / 3600)
+
+        if (map.has(key)) {
+            const existing = map.get(key)!
+            existing.session_count += sessionCount
+            existing.total_seconds += totalSeconds
+            existing.total_hours = Math.round((existing.total_seconds / 3600) * 100) / 100
+            existing.unique_users = Math.max(existing.unique_users, uniqueUsers)
+            existing.avg_seconds = existing.session_count > 0 ? existing.total_seconds / existing.session_count : 0
+        } else {
+            map.set(key, {
+                activity_name: normName,
+                unique_users: uniqueUsers,
+                session_count: sessionCount,
+                total_seconds: totalSeconds,
+                avg_seconds: Number(row.avg_seconds) || (sessionCount > 0 ? totalSeconds / sessionCount : 0),
+                total_hours: totalHours
+            })
+        }
+    }
+
+    const aggregated = Array.from(map.values()).sort((a, b) => b.total_seconds - a.total_seconds)
+    return aggregated.slice(0, limit)
 }
 
 // Get daily activity statistics

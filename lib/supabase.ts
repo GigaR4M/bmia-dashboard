@@ -439,6 +439,47 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         }))
     }
 
+    const processGameOfTheYear = (res: any) => {
+        if (res.error) {
+            console.error('Error in gameOfTheYear query:', res.error)
+            return []
+        }
+        const KNOWN: Record<string, string> = {
+            'roblox': 'Roblox',
+            'ea sports fc 24': 'EA Sports FC 24',
+            'ea sports fc 25': 'EA Sports FC 25',
+            'ea sports fc 26': 'EA Sports FC 26',
+            'valorant': 'VALORANT',
+            'counter-strike 2': 'Counter-Strike 2',
+        }
+        const map = new Map<string, any>()
+        for (const row of res.data || []) {
+            const rawName = (row.activity_name || '').trim()
+            const lower = rawName.toLowerCase()
+            if (lower === 'hang status' || lower === 'spotify' || !rawName) continue
+            const normName = KNOWN[lower] || rawName
+            const key = normName.toLowerCase()
+            const valSec = Number(row.value_seconds !== null && row.value_seconds !== undefined ? row.value_seconds : row.value) || 0
+
+            if (map.has(key)) {
+                const existing = map.get(key)
+                existing.value_seconds += valSec
+                existing.value += valSec
+            } else {
+                map.set(key, {
+                    ...row,
+                    activity_name: normName,
+                    value: valSec,
+                    value_seconds: valSec
+                })
+            }
+        }
+        return Array.from(map.values())
+            .sort((a, b) => b.value_seconds - a.value_seconds)
+            .map((item, idx) => ({ ...item, rank: idx + 1 }))
+            .slice(0, limit)
+    }
+
     return {
         highestScore: processResult(highestScore),
         mostMessages: processResult(mostMessages),
@@ -452,7 +493,7 @@ export async function getHighlights(guildId: string, limit: number = 5) {
         demoKing: processResult(demoKing),
         mostDistinctGames: processResult(mostDistinctGames),
         longestSession: processResult(longestSession),
-        gameOfTheYear: processResult(gameOfTheYear),
+        gameOfTheYear: processGameOfTheYear(gameOfTheYear),
         nightOwl: processResult(nightOwl),
         mediaKing: processResult(mediaKing),
         omnipresent: processResult(omnipresent)
