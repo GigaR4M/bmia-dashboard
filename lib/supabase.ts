@@ -49,10 +49,11 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
         ? new Set(activeUsersData.map(m => m.user_id)).size
         : 0
 
-    // Get total members (all time)
+    // Get total members (guild specific)
     const { count: totalMembers } = await supabaseAdmin
-        .from('users')
+        .from('member_join_dates')
         .select('*', { count: 'exact', head: true })
+        .eq('guild_id', guildId)
 
     // Get total channels
     const { count: totalChannels } = await supabaseAdmin
