@@ -480,7 +480,7 @@ export function useModerationStats(days: number = 30, startDate?: string) {
     return { data, loading, error }
 }
 
-export function useHighlights(limit: number = 5) {
+export function useHighlights(limit: number = 5, year: number | null = 2026) {
     const [data, setData] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -492,7 +492,8 @@ export function useHighlights(limit: number = 5) {
                 const guildId = localStorage.getItem('selectedGuildId')
                 if (!guildId) throw new Error('No server selected')
 
-                const response = await fetch(`/api/stats/highlights?limit=${limit}&guildId=${guildId}`)
+                const yearParam = year === null ? 'all' : year
+                const response = await fetch(`/api/stats/highlights?limit=${limit}&guildId=${guildId}&year=${yearParam}`)
                 if (!response.ok) throw new Error('Failed to fetch highlights')
                 const stats = await response.json()
                 setData(stats)
@@ -504,7 +505,7 @@ export function useHighlights(limit: number = 5) {
         }
 
         fetchStats()
-    }, [limit])
+    }, [limit, year])
 
     return { data, loading, error }
 }

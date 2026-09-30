@@ -8,6 +8,8 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url)
         const limit = parseInt(searchParams.get('limit') || '5')
         const guildId = searchParams.get('guildId')
+        const rawYear = searchParams.get('year')
+        const year = (rawYear === 'all' || rawYear === 'null' || rawYear === '') ? null : (rawYear ? parseInt(rawYear) : 2026)
 
         if (!session || !session.user.isAdmin) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -21,7 +23,7 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         }
 
-        const stats = await getHighlights(guildId, limit)
+        const stats = await getHighlights(guildId, limit, year)
 
         return NextResponse.json(stats)
     } catch (error) {

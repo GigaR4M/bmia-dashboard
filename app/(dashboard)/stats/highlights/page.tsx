@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useHighlights } from '@/hooks/useStats'
 import {
     Trophy,
@@ -24,7 +25,9 @@ import {
 import { cn } from '@/lib/utils'
 
 export default function HighlightsPage() {
-    const { data: stats, loading, error } = useHighlights(5)
+    const [period, setPeriod] = useState<'current' | 'all'>('current')
+    const yearParam = period === 'current' ? 2026 : null
+    const { data: stats, loading, error } = useHighlights(5, yearParam)
 
     if (loading) {
         return (
@@ -205,13 +208,41 @@ export default function HighlightsPage() {
     return (
         <div className="space-y-8">
             {/* Header */}
-            <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-purple-300 text-xs font-bold font-orbitron tracking-widest uppercase mb-2">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                    RETROSPECTIVA & DESTAQUES OFICIAIS
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-purple-300 text-xs font-bold font-orbitron tracking-widest uppercase mb-2">
+                        <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                        RETROSPECTIVA & DESTAQUES OFICIAIS
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl font-black text-white font-orbitron tracking-tight">Destaques do Servidor</h1>
+                    <p className="text-slate-400 text-sm font-rajdhani font-medium">Os membros e registros que dominaram cada categoria no servidor</p>
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-black text-white font-orbitron tracking-tight">Destaques do Servidor</h1>
-                <p className="text-slate-400 text-sm font-rajdhani font-medium">Os membros e registros que dominaram cada categoria no servidor</p>
+
+                {/* Filter Buttons */}
+                <div className="flex items-center bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 shadow-inner gap-1.5 self-start sm:self-auto backdrop-blur-md">
+                    <button
+                        onClick={() => setPeriod('current')}
+                        className={cn(
+                            "px-4 py-2 rounded-lg text-xs font-bold font-orbitron tracking-wider uppercase transition-all duration-200 cursor-pointer",
+                            period === 'current'
+                                ? "bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)] border border-purple-400/60"
+                                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                        )}
+                    >
+                        Ano Atual (2026)
+                    </button>
+                    <button
+                        onClick={() => setPeriod('all')}
+                        className={cn(
+                            "px-4 py-2 rounded-lg text-xs font-bold font-orbitron tracking-wider uppercase transition-all duration-200 cursor-pointer",
+                            period === 'all'
+                                ? "bg-cyan-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.5)] border border-cyan-400/60"
+                                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                        )}
+                    >
+                        Todo o Período
+                    </button>
+                </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">

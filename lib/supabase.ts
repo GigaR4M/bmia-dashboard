@@ -470,29 +470,31 @@ export async function getModerationStats(guildId: string, days: number = 30, sta
 }
 
 // Helper function to get all highlights
-export async function getHighlights(guildId: string, limit: number = 5) {
+export async function getHighlights(guildId: string, limit: number = 5, year: number | null = 2026) {
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not initialized')
     }
 
+    const rpcParams = { p_guild_id: guildId, p_limit: limit, p_year: year }
+
     const queries = [
-        supabaseAdmin.rpc('get_highlight_highest_score', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_messages', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_voice_time', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_offensive', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_activity_time', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_longest_streaming', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_events', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_top_gamers', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_reactions_received', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_demo_king', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_most_distinct_games', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_longest_session', { p_guild_id: guildId, p_limit: limit }),
+        supabaseAdmin.rpc('get_highlight_highest_score', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_messages', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_voice_time', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_offensive', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_activity_time', rpcParams),
+        supabaseAdmin.rpc('get_highlight_longest_streaming', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_events', rpcParams),
+        supabaseAdmin.rpc('get_highlight_top_gamers', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_reactions_received', rpcParams),
+        supabaseAdmin.rpc('get_highlight_demo_king', rpcParams),
+        supabaseAdmin.rpc('get_highlight_most_distinct_games', rpcParams),
+        supabaseAdmin.rpc('get_highlight_longest_session', rpcParams),
         // New stats
-        supabaseAdmin.rpc('get_highlight_game_of_the_year', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_night_owl', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_media_king', { p_guild_id: guildId, p_limit: limit }),
-        supabaseAdmin.rpc('get_highlight_omnipresent', { p_guild_id: guildId, p_limit: limit })
+        supabaseAdmin.rpc('get_highlight_game_of_the_year', rpcParams),
+        supabaseAdmin.rpc('get_highlight_night_owl', rpcParams),
+        supabaseAdmin.rpc('get_highlight_media_king', rpcParams),
+        supabaseAdmin.rpc('get_highlight_omnipresent', rpcParams)
     ]
 
     const results = await Promise.all(queries)
