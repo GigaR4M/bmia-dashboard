@@ -61,11 +61,20 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
         .select('*', { count: 'exact', head: true })
         .eq('guild_id', guildId)
 
-    // Calculate Voice Peak Records (Single Channel Peak & Server Total Peak)
+    // Calculate Voice Peak Records (Single Channel Peak & Server Total Peak, excluding AFK and ignored channels)
     let channelPeak = { count: 0, channel_name: 'Nenhum', peak_time: null as string | null }
     let serverPeak = { count: 0, peak_time: null as string | null }
 
     try {
+        // Fetch ignored voice channels from guild_settings
+        const { data: guildSettings } = await supabaseAdmin
+            .from('guild_settings')
+            .select('ignored_voice_channels')
+            .eq('guild_id', guildId)
+            .single()
+
+        const ignoredIds = new Set<string>((guildSettings?.ignored_voice_channels || []).map((id: any) => String(id)))
+
         const { data: voiceSessions } = await supabaseAdmin
             .from('voice_activity')
             .select('channel_id, joined_at, left_at, duration_seconds, channels(channel_name)')
@@ -79,11 +88,18 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
             const serverEvents: Array<{ ts: number; val: number }> = []
 
             for (const sess of voiceSessions) {
+                const chIdStr = String(sess.channel_id)
+                const chName = (sess.channels as any)?.channel_name || `Canal ${sess.channel_id}`
+                
+                // Exclude ignored channels and AFK channels
+                if (ignoredIds.has(chIdStr) || chName.toLowerCase().includes('afk')) {
+                    continue
+                }
+
                 const startTs = new Date(sess.joined_at).getTime()
                 const endTs = sess.left_at
                     ? new Date(sess.left_at).getTime()
                     : (sess.duration_seconds ? startTs + sess.duration_seconds * 1000 : startTs + 2 * 3600 * 1000)
-                const chName = (sess.channels as any)?.channel_name || `Canal ${sess.channel_id}`
 
                 if (!channelEvents[sess.channel_id]) {
                     channelEvents[sess.channel_id] = []
