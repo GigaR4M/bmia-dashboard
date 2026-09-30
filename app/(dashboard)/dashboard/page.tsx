@@ -18,7 +18,7 @@ import {
     useEventStats,
     useModerationStats
 } from '@/hooks/useStats'
-import { Users, MessageSquare, Hash, TrendingUp, Mic, Calendar, ShieldAlert } from 'lucide-react'
+import { Users, MessageSquare, Hash, TrendingUp, Mic, Calendar, ShieldAlert, Headphones } from 'lucide-react'
 import { formatNumber } from '@/lib/utils'
 import { UserAvatar } from '@/components/ui/UserAvatar'
 
@@ -109,6 +109,22 @@ export default function DashboardPage() {
                     title="Total de Canais"
                     value={serverStats ? formatNumber(serverStats.total_channels) : '0'}
                     icon={<Hash className="w-8 h-8" />}
+                    loading={serverLoading}
+                />
+                <StatsCard
+                    title="Recorde em Voz (Servidor)"
+                    value={serverStats?.server_peak_count ? `${serverStats.server_peak_count} membros` : '0'}
+                    subtitle={serverStats?.server_peak_time ? `Pico: ${serverStats.server_peak_time}` : 'Simultâneos no servidor'}
+                    icon={<Mic className="w-8 h-8 text-cyan-400" />}
+                    accentColor="cyan"
+                    loading={serverLoading}
+                />
+                <StatsCard
+                    title="Recorde em Canal Único"
+                    value={serverStats?.channel_peak_count ? `${serverStats.channel_peak_count} membros` : '0'}
+                    subtitle={serverStats?.channel_peak_name && (serverStats.channel_peak_count ?? 0) > 0 ? `#${serverStats.channel_peak_name}` : 'Maior sala única'}
+                    icon={<Headphones className="w-8 h-8 text-purple-400" />}
+                    accentColor="purple"
                     loading={serverLoading}
                 />
                 <StatsCard

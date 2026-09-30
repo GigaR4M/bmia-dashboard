@@ -61,12 +61,82 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
         .select('*', { count: 'exact', head: true })
         .eq('guild_id', guildId)
 
+    // Calculate Voice Peak Records (Single Channel Peak & Server Total Peak)
+    let channelPeak = { count: 0, channel_name: 'Nenhum', peak_time: null as string | null }
+    let serverPeak = { count: 0, peak_time: null as string | null }
+
+    try {
+        const { data: voiceSessions } = await supabaseAdmin
+            .from('voice_activity')
+            .select('channel_id, joined_at, left_at, duration_seconds, channels(channel_name)')
+            .eq('guild_id', guildId)
+            .not('joined_at', 'is', null)
+            .order('joined_at', { ascending: true })
+            .limit(3000)
+
+        if (voiceSessions && voiceSessions.length > 0) {
+            const channelEvents: Record<string, Array<{ ts: number; val: number; name: string }>> = {}
+            const serverEvents: Array<{ ts: number; val: number }> = []
+
+            for (const sess of voiceSessions) {
+                const startTs = new Date(sess.joined_at).getTime()
+                const endTs = sess.left_at
+                    ? new Date(sess.left_at).getTime()
+                    : (sess.duration_seconds ? startTs + sess.duration_seconds * 1000 : startTs + 2 * 3600 * 1000)
+                const chName = (sess.channels as any)?.channel_name || `Canal ${sess.channel_id}`
+
+                if (!channelEvents[sess.channel_id]) {
+                    channelEvents[sess.channel_id] = []
+                }
+                channelEvents[sess.channel_id].push({ ts: startTs, val: 1, name: chName })
+                channelEvents[sess.channel_id].push({ ts: endTs, val: -1, name: chName })
+
+                serverEvents.push({ ts: startTs, val: 1 })
+                serverEvents.push({ ts: endTs, val: -1 })
+            }
+
+            for (const evts of Object.values(channelEvents)) {
+                evts.sort((a, b) => a.ts - b.ts || b.val - a.val)
+                let current = 0
+                for (const evt of evts) {
+                    current += evt.val
+                    if (current > channelPeak.count) {
+                        channelPeak = {
+                            count: current,
+                            channel_name: evt.name,
+                            peak_time: new Date(evt.ts).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                        }
+                    }
+                }
+            }
+
+            serverEvents.sort((a, b) => a.ts - b.ts || b.val - a.val)
+            let sCurrent = 0
+            for (const evt of serverEvents) {
+                sCurrent += evt.val
+                if (sCurrent > serverPeak.count) {
+                    serverPeak = {
+                        count: sCurrent,
+                        peak_time: new Date(evt.ts).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Error calculating voice peak records:', err)
+    }
+
     return {
         guild_id: guildId,
         total_messages: totalMessages || 0,
         total_members: totalMembers || 0,
         active_members: activeMembers,
         total_channels: totalChannels || 0,
+        channel_peak_count: channelPeak.count,
+        channel_peak_name: channelPeak.channel_name,
+        channel_peak_time: channelPeak.peak_time,
+        server_peak_count: serverPeak.count,
+        server_peak_time: serverPeak.peak_time,
         period_days: days,
         last_updated: new Date().toISOString()
     }

@@ -4,6 +4,11 @@ export interface ServerStats {
     total_members: number
     active_members: number
     total_channels: number
+    channel_peak_count?: number
+    channel_peak_name?: string
+    channel_peak_time?: string | null
+    server_peak_count?: number
+    server_peak_time?: string | null
     period_days: number
     last_updated: string
 }

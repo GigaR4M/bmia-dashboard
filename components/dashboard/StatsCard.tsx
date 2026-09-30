@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 interface StatsCardProps {
     title: string
     value: string | number
+    subtitle?: string
     icon?: React.ReactNode
     trend?: {
         value: number
@@ -12,7 +13,7 @@ interface StatsCardProps {
     accentColor?: 'cyan' | 'purple' | 'gold' | 'rose'
 }
 
-export function StatsCard({ title, value, icon, trend, loading, accentColor = 'cyan' }: StatsCardProps) {
+export function StatsCard({ title, value, subtitle, icon, trend, loading, accentColor = 'cyan' }: StatsCardProps) {
     if (loading) {
         return (
             <div className="cyber-card rounded-2xl p-6 border border-slate-800 animate-pulse">
@@ -38,6 +39,10 @@ export function StatsCard({ title, value, icon, trend, loading, accentColor = 'c
                 <div className="flex-1">
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2 font-rajdhani">{title}</p>
                     <p className="text-3xl font-extrabold text-white font-orbitron tracking-tight">{value}</p>
+
+                    {subtitle && (
+                        <p className="text-slate-400 text-xs mt-1.5 font-rajdhani truncate">{subtitle}</p>
+                    )}
 
                     {trend && (
                         <div className={cn(
