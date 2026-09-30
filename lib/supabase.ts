@@ -77,7 +77,7 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
 
         const { data: voiceSessions } = await supabaseAdmin
             .from('voice_activity')
-            .select('channel_id, joined_at, left_at, duration_seconds, channels(channel_name)')
+            .select('channel_id, joined_at, left_at, duration_seconds, channels(channel_name), users(is_bot)')
             .eq('guild_id', guildId)
             .not('joined_at', 'is', null)
             .order('joined_at', { ascending: true })
@@ -88,6 +88,11 @@ export async function getServerStats(guildId: string, days: number = 30, startDa
             const serverEvents: Array<{ ts: number; val: number }> = []
 
             for (const sess of voiceSessions) {
+                // Exclude bots
+                if ((sess.users as any)?.is_bot) {
+                    continue
+                }
+
                 const chIdStr = String(sess.channel_id)
                 const chName = (sess.channels as any)?.channel_name || `Canal ${sess.channel_id}`
                 
