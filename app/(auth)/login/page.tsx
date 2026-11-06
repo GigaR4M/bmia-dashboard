@@ -31,10 +31,10 @@ function LoginContent() {
                         </div>
                     )}
 
-                    {error === 'OAuthSignin' && (
+                    {error && error !== 'unauthorized' && (
                         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
                             <p className="text-red-400 text-sm text-center">
-                                ⚠️ Erro ao fazer login. Tente novamente.
+                                ⚠️ Erro ao fazer login ({error}). Tente novamente.
                             </p>
                         </div>
                     )}
